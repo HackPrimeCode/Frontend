@@ -4,7 +4,7 @@ import { setCredentials, setInitialized } from "../model/authSlice";
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    refreshSession: builder.query<AuthResponse, void>({
+    refreshSession: builder.mutation<AuthResponse, void>({
       query: () => ({
         url: "/auth/refresh",
         method: "POST",
@@ -14,7 +14,7 @@ export const authApi = api.injectEndpoints({
           const { data } = await queryFulfilled;
           dispatch(setCredentials(data));
         } catch {
-          dispatch(setInitialized(true));
+          console.error("Refresh session failed");
         } finally {
           dispatch(setInitialized(true));
         }
@@ -23,4 +23,4 @@ export const authApi = api.injectEndpoints({
   }),
 });
 
-export const { useRefreshSessionQuery } = authApi;
+export const { useRefreshSessionMutation } = authApi;

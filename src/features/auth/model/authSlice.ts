@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AuthState, AuthResponse } from "./authTypes";
+import type { AuthState, AuthResponse, CurrentContext } from "./authTypes";
 
 const initialState: AuthState = {
   user: null,
   accessToken: null,
   isInitialized: false,
+  currentContext: null,
 };
 
 const authSlice = createSlice({
@@ -25,6 +26,9 @@ const authSlice = createSlice({
     },
     setInitialized(state: AuthState, action: PayloadAction<boolean>) {
       state.isInitialized = action.payload;
+    },
+    setContext(state: AuthState, action: PayloadAction<CurrentContext | null>) {
+      state.currentContext = action.payload;
     },
   },
 });

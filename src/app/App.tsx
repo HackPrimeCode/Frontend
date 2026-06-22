@@ -1,18 +1,12 @@
-import { toast } from "sonner";
-import { Button } from "../components/ui/button";
+import { useRefreshSessionMutation } from "@/features/auth/api/authApi";
+import { useEffect, type ReactNode } from "react";
 
-function App() {
-  return (
-    <>
-      <Button
-        onClick={() =>
-          toast.success("Тест прошел успешно", { position: "top-right" })
-        }
-      >
-        Тест
-      </Button>
-    </>
-  );
+function AppInit({ children }: { children: ReactNode }) {
+  const [refresh] = useRefreshSessionMutation();
+  useEffect(() => {
+    refresh();
+  }, []);
+  return children;
 }
 
-export default App;
+export default AppInit;
