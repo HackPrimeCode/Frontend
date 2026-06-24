@@ -2,10 +2,19 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AuthState, AuthResponse, CurrentContext } from "./authTypes";
 
 const initialState: AuthState = {
-  user: null,
-  accessToken: null,
-  isInitialized: false,
-  currentContext: null,
+  user: {
+    id: 1,
+    name: "Артем",
+    surname: "Степанов",
+    email: "artem@gmail.com",
+    role: "USER",
+  },
+  accessToken: "access-token",
+  isInitialized: true,
+  currentContext: {
+    hackathonId: 1,
+    localRole: "MEMBER",
+  },
 };
 
 const authSlice = createSlice({

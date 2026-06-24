@@ -4,13 +4,14 @@ export type LocalRole = "CAPTAIN" | "MEMBER" | "JURY";
 export interface User {
   id: number;
   name: string;
+  surname: string;
   email: string;
   role: GlobalRole;
 }
 
 export interface CurrentContext {
   hackathonId: number;
-  teamId: number | null;
+  teamId?: number | null;
   localRole: LocalRole | null;
 }
 

@@ -1,7 +1,211 @@
+import { Link, useLocation, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import { Button } from "../ui/button";
+import { useState } from "react";
+
+interface NavItem {
+  path: string;
+  label: string;
+  icon: keyof typeof IconImages;
+  hasAccess: (globalRole: string, contextRole?: string | null) => boolean;
+}
+
+interface NavItem {
+  path: string;
+  label: string;
+  icon: keyof typeof IconImages; // Теперь строго указывает на ключи IconImages
+  hasAccess: (globalRole: string, contextRole?: string | null) => boolean;
+}
+
+const navItems: NavItem[] = [
+  { path: "/hub", label: "Мероприятия", icon: "hub", hasAccess: () => true },
+  {
+    path: "/team",
+    label: "Команда",
+    icon: "team",
+    hasAccess: (global, context) => global === "USER" && context !== "JURY",
+  },
+  {
+    path: "/worktable",
+    label: "Рабочий стол",
+    icon: "worktable",
+    hasAccess: (global, context) => global === "USER" && context !== "JURY",
+  },
+  {
+    path: "/leaderboard",
+    label: "Рейтинг",
+    icon: "leaderboard",
+    hasAccess: () => true,
+  },
+  {
+    path: "/profile",
+    label: "Профиль",
+    icon: "profile",
+    hasAccess: () => true,
+  },
+
+  {
+    path: "/jury",
+    label: "Жюри",
+    icon: "jury",
+    hasAccess: (global, context) => global === "ADMIN" || context === "JURY",
+  },
+  {
+    path: "/organizer",
+    label: "Организатор",
+    icon: "organizer",
+    hasAccess: (global) => global === "ORGANIZER" || global === "ADMIN",
+  },
+  {
+    path: "/admin",
+    label: "Админ",
+    icon: "admin",
+    hasAccess: (global) => global === "ADMIN",
+  },
+];
+
+const IconImages = {
+  hub: { default: "/hub-icon.svg", active: "/hub-icon-active.svg" },
+  team: { default: "/team-icon.svg", active: "/team-icon-active.svg" },
+  worktable: {
+    default: "/worktable-icon.svg",
+    active: "/worktable-icon-active.svg",
+  },
+  leaderboard: {
+    default: "/leaderboard-icon.svg",
+    active: "/leaderboard-icon-active.svg",
+  },
+  profile: { default: "/profile-icon.svg", active: "/profile-icon-active.svg" },
+  jury: { default: "/jury-icon.svg", active: "/jury-icon-active.svg" },
+  organizer: {
+    default: "/organizer-icon.svg",
+    active: "/organizer-icon-active.svg",
+  },
+  admin: { default: "/admin-icon.svg", active: "/admin-icon-active.svg" },
+};
+
 export default function Header() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
+
+  function toggleDropdownMenu() {
+    setIsMenuOpen((prev) => !prev);
+  }
+  function toggleNotificationMenu() {
+    setIsNotificationsOpen((prev) => !prev);
+  }
+
+  const { user, currentContext } = useSelector(
+    (state: RootState) => state.auth,
+  );
+  const visibleNavItems = navItems.filter((item) => {
+    if (!user) return false;
+
+    return item.hasAccess(user.role, currentContext?.localRole);
+  });
+
   return (
-    <>
-      <h1>Header!</h1>
-    </>
+    <header className="flex justify-between h-15 w-full px-8 items-center border-b border-b-border">
+      <div className="flex gap-9">
+        <div className="flex gap-1 items-center">
+          <img
+            src="/HackPrimeCode-logo.svg"
+            alt="logo"
+            className="w-9 h-7 -translate-y-0.5"
+          />
+          <span className="text-white text-lg">
+            Hack<span className="text-red">Prime</span>Code
+          </span>
+        </div>
+        <div className="flex gap-6">
+          {visibleNavItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            const currentIcon = isActive
+              ? IconImages[item.icon].active
+              : IconImages[item.icon].default;
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                  isActive
+                    ? "px-3.5 py-2 rounded-lg border bg-red/6 border-red text-red font-medium"
+                    : "p-0 bg-transparent border-none text-text-accent hover:text-text"
+                }`}
+              >
+                <img src={currentIcon} alt="" className="w-3 h-3" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+      {user ? (
+        <div className="relative flex items-center gap-2.5 text-white">
+          <div className="relative">
+            <Button
+              onClick={toggleNotificationMenu}
+              className="flex items-center cursor-pointer rounded-full p-2 hover:bg-card-background/60"
+            >
+              <img src="/notification-icon.svg" alt="" className="w-4 h-4" />
+            </Button>
+            {isNotificationsOpen && (
+              <div className="absolute text-center top-full bg-card-background w-96 rounded-lg px-4 py-3 right-0 mt-2 z-50">
+                <h1>У вас пока нет уведомлений</h1>
+              </div>
+            )}
+          </div>
+
+          <div className="items-center w-0.5 bg-border h-6"></div>
+          <div className="flex items-center gap-2">
+            <div className="text-sm w-6.5 h-6.5 bg-red flex items-center justify-center rounded-full">
+              <span className="-translate-y-px">{user.name[0]}</span>
+            </div>
+            <div className="relative">
+              <Button
+                onClick={toggleDropdownMenu}
+                className="flex items-center gap-2 cursor-pointer p-0"
+              >
+                <span>
+                  {user.name} {user.surname[0]}.
+                </span>
+                <img
+                  src="/dropdown-icon.svg"
+                  alt=""
+                  className={`w-2.5 h-1.5 transition-all duration-300 ${isMenuOpen && "-rotate-180"}`}
+                />
+              </Button>
+              {isMenuOpen && (
+                <div className="absolute text-right top-full w-24 rounded-lg right-0 mt-2 z-50">
+                  <Button className="text-red border bg-background border-red px-4">
+                    Выйти
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        !isAuthPage && (
+          <Button className="border-[0.5px] h-10 border-red px-5 py-2.5 text-white text-sm flex items-center gap-3 cursor-pointer">
+            <span>Войти в аккаунт</span>
+            <img
+              src="/arrow-icon.svg"
+              alt=""
+              className="h-3 w-3 translate-y-0.5"
+            />
+          </Button>
+        )
+      )}
+    </header>
   );
 }

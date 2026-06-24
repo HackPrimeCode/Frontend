@@ -9,6 +9,15 @@ import { createBrowserRouter } from "react-router";
 
 const routes = [
   {
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/hub",
+        lazy: () => wrapLazy(() => import("@/pages/HubPage")),
+      },
+    ],
+  },
+  {
     element: <PublicRoute />,
     children: [
       {
@@ -17,10 +26,6 @@ const routes = [
           {
             path: "/",
             lazy: () => wrapLazy(() => import("@/pages/LandingPage")),
-          },
-          {
-            path: "/hub",
-            lazy: () => wrapLazy(() => import("@/pages/HubPage")),
           },
         ],
       },
@@ -61,14 +66,32 @@ const routes = [
             path: "/worktable",
             lazy: () => wrapLazy(() => import("@/pages/WorkTablePage")),
           },
+        ],
+      },
+      {
+        element: (
+          <RoleProtectedRoute
+            allowedRoles={["ADMIN"]}
+            allowedLocalRoles={["JURY"]}
+          />
+        ),
+        children: [
           {
-            path: "/jury",
-            lazy: () => wrapLazy(() => import("@/pages/JuryPage")),
+            element: <MainLayout />,
+            children: [
+              {
+                path: "/jury",
+                lazy: () => wrapLazy(() => import("@/pages/JuryPage")),
+              },
+            ],
           },
+        ],
+      },
+      {
+        element: <RoleProtectedRoute allowedRoles={["ORGANIZER", "ADMIN"]} />,
+        children: [
           {
-            element: (
-              <RoleProtectedRoute allowedRoles={["ORGANIZER", "ADMIN"]} />
-            ),
+            element: <MainLayout />,
             children: [
               {
                 path: "/organizer",
@@ -76,8 +99,13 @@ const routes = [
               },
             ],
           },
+        ],
+      },
+      {
+        element: <RoleProtectedRoute allowedRoles={["ADMIN"]} />,
+        children: [
           {
-            element: <RoleProtectedRoute allowedRoles={["ADMIN"]} />,
+            element: <MainLayout />,
             children: [
               {
                 path: "/admin",

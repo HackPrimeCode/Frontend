@@ -8,7 +8,11 @@ export default function ProtectedRoute() {
   );
   const location = useLocation();
   if (!isInitialized) {
-    return <div>Загрузка...</div>;
+    return (
+      <div className="h-screen w-full bg-background text-white text-2xl flex items-center justify-center">
+        Загрузка...
+      </div>
+    );
   } else if (accessToken === null) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   } else {
