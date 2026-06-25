@@ -1,20 +1,14 @@
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { logout } from "@/features/auth/model/authSlice";
 
 interface NavItem {
   path: string;
   label: string;
   icon: keyof typeof IconImages;
-  hasAccess: (globalRole: string, contextRole?: string | null) => boolean;
-}
-
-interface NavItem {
-  path: string;
-  label: string;
-  icon: keyof typeof IconImages; // Теперь строго указывает на ключи IconImages
   hasAccess: (globalRole: string, contextRole?: string | null) => boolean;
 }
 
@@ -24,13 +18,13 @@ const navItems: NavItem[] = [
     path: "/team",
     label: "Команда",
     icon: "team",
-    hasAccess: (global, context) => global === "USER" && context !== "JURY",
+    hasAccess: (global, context) => global === "user" && context !== "judge",
   },
   {
     path: "/worktable",
     label: "Рабочий стол",
     icon: "worktable",
-    hasAccess: (global, context) => global === "USER" && context !== "JURY",
+    hasAccess: (global, context) => global === "user" && context !== "judge",
   },
   {
     path: "/leaderboard",
@@ -46,22 +40,22 @@ const navItems: NavItem[] = [
   },
 
   {
-    path: "/jury",
+    path: "/judge",
     label: "Жюри",
-    icon: "jury",
-    hasAccess: (global, context) => global === "ADMIN" || context === "JURY",
+    icon: "judge",
+    hasAccess: (global, context) => global === "admin" || context === "judge",
   },
   {
     path: "/organizer",
     label: "Организатор",
     icon: "organizer",
-    hasAccess: (global) => global === "ORGANIZER" || global === "ADMIN",
+    hasAccess: (global) => global === "organizator" || global === "admin",
   },
   {
     path: "/admin",
     label: "Админ",
     icon: "admin",
-    hasAccess: (global) => global === "ADMIN",
+    hasAccess: (global) => global === "admin",
   },
 ];
 
@@ -77,7 +71,7 @@ const IconImages = {
     active: "/leaderboard-icon-active.svg",
   },
   profile: { default: "/profile-icon.svg", active: "/profile-icon-active.svg" },
-  jury: { default: "/jury-icon.svg", active: "/jury-icon-active.svg" },
+  judge: { default: "/judge-icon.svg", active: "/judge-icon-active.svg" },
   organizer: {
     default: "/organizer-icon.svg",
     active: "/organizer-icon-active.svg",
@@ -87,10 +81,33 @@ const IconImages = {
 
 export default function Header() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const logoutRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const { user, currentContext } = useSelector(
+    (state: RootState) => state.auth,
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        logoutRef.current &&
+        !logoutRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setIsNotificationsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
@@ -101,14 +118,15 @@ export default function Header() {
   function toggleNotificationMenu() {
     setIsNotificationsOpen((prev) => !prev);
   }
+  function handleLogout() {
+    dispatch(logout());
+    setIsMenuOpen(false);
+  }
 
-  const { user, currentContext } = useSelector(
-    (state: RootState) => state.auth,
-  );
   const visibleNavItems = navItems.filter((item) => {
     if (!user) return false;
 
-    return item.hasAccess(user.role, currentContext?.localRole);
+    return item.hasAccess(user.global_role, currentContext?.localRole);
   });
 
   return (
@@ -120,7 +138,7 @@ export default function Header() {
             alt="logo"
             className="w-9 h-7 -translate-y-0.5"
           />
-          <span className="text-white text-lg">
+          <span className="text-white">
             Hack<span className="text-red">Prime</span>Code
           </span>
         </div>
@@ -151,7 +169,7 @@ export default function Header() {
       </div>
       {user ? (
         <div className="relative flex items-center gap-2.5 text-white">
-          <div className="relative">
+          <div className="relative" ref={notificationRef}>
             <Button
               onClick={toggleNotificationMenu}
               className="flex items-center cursor-pointer rounded-full p-2 hover:bg-card-background/60"
@@ -170,14 +188,12 @@ export default function Header() {
             <div className="text-sm w-6.5 h-6.5 bg-red flex items-center justify-center rounded-full">
               <span className="-translate-y-px">{user.name[0]}</span>
             </div>
-            <div className="relative">
+            <div className="relative" ref={logoutRef}>
               <Button
                 onClick={toggleDropdownMenu}
                 className="flex items-center gap-2 cursor-pointer p-0"
               >
-                <span>
-                  {user.name} {user.surname[0]}.
-                </span>
+                <span>{user.name}</span>
                 <img
                   src="/dropdown-icon.svg"
                   alt=""
@@ -186,7 +202,10 @@ export default function Header() {
               </Button>
               {isMenuOpen && (
                 <div className="absolute text-right top-full w-24 rounded-lg right-0 mt-2 z-50">
-                  <Button className="text-red border bg-background border-red px-4">
+                  <Button
+                    onClick={handleLogout}
+                    className="text-red border bg-background border-red px-4 cursor-pointer hover:bg-red/25"
+                  >
                     Выйти
                   </Button>
                 </div>
@@ -196,14 +215,17 @@ export default function Header() {
         </div>
       ) : (
         !isAuthPage && (
-          <Button className="border-[0.5px] h-10 border-red px-5 py-2.5 text-white text-sm flex items-center gap-3 cursor-pointer">
+          <Link
+            to={"/login"}
+            className="border-[0.5px] h-10 border-red px-5 py-2.5 text-white text-sm flex items-center gap-3 cursor-pointer rounded-lg"
+          >
             <span>Войти в аккаунт</span>
             <img
               src="/arrow-icon.svg"
               alt=""
               className="h-3 w-3 translate-y-0.5"
             />
-          </Button>
+          </Link>
         )
       )}
     </header>

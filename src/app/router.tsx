@@ -71,8 +71,8 @@ const routes = [
       {
         element: (
           <RoleProtectedRoute
-            allowedRoles={["ADMIN"]}
-            allowedLocalRoles={["JURY"]}
+            allowedRoles={["admin"]}
+            allowedLocalRoles={["judge"]}
           />
         ),
         children: [
@@ -80,15 +80,15 @@ const routes = [
             element: <MainLayout />,
             children: [
               {
-                path: "/jury",
-                lazy: () => wrapLazy(() => import("@/pages/JuryPage")),
+                path: "/judge",
+                lazy: () => wrapLazy(() => import("@/pages/JudgePage")),
               },
             ],
           },
         ],
       },
       {
-        element: <RoleProtectedRoute allowedRoles={["ORGANIZER", "ADMIN"]} />,
+        element: <RoleProtectedRoute allowedRoles={["organizator", "admin"]} />,
         children: [
           {
             element: <MainLayout />,
@@ -102,7 +102,7 @@ const routes = [
         ],
       },
       {
-        element: <RoleProtectedRoute allowedRoles={["ADMIN"]} />,
+        element: <RoleProtectedRoute allowedRoles={["admin"]} />,
         children: [
           {
             element: <MainLayout />,

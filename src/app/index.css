@@ -26,6 +26,12 @@
   transition-duration: 200ms;
 }
 
+*:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 1px var(--color-red) !important;
+  border-color: var(--color-red) !important;
+}
+
 @layer base {
   a,
   button,

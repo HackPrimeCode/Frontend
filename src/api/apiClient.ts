@@ -8,7 +8,7 @@ declare module "axios" {
 }
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: "/api/v1",
   timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 10000,
   withCredentials: true,
 });
@@ -27,30 +27,38 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (originalRequest.url?.includes("/auth/refresh")) {
+      const { store } = await import("../store");
+      store.dispatch(logout());
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/login") &&
+      !originalRequest.url?.includes("/auth/register")
+    ) {
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true },
-        );
+        const response = await apiClient.post("/auth/refresh", {});
 
-        const { accessToken } = response.data;
+        const { access_token } = response.data;
 
         const { store } = await import("../store");
-        store.dispatch(updateAccessToken(accessToken));
+        store.dispatch(updateAccessToken(access_token));
 
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
         }
 
         return apiClient(originalRequest);
       } catch (refreshError) {
         const { store } = await import("../store");
         store.dispatch(logout());
-        window.location.assign("/auth");
+        window.location.assign("/login");
         return Promise.reject(refreshError);
       }
     }

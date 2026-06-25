@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { RouterProvider } from "react-router";
 import { router } from "./router.tsx";
 import { store } from "@/store/index.ts";
-import AppInit from "./App.tsx";
+import AppInit from "./AppInit.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

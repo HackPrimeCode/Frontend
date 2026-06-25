@@ -1,12 +1,14 @@
-export type GlobalRole = "USER" | "ORGANIZER" | "ADMIN";
-export type LocalRole = "CAPTAIN" | "MEMBER" | "JURY";
+export type GlobalRole = "admin" | "user" | "organizator";
+
+export type LocalRole = "captain" | "participant" | "judge";
+
+export type RegisterRole = "user" | "judge" | "organizator";
 
 export interface User {
   id: number;
   name: string;
-  surname: string;
   email: string;
-  role: GlobalRole;
+  global_role: GlobalRole;
 }
 
 export interface CurrentContext {
@@ -17,7 +19,8 @@ export interface CurrentContext {
 
 export interface AuthResponse {
   user: User;
-  accessToken: string;
+  access_token: string;
+  token_type: string;
 }
 
 export interface AuthState {
@@ -25,4 +28,20 @@ export interface AuthState {
   accessToken: string | null;
   isInitialized: boolean;
   currentContext: CurrentContext | null;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload {
+  email: string;
+  name: string;
+  password: string;
+}
+
+export interface ValidateInviteResponse {
+  email: string;
+  role: "judge" | "organizator";
 }
