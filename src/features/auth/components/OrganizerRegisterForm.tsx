@@ -80,7 +80,7 @@ export default function OrganizerRegisterForm({
                 type="text"
                 placeholder="Алексей Иванов"
                 autoComplete="off"
-                className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
               />
             </div>
             {fieldState.invalid && (
@@ -114,7 +114,7 @@ export default function OrganizerRegisterForm({
                 placeholder="alex@hackprimecode.ru"
                 disabled={true}
                 autoComplete="off"
-                className="h-12 w-full bg-[#111118] text-sm pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all disabled:opacity-100 disabled:pointer-events-none text-white! border-2! border-white!"
+                className="h-12 w-full bg-input-background text-sm pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all disabled:opacity-100 disabled:pointer-events-none text-white! border-2! border-white!"
               />
             </div>
             {fieldState.invalid && (
@@ -146,7 +146,7 @@ export default function OrganizerRegisterForm({
                 {...field}
                 type="password"
                 placeholder="•••••"
-                className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
               />
             </div>
             {fieldState.invalid && (
@@ -178,7 +178,7 @@ export default function OrganizerRegisterForm({
                 {...field}
                 type="password"
                 placeholder="•••••"
-                className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
               />
             </div>
             {fieldState.invalid && (

@@ -87,7 +87,7 @@ export default function UserRegisterForm() {
                   type="text"
                   placeholder="Алексей Иванов"
                   autoComplete="off"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
                 />
               </div>
               {fieldState.invalid && (
@@ -120,7 +120,7 @@ export default function UserRegisterForm() {
                   type="email"
                   placeholder="alex@hackprimecode.ru"
                   autoComplete="off"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
                 />
               </div>
               {fieldState.invalid && (
@@ -152,7 +152,7 @@ export default function UserRegisterForm() {
                   {...field}
                   type="password"
                   placeholder="••••••••"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
                 />
               </div>
               {fieldState.invalid && (
@@ -184,7 +184,7 @@ export default function UserRegisterForm() {
                   {...field}
                   type="password"
                   placeholder="••••••••"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent transition-all"
                 />
               </div>
               {fieldState.invalid && (

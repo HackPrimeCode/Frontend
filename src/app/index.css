@@ -16,6 +16,7 @@
   --color-text: #ffffff;
   --color-text-accent: #8a8a9a;
   --color-yellow: #ffcc00;
+  --color-input-background: #111118;
 }
 
 @utility transition-base {

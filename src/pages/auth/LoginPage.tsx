@@ -8,7 +8,7 @@ export default function LoginPage() {
         <h1 className="text-2xl text-white">С возвращением</h1>
         <p className="text-text-accent">// войдите в аккаунт</p>
       </div>
-      <div className="grid w-full grid-cols-2 space-x-1 bg-[#111118] border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-6 text-center text-sm font-medium tracking-wide">
+      <div className="grid w-full grid-cols-2 space-x-1 bg-input-background border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-6 text-center text-sm font-medium tracking-wide">
         <div className="flex items-center justify-center bg-red text-white transition-all cursor-pointer rounded-sm">
           Войти
         </div>

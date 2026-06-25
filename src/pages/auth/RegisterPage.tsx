@@ -73,7 +73,7 @@ export default function RegisterPage() {
           {role === "organizator" && "создайте аккаунт организатора"}
         </p>
       </div>
-      <div className="grid w-full grid-cols-2 space-x-1 bg-[#111118] border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-4 text-center text-sm font-medium tracking-wide">
+      <div className="grid w-full grid-cols-2 space-x-1 bg-input-background border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-4 text-center text-sm font-medium tracking-wide">
         <Link
           to="/login"
           className="flex items-center justify-center text-center text-text-accent hover:text-white rounded-md transition-all"

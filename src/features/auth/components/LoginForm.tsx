@@ -75,7 +75,7 @@ export default function LoginForm() {
                   type="email"
                   placeholder="alex@hackprimecode.ru"
                   autoComplete="off"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent focus-visible:border-red transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent focus-visible:border-red transition-all"
                 />
               </div>
               {fieldState.invalid && (
@@ -107,7 +107,7 @@ export default function LoginForm() {
                   {...field}
                   type="password"
                   placeholder="••••••••"
-                  className="h-12 w-full bg-[#111118] border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent focus-visible:border-red transition-all"
+                  className="h-12 w-full bg-input-background border-border text-sm text-white pl-9 pr-4 rounded-lg outline-none placeholder-text-accent focus-visible:border-red transition-all"
                 />
               </div>
               {fieldState.invalid && (
