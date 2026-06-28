@@ -46,7 +46,6 @@ export default function UserRegisterForm() {
     try {
       setSubmitError(null);
       const { name, email, password } = data;
-      console.log({ name, email, password });
       await register({ name, email, password }).unwrap();
       navigate(from, { replace: true });
     } catch (err: any) {

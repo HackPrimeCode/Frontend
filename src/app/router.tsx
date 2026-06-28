@@ -12,6 +12,10 @@ const routes = [
     element: <MainLayout />,
     children: [
       {
+        path: "/",
+        lazy: () => wrapLazy(() => import("@/pages/LandingPage")),
+      },
+      {
         path: "/hub",
         lazy: () => wrapLazy(() => import("@/pages/HubPage")),
       },
@@ -20,15 +24,6 @@ const routes = [
   {
     element: <PublicRoute />,
     children: [
-      {
-        element: <MainLayout />,
-        children: [
-          {
-            path: "/",
-            lazy: () => wrapLazy(() => import("@/pages/LandingPage")),
-          },
-        ],
-      },
       {
         element: <AuthLayout />,
         children: [
