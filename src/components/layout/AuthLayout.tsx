@@ -14,11 +14,11 @@ export default function AuthLayout() {
               alt="logo"
               className="w-28.5 h-22.5 mb-7"
             />
-            <span className="text-6xl text-white font-bold">
+            <span className="text-6xl text-white">
               Hack<span className="text-red">Prime</span>
             </span>
             <div>
-              <span className="text-6xl text-red font-bold">Code</span>
+              <span className="text-6xl text-red">Code</span>
             </div>
             <span className="text-white text-3xl mt-4 tracking-wide">
               Code.Compete.Conquer.

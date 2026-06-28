@@ -47,7 +47,7 @@ export default function RegisterPage() {
   if (tokenError) {
     return (
       <div className="text-center p-6 bg-card border border-red/20 rounded-xl">
-        <h1 className="text-red text-lg font-medium mb-2">Ошибка доступа</h1>
+        <h1 className="text-red text-lg  mb-2">Ошибка доступа</h1>
         <p className="text-text-accent text-sm mb-4">{tokenError}</p>
         <button
           onClick={() => navigate("/")}
@@ -60,7 +60,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-110 w-full mx-auto px-6 mt-6">
+    <div className="max-w-110 w-full mx-auto px-6 mt-6 min-h-[calc(100vh-3.75rem)">
       <div className="mb-4 space-y-1">
         <h1 className="text-2xl text-white">
           {role === "user" && "Присоединяйся"}
@@ -73,7 +73,7 @@ export default function RegisterPage() {
           {role === "organizator" && "создайте аккаунт организатора"}
         </p>
       </div>
-      <div className="grid w-full grid-cols-2 space-x-1 bg-input-background border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-4 text-center text-sm font-medium tracking-wide">
+      <div className="grid w-full grid-cols-2 space-x-1 bg-input-background border-[1.5px] border-border py-1 px-2 h-11 rounded-sm mb-4 text-center text-sm  tracking-wide">
         <Link
           to="/login"
           className="flex items-center justify-center text-center text-text-accent hover:text-white rounded-md transition-all"

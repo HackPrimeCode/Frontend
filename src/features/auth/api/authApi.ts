@@ -4,7 +4,7 @@ import type {
   LoginPayload,
   RegisterPayload,
 } from "../model/authTypes";
-import { setCredentials, setInitialized } from "../model/authSlice";
+import { logout, setCredentials, setInitialized } from "../model/authSlice";
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -13,6 +13,7 @@ export const authApi = api.injectEndpoints({
         url: "/auth/refresh",
         method: "POST",
       }),
+      invalidatesTags: (result) => (result ? [] : ["User"]),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -54,6 +55,21 @@ export const authApi = api.injectEndpoints({
         }
       },
     }),
+    logout: builder.mutation<{ detail: string }, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+      invalidatesTags: ["User"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logout());
+        } catch {
+          console.error("Logout failed");
+        }
+      },
+    }),
   }),
 });
 
@@ -61,4 +77,5 @@ export const {
   useRefreshSessionMutation,
   useLoginMutation,
   useRegisterUserMutation,
+  useLogoutMutation,
 } = authApi;

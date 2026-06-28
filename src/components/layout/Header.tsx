@@ -1,9 +1,9 @@
-import { Link, useLocation } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
-import { logout } from "@/features/auth/model/authSlice";
+import { useLogoutMutation } from "@/features/auth/api/authApi";
 
 interface NavItem {
   path: string;
@@ -80,8 +80,9 @@ const IconImages = {
 };
 
 export default function Header() {
-  const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [logout, { isLoading }] = useLogoutMutation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const logoutRef = useRef<HTMLDivElement>(null);
@@ -118,9 +119,16 @@ export default function Header() {
   function toggleNotificationMenu() {
     setIsNotificationsOpen((prev) => !prev);
   }
-  function handleLogout() {
-    dispatch(logout());
-    setIsMenuOpen(false);
+  async function handleLogout() {
+    try {
+      await logout().unwrap();
+
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error("Не удалось выйти из системы:", error);
+    } finally {
+      setIsMenuOpen(false);
+    }
   }
 
   const visibleNavItems = navItems.filter((item) => {
@@ -156,7 +164,7 @@ export default function Header() {
                 to={item.path}
                 className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
                   isActive
-                    ? "px-3.5 py-2 rounded-lg border bg-red/6 border-red text-red font-medium"
+                    ? "px-3.5 py-2 rounded-lg border bg-red/6 border-red text-red "
                     : "p-0 bg-transparent border-none text-text-accent hover:text-text"
                 }`}
               >
@@ -204,9 +212,10 @@ export default function Header() {
                 <div className="absolute text-right top-full w-24 rounded-lg right-0 mt-2 z-50">
                   <Button
                     onClick={handleLogout}
+                    disabled={isLoading}
                     className="text-red border bg-background border-red px-4 cursor-pointer hover:bg-red/25"
                   >
-                    Выйти
+                    {isLoading ? "Выход..." : "Выйти"}
                   </Button>
                 </div>
               )}
