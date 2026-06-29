@@ -7,6 +7,8 @@ import HackathonCard from "@/features/hackathons/components/HackathonCard";
 import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
 import { formatTotalRewards } from "@/lib/utils";
 import HackathonDetailsModal from "@/features/hackathons/components/HackathonDetailsModal";
+import { useNavigate } from "react-router";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 type FilterStatus = "ALL" | "REGISTRATION" | "IN_PROGRESS" | "FINISHED";
 
@@ -60,6 +62,9 @@ export default function HubPage() {
     )[0];
   }, [hackathons]);
 
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
   const handleFilterChange = (status: FilterStatus) => {
     setActiveFilter(status);
     setVisibleCount(12);
@@ -68,6 +73,19 @@ export default function HubPage() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setVisibleCount(12);
+  };
+
+  const handleApply = (hackathonId: number) => {
+    if (isAuthenticated) {
+      navigate("/team", { state: { applyHackathonId: hackathonId } });
+    } else {
+      navigate("/login", {
+        state: {
+          from: "/team",
+          applyHackathonId: hackathonId,
+        },
+      });
+    }
   };
 
   if (isLoading) {
@@ -250,6 +268,7 @@ export default function HubPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         hackathon={selectedHackathon}
+        onApply={handleApply}
       />
     </div>
   );

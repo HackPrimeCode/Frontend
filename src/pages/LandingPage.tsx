@@ -9,6 +9,7 @@ import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonT
 import { useCountdown } from "@/lib/hooks/useCountdown";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 type FilterStatus = "ALL" | "REGISTRATION" | "IN_PROGRESS" | "FINISHED";
 
@@ -27,6 +28,7 @@ export default function LandingPage() {
     useState<HackathonDetailRead | null>(null);
 
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const activeHackathon = useMemo(
     () => hackathons.find((h) => h.status === "IN_PROGRESS"),
@@ -62,6 +64,20 @@ export default function LandingPage() {
   const { days, hours, minutes, seconds } = useCountdown(
     activeHackathon?.end_date,
   );
+
+  const handleApply = (hackathonId: number) => {
+    if (isAuthenticated) {
+      navigate("/team", { state: { applyHackathonId: hackathonId } });
+    } else {
+      navigate("/login", {
+        state: {
+          from: "/team",
+          applyHackathonId: hackathonId,
+        },
+      });
+    }
+  };
+
   const timeBlocks = [
     { value: days, label: "Дни" },
     { value: hours, label: "Час" },
@@ -109,17 +125,19 @@ export default function LandingPage() {
           </p>
 
           <div className="flex items-center gap-4 my-10">
-            <Button
-              onClick={() => handleOpenDetails(activeHackathon)}
-              className="h-11 px-6 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
-            >
-              <img
-                src="/flag-icon.svg"
-                alt=""
-                className="w-4 h-4 translate-y-px"
-              />
-              Принять участие
-            </Button>
+            {activeHackathon && (
+              <Button
+                onClick={() => handleApply(activeHackathon.id)}
+                className="h-11 px-6 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
+              >
+                <img
+                  src="/flag-icon.svg"
+                  alt=""
+                  className="w-4 h-4 translate-y-px"
+                />
+                Принять участие
+              </Button>
+            )}
             <Button
               onClick={() => navigate("/hub", { replace: true })}
               className="h-11 px-6 bg-transparent border-[0.5px] border-text-accent text-white text-sm rounded-lg flex items-center gap-2 hover:border-text-accent/50 transition-colors cursor-pointer"
@@ -237,6 +255,7 @@ export default function LandingPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         hackathon={selectedHackathon}
+        onApply={handleApply}
       />
     </div>
   );

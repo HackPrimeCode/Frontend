@@ -20,7 +20,7 @@ export default function RoleProtectedRoute({
   if (!user) return <ForbiddenPage />;
 
   const hasGlobalAccess = allowedRoles
-    ? allowedRoles.includes(user.role)
+    ? allowedRoles.includes(user.global_role)
     : false;
 
   const hasLocalAccess =

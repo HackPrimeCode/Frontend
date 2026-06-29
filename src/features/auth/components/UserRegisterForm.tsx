@@ -40,14 +40,18 @@ export default function UserRegisterForm() {
     },
   });
 
-  const from = location.state?.from?.pathname || "/hub";
+  const from = location.state?.from || "/hub";
+  const applyHackathonId = location.state?.applyHackathonId;
 
   async function onSubmit(data: UserRegisterFormValues) {
     try {
       setSubmitError(null);
       const { name, email, password } = data;
       await register({ name, email, password }).unwrap();
-      navigate(from, { replace: true });
+      navigate(from, {
+        replace: true,
+        state: applyHackathonId ? { applyHackathonId } : undefined,
+      });
     } catch (err: any) {
       const detailError = err?.data?.detail;
 

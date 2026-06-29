@@ -25,6 +25,7 @@ interface HackathonDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   hackathon: HackathonDetailRead | null;
+  onApply?: (hackathonId: number) => void;
 }
 
 const getPrizeIcon = (title: string) => {
@@ -65,6 +66,7 @@ export default function HackathonDetailsModal({
   isOpen,
   onClose,
   hackathon,
+  onApply,
 }: HackathonDetailsModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -246,15 +248,21 @@ export default function HackathonDetailsModal({
             <span className="text-white ">{hackathon.total_teams}</span> команд
             зарегистрировано
           </div>
-          <Button
-            onClick={() =>
-              console.log("Подача заявки на хакатон:", hackathon.id)
-            }
-            className="h-9 px-6 bg-red text-white text-xs rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer racking-wider"
-          >
-            <Mail className="w-4.5 h-4.5" />
-            Принять участие
-          </Button>
+          {hackathon.status !== "FINISHED" && (
+            <Button
+              onClick={() => {
+                if (hackathon && onApply) {
+                  onApply(hackathon.id);
+                  onClose();
+                }
+              }}
+              disabled={!onApply}
+              className="h-9 px-6 bg-red text-white text-xs rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer tracking-wider"
+            >
+              <Mail className="w-4.5 h-4.5" />
+              Принять участие
+            </Button>
+          )}
         </div>
       </div>
     </div>

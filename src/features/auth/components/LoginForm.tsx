@@ -30,13 +30,17 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const from = location.state?.from?.pathname || "/hub";
+  const from = location.state?.from || "/hub";
+  const applyHackathonId = location.state?.applyHackathonId;
 
   async function onSubmit(data: LoginFormValues) {
     try {
       setSubmitError(null);
       await login(data).unwrap();
-      navigate(from, { replace: true });
+      navigate(from, {
+        replace: true,
+        state: applyHackathonId ? { applyHackathonId } : undefined,
+      });
     } catch (err: any) {
       const detailError = err?.data?.detail;
 
