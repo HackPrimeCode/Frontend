@@ -1,6 +1,15 @@
 import { Calendar, CircleCheck, Clock, MapPin } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import type { CurrentHackathon } from "../model/profileTypes";
+
+function HackathonCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative pl-6">
+      <div className="rounded-lg border border-border bg-card-background p-4">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 interface CurrentHackathonSectionProps {
   hackathon: CurrentHackathon | null | undefined;
@@ -20,11 +29,9 @@ export default function CurrentHackathonSection({
           <CircleCheck className="h-6 w-6 text-red" strokeWidth={2.25} />
           <h3 className="text-2xl text-text">Текущее мероприятие</h3>
         </div>
-        <Card className="border border-border bg-card-background ring-0">
-          <CardContent className="py-6">
-            <div className="animate-pulse text-text-accent">Загрузка...</div>
-          </CardContent>
-        </Card>
+        <HackathonCard>
+          <div className="animate-pulse text-text-accent">Загрузка...</div>
+        </HackathonCard>
       </section>
     );
   }
@@ -36,11 +43,11 @@ export default function CurrentHackathonSection({
           <CircleCheck className="h-6 w-6 text-red" strokeWidth={2.25} />
           <h3 className="text-2xl text-text">Текущее мероприятие</h3>
         </div>
-        <Card className="border border-border bg-card-background ring-0">
-          <CardContent className="py-6 text-sm text-text-accent">
+        <HackathonCard>
+          <div className="text-sm text-text-accent">
             Вы не участвуете ни в одном мероприятии
-          </CardContent>
-        </Card>
+          </div>
+        </HackathonCard>
       </section>
     );
   }
@@ -52,8 +59,8 @@ export default function CurrentHackathonSection({
         <h3 className="text-2xl text-text">Текущее мероприятие</h3>
       </div>
 
-      <Card className="border border-border bg-card-background ring-0">
-        <CardContent className="space-y-4 py-5">
+      <HackathonCard>
+        <div className="space-y-4">
           <div>
             <h4 className="text-base font-bold text-text">{hackathon.title}</h4>
             <p className="mt-2 text-sm leading-relaxed text-text-accent">
@@ -98,8 +105,8 @@ export default function CurrentHackathonSection({
               Подробнее &gt;
             </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </HackathonCard>
     </section>
   );
 }
