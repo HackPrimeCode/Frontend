@@ -6,12 +6,18 @@ interface ProfileHeaderProps {
   profile: UserProfile | undefined;
   isLoading: boolean;
   onEditClick: () => void;
+  showSkills?: boolean;
+  showStats?: boolean;
+  roleLabel?: string;
 }
 
 export default function ProfileHeader({
   profile,
   isLoading,
   onEditClick,
+  showSkills = true,
+  showStats = true,
+  roleLabel,
 }: ProfileHeaderProps) {
   if (isLoading) {
     return (
@@ -50,6 +56,11 @@ export default function ProfileHeader({
         <div className="text-center">
           <h2 className="text-xl font-bold text-text">{profile.name}</h2>
           <p className="mt-1 text-sm text-text-accent">{profile.email}</p>
+          {roleLabel && (
+            <p className="mt-2 text-xs font-medium uppercase tracking-wide text-red">
+              {roleLabel}
+            </p>
+          )}
         </div>
 
         {profile.github_url && (
@@ -64,7 +75,7 @@ export default function ProfileHeader({
           </a>
         )}
 
-        {profile.skills && profile.skills.length > 0 && (
+        {showSkills && profile.skills && profile.skills.length > 0 && (
           <div className="w-full">
             <p className="mb-2.5 text-[0.6875rem] uppercase tracking-wide text-text-accent">
               Навыки
@@ -82,32 +93,34 @@ export default function ProfileHeader({
           </div>
         )}
 
-        <div className="grid w-full grid-cols-3 gap-2 border-t border-border pt-6 text-center">
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-red">
-              {profile.stats.total_hackathons}
-            </span>
-            <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
-              Хакатона
-            </span>
+        {showStats && (
+          <div className="grid w-full grid-cols-3 gap-2 border-t border-border pt-6 text-center">
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-3xl font-bold text-red">
+                {profile.stats.total_hackathons}
+              </span>
+              <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
+                Хакатона
+              </span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-3xl font-bold text-red">
+                {profile.stats.total_wins}
+              </span>
+              <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
+                Победы
+              </span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-3xl font-bold text-red">
+                {profile.stats.average_score.toFixed(1)}
+              </span>
+              <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
+                Ср. балл
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-red">
-              {profile.stats.total_wins}
-            </span>
-            <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
-              Победы
-            </span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-red">
-              {profile.stats.average_score.toFixed(1)}
-            </span>
-            <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
-              Ср. балл
-            </span>
-          </div>
-        </div>
+        )}
 
         <div className="flex w-full justify-end">
           <button

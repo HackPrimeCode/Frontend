@@ -4,7 +4,7 @@ import CurrentTeamSection from "@/features/profile/components/CurrentTeamSection
 import HackathonHistorySection from "@/features/profile/components/HackathonHistorySection";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CurrentHackathon, HackathonParticipation, CurrentTeam } from "@/features/profile/model/profileTypes";
+import type { GlobalRole } from "@/features/auth/model/authTypes";
+import type { CurrentHackathon, HackathonParticipation, CurrentTeam, UserProfile } from "@/features/profile/model/profileTypes";
+
+function getRoleLabel(role: GlobalRole | undefined) {
+  if (role === "admin") return "Администратор";
+  if (role === "organizator") return "Организатор";
+  return undefined;
+}
 
 const mockProfile = {
   id: 1,
@@ -96,26 +103,36 @@ export default function ProfilePage() {
   const [isHackathonModalOpen, setIsHackathonModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
-  const profile = mockProfile;
-  const currentTeam = mockCurrentTeam;
+  const isParticipant = user?.global_role === "user";
+  const roleLabel = getRoleLabel(user?.global_role);
+
+  const profile = useMemo<UserProfile | undefined>(() => {
+    if (!user) return undefined;
+
+    if (isParticipant) {
+      return mockProfile;
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      skills: [],
+      stats: {
+        total_hackathons: 0,
+        total_wins: 0,
+        average_score: 0,
+      },
+    };
+  }, [user, isParticipant]);
+
+  const currentTeam = isParticipant ? mockCurrentTeam : null;
   const currentHackathon = mockCurrentHackathon;
-  const history = mockHistory;
+  const history = isParticipant ? mockHistory : [];
   const profileLoading = false;
   const hackathonLoading = false;
   const historyLoading = false;
   const profileError = null;
-
-  if (user?.global_role !== "user") {
-    return (
-      <div className="flex h-full items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-text">
-            Профиль для этой роли еще не реализован
-          </h1>
-        </div>
-      </div>
-    );
-  }
 
   const handleHackathonDetailsClick = (hackathon: CurrentHackathon) => {
     setSelectedHackathon(hackathon);
@@ -142,11 +159,16 @@ export default function ProfilePage() {
               profile={profile}
               isLoading={profileLoading}
               onEditClick={() => setIsEditDialogOpen(true)}
+              showSkills={isParticipant}
+              showStats={isParticipant}
+              roleLabel={roleLabel}
             />
-            <CurrentTeamSection
-              team={currentTeam}
-              isLoading={profileLoading}
-            />
+            {isParticipant && (
+              <CurrentTeamSection
+                team={currentTeam}
+                isLoading={profileLoading}
+              />
+            )}
           </div>
 
           <div className="space-y-8">
@@ -155,11 +177,13 @@ export default function ProfilePage() {
               isLoading={hackathonLoading}
               onDetailsClick={handleHackathonDetailsClick}
             />
-            <HackathonHistorySection
-              history={history}
-              isLoading={historyLoading}
-              onDetailsClick={handleHistoryDetailsClick}
-            />
+            {isParticipant && (
+              <HackathonHistorySection
+                history={history}
+                isLoading={historyLoading}
+                onDetailsClick={handleHistoryDetailsClick}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -187,14 +211,16 @@ export default function ProfilePage() {
                 className="mt-2"
               />
             </div>
-            <div>
-              <label className="text-sm text-text-accent">Навыки</label>
-              <Input
-                defaultValue={profile?.skills?.join(", ")}
-                placeholder="Python, React, Go..."
-                className="mt-2"
-              />
-            </div>
+            {isParticipant && (
+              <div>
+                <label className="text-sm text-text-accent">Навыки</label>
+                <Input
+                  defaultValue={profile?.skills?.join(", ")}
+                  placeholder="Python, React, Go..."
+                  className="mt-2"
+                />
+              </div>
+            )}
             <div className="flex gap-2 pt-4">
               <Button
                 variant="outline"
@@ -282,6 +308,7 @@ export default function ProfilePage() {
       </Dialog>
 
       {/* History Event Details Modal */}
+      {isParticipant && (
       <Dialog open={isHistoryModalOpen} onOpenChange={setIsHistoryModalOpen}>
         <DialogContent className="max-w-2xl bg-card-background border-border text-text">
           <DialogHeader>
@@ -333,6 +360,7 @@ export default function ProfilePage() {
           </div>
         </DialogContent>
       </Dialog>
+      )}
     </div>
   );
 }
