@@ -141,14 +141,19 @@ export default function Header() {
     <header className="flex justify-between h-15 w-full px-8 items-center border-b border-b-border">
       <div className="flex gap-9">
         <div className="flex gap-1 items-center">
-          <img
-            src="/HackPrimeCode-logo.svg"
-            alt="logo"
-            className="w-9 h-7 -translate-y-0.5"
-          />
-          <span className="text-white">
-            Hack<span className="text-red">Prime</span>Code
-          </span>
+          <Button
+            onClick={() => navigate("/", { replace: true })}
+            className="cursor-pointer"
+          >
+            <img
+              src="/HackPrimeCode-logo.svg"
+              alt="logo"
+              className="w-9 h-7 -translate-y-0.5"
+            />
+            <span className="text-white">
+              Hack<span className="text-red">Prime</span>Code
+            </span>
+          </Button>
         </div>
         <div className="flex gap-6">
           {visibleNavItems.map((item) => {

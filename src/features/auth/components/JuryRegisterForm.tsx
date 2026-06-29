@@ -188,7 +188,7 @@ export default function JuryRegisterForm({
 
       <Button
         type="submit"
-        className="w-full h-12 bg-red hover:bg-red/85 active:bg-red/60 text-white text-sm rounded-sm mt-2 transition-colors duration-150"
+        className="w-full h-12 bg-red hover:bg-red/85 active:bg-red/60 text-white text-sm cursor-pointer rounded-sm mt-2 transition-colors duration-150"
       >
         Создать аккаунт
       </Button>
