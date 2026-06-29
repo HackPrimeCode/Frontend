@@ -14,7 +14,13 @@ export default function ProtectedRoute() {
       </div>
     );
   } else if (accessToken === null) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location.pathname, ...location.state }}
+        replace
+      />
+    );
   } else {
     return <Outlet />;
   }
