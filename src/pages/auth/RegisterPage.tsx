@@ -4,6 +4,7 @@ import UserRegisterForm from "@/features/auth/components/UserRegisterForm";
 import JuryRegisterForm from "@/features/auth/components/JuryRegisterForm";
 import OrganizerRegisterForm from "@/features/auth/components/OrganizerRegisterForm";
 import type { RegisterRole } from "@/features/auth/model/authTypes";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const [searchParams] = useSearchParams();
@@ -12,8 +13,10 @@ export default function RegisterPage() {
   const token = searchParams.get("token");
   const emailFromUrl = searchParams.get("email");
 
-  const [role, setRole] = useState<RegisterRole>("user");
-  const [invitedEmail, setInvitedEmail] = useState<string | null>(emailFromUrl);
+  const [role, _setRole] = useState<RegisterRole>("user");
+  const [invitedEmail, _setInvitedEmail] = useState<string | null>(
+    emailFromUrl,
+  );
   const [isLoading, setIsLoading] = useState(!!token);
   const [tokenError, setTokenError] = useState<string | null>(null);
 
@@ -49,12 +52,12 @@ export default function RegisterPage() {
       <div className="text-center p-6 bg-card border border-red/20 rounded-xl">
         <h1 className="text-red text-lg  mb-2">Ошибка доступа</h1>
         <p className="text-text-accent text-sm mb-4">{tokenError}</p>
-        <button
+        <Button
           onClick={() => navigate("/")}
           className="text-white bg-red px-4 py-2 rounded-lg text-sm"
         >
           На главную
-        </button>
+        </Button>
       </div>
     );
   }

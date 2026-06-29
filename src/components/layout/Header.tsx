@@ -140,8 +140,11 @@ export default function Header() {
   return (
     <header className="flex justify-between h-15 w-full px-8 items-center border-b border-b-border">
       <div className="flex gap-9">
-        <div className="flex gap-1 items-center cursor-pointer">
-          <Button onClick={() => navigate("/", { replace: true })}>
+        <div className="flex gap-1 items-center">
+          <Button
+            onClick={() => navigate("/", { replace: true })}
+            className="cursor-pointer"
+          >
             <img
               src="/HackPrimeCode-logo.svg"
               alt="logo"

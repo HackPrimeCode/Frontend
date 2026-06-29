@@ -1,13 +1,15 @@
 import { api } from "@/store/api";
-import type { HackathonPublicRead } from "../model/hackathonTypes";
+import type { HackathonDetailRead } from "../model/hackathonTypes";
+import { mockHackathons } from "./mockHackathons";
 
 export const hackathonsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getHackathons: builder.query<HackathonPublicRead[], void>({
+    getHackathons: builder.query<HackathonDetailRead[], void>({
       query: () => ({
         url: "/hackathons",
         method: "GET",
       }),
+      transformResponse: () => mockHackathons,
     }),
   }),
 });

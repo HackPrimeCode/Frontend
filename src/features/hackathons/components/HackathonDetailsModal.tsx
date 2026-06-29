@@ -19,6 +19,7 @@ import {
   formatTotalRewards,
   statusConfig,
 } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface HackathonDetailsModalProps {
   isOpen: boolean;
@@ -100,12 +101,12 @@ export default function HackathonDetailsModal({
       />
 
       <div className="relative w-full max-w-160 max-h-[90vh] border-2 border-border rounded-lg flex flex-col overflow-hidden text-white animate-in fade-in zoom-in-95 duration-150">
-        <button
+        <Button
           onClick={onClose}
           className="absolute top-5 right-5 text-text-accent hover:text-white transition-colors cursor-pointer z-10"
         >
           <X className="w-5 h-5" />
-        </button>
+        </Button>
 
         <div className="flex-1 bg-input-background overflow-y-auto custom-scrollbar flex flex-col">
           <div className="flex flex-col gap-2 bg-card-background px-7 pt-5.5 pb-4 border-b-2 border-border  ">
@@ -242,12 +243,10 @@ export default function HackathonDetailsModal({
 
         <div className="w-full h-18 px-7 bg-background border-t-2 border-border flex items-center justify-between">
           <div className="text-xs md:text-sm text-[#e5e5ea]  tracking-wide">
-            <span className="text-white ">
-              {hackathon.total_participants / 4}
-            </span>{" "}
-            команд зарегистрировано
+            <span className="text-white ">{hackathon.total_teams}</span> команд
+            зарегистрировано
           </div>
-          <button
+          <Button
             onClick={() =>
               console.log("Подача заявки на хакатон:", hackathon.id)
             }
@@ -255,7 +254,7 @@ export default function HackathonDetailsModal({
           >
             <Mail className="w-4.5 h-4.5" />
             Принять участие
-          </button>
+          </Button>
         </div>
       </div>
     </div>

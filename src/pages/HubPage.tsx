@@ -18,7 +18,7 @@ const filters = [
 ];
 
 export default function HubPage() {
-  const { data: hackathonses = [], isLoading, error } = useGetHackathonsQuery();
+  const { data: hackathons = [], isLoading, error } = useGetHackathonsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterStatus>("ALL");
   const [visibleCount, setVisibleCount] = useState(12);
@@ -30,144 +30,6 @@ export default function HubPage() {
     setSelectedHackathon(hackathon);
     setIsModalOpen(true);
   };
-
-  const hackathons: HackathonDetailRead[] = [
-    {
-      id: 1,
-      title: "HackPrimeCode Лето 2026",
-      description:
-        "HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026",
-      status: "FINISHED",
-      topics: ["ML", "Python", "React", "Go"],
-      total_participants: 312,
-      total_teams: 64,
-      min_team_size: 1,
-      max_team_size: 4,
-      max_participants: 1000,
-      event_location: "Moscow",
-      start_date: "2026-06-25T18:00:00",
-      end_date: "2026-06-27T18:00:00",
-      prizes: [
-        {
-          id: 1,
-          title: "1-е место",
-          reward: "300000",
-        },
-        {
-          id: 2,
-          title: "2-е место",
-          reward: "200000",
-        },
-        {
-          id: 3,
-          title: "3-е место",
-          reward: "100000",
-        },
-        {
-          id: 4,
-          title: "Лучший AI-продукт",
-          reward: "300000",
-        },
-      ],
-      submission_requirements: [
-        "Команда от 1 до 4 человек",
-        "Опыт в Machine Learning или Deep Learning",
-        "Знание Python и основных ML-библиотек",
-        "Решение должно производиться по инструкции",
-      ],
-      evaluation_criteria: [],
-    },
-    {
-      id: 2,
-      title: "HackPrimeCode Лето 2026",
-      description:
-        "HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026",
-      status: "REGISTRATION",
-      topics: ["ML", "Python", "React", "Go"],
-      total_participants: 312,
-      total_teams: 64,
-      min_team_size: 1,
-      max_team_size: 4,
-      max_participants: 1000,
-      event_location: "Moscow",
-      start_date: "2026-06-29T18:00:00",
-      end_date: "2026-07-02T18:00:00",
-      prizes: [
-        {
-          id: 1,
-          title: "1-е место",
-          reward: "1000000",
-        },
-        {
-          id: 2,
-          title: "2-е место",
-          reward: "500000",
-        },
-        {
-          id: 3,
-          title: "3-е место",
-          reward: "300000",
-        },
-        {
-          id: 4,
-          title: "Лучший AI-продукт",
-          reward: "100000",
-        },
-      ],
-      submission_requirements: [
-        "Команда от 1 до 4 человек",
-        "Опыт в Machine Learning или Deep Learning",
-        "Знание Python и основных ML-библиотек",
-        "Решение должно производиться по инструкции",
-      ],
-      evaluation_criteria: [],
-    },
-    {
-      id: 3,
-      title: "HackPrimeCode Лето 2026",
-      description:
-        "HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026HackPrimeCode Лето 2026",
-      status: "REGISTRATION",
-      topics: ["ML", "Python", "React", "Go"],
-      total_participants: 312,
-      total_teams: 64,
-      min_team_size: 1,
-      max_team_size: 4,
-      max_participants: 1000,
-      event_location: "Moscow",
-      start_date: "2026-07-5T18:00:00",
-      end_date: "2026-07-6T18:00:00",
-      prizes: [
-        {
-          id: 1,
-          title: "1-е место",
-          reward: "300000",
-        },
-        {
-          id: 2,
-          title: "2-е место",
-          reward: "200000",
-        },
-        {
-          id: 3,
-          title: "3-е место",
-          reward: "100000",
-        },
-        {
-          id: 4,
-          title: "Лучший AI-продукт",
-          reward: "300000",
-        },
-      ],
-      submission_requirements: [
-        "Команда от 1 до 4 человек",
-        "Опыт в Machine Learning или Deep Learning",
-        "Знание Python и основных ML-библиотек",
-        "Решение должно производиться по инструкции",
-      ],
-      evaluation_criteria: [],
-    },
-  ];
 
   const filteredHackathons = useMemo(() => {
     return hackathons.filter((hack) => {
@@ -181,7 +43,7 @@ export default function HubPage() {
 
       return matchesSearch && matchesStatus;
     });
-  }, [hackathonses, searchQuery, activeFilter]);
+  }, [hackathons, searchQuery, activeFilter]);
 
   const slicedHackathons = useMemo(() => {
     return filteredHackathons.slice(0, visibleCount);
@@ -196,7 +58,7 @@ export default function HubPage() {
       (a, b) =>
         new Date(a.end_date!).getTime() - new Date(b.end_date!).getTime(),
     )[0];
-  }, [hackathonses]);
+  }, [hackathons]);
 
   const handleFilterChange = (status: FilterStatus) => {
     setActiveFilter(status);
@@ -266,7 +128,7 @@ export default function HubPage() {
   ];
 
   return (
-    <div className="w-full mx-auto grid grid-cols-[16rem_1px_1fr] min-h-[calc(100vh-3.75rem)]">
+    <div className="w-full mx-auto grid grid-cols-[16rem_1px_1fr] min-h-[calc(100vh-3.75rem)] bg-background">
       <div className="p-5 flex flex-col items-center space-y-5">
         <div className="flex w-full flex-col gap-3">
           <h2 className="uppercase text-text-accent text-xs">// Статистика</h2>

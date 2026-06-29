@@ -1,6 +1,6 @@
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { HackathonPublicRead } from "../model/hackathonTypes";
+import type { HackathonDetailRead } from "../model/hackathonTypes";
 import {
   calculateDurationHours,
   formatDate,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/utils";
 
 interface HackathonCardProps {
-  hackathon: HackathonPublicRead;
+  hackathon: HackathonDetailRead;
   onNavigateToDetails?: (id: number) => void;
 }
 

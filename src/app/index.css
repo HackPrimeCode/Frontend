@@ -47,7 +47,7 @@
   body,
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-red) transparent;
+    scrollbar-color: var(--color-red) var(--color-card-background);
   }
 
   ::-webkit-scrollbar {
@@ -56,7 +56,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--color-card-background);
   }
 
   ::-webkit-scrollbar-thumb {
