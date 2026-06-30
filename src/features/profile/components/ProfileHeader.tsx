@@ -105,14 +105,6 @@ export default function ProfileHeader({
             </div>
             <div className="flex flex-col items-center gap-1">
               <span className="text-3xl font-bold text-red">
-                {profile.stats.total_wins}
-              </span>
-              <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
-                Победы
-              </span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-3xl font-bold text-red">
                 {profile.stats.average_score.toFixed(1)}
               </span>
               <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
