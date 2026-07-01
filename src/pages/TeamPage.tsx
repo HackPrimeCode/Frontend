@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Mail, Calendar, Edit2, UserPlus, Trash2 } from "lucide-react";
+import { Users, Calendar, UserPlus } from "lucide-react";
 import {
   useGetMyTeamQuery,
   useCreateTeamMutation,
@@ -127,9 +127,9 @@ export default function TeamPage() {
   const otherMembers = team.members.filter((m) => !m.is_captain);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl text-white mb-1">Команда</h1>
+    <div className="w-full max-w-6xl mx-auto px-6 py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl text-white mb-2">Команда</h1>
         <p className="text-xs text-text-accent">
           // Управляйте своей командой, приглашайте участников
         </p>
@@ -137,7 +137,7 @@ export default function TeamPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6">
         <div className="flex flex-col gap-5">
-          <div className="bg-card-background border border-border rounded-lg p-5">
+          <div className="bg-card-background border border-border rounded-lg p-4">
             <div className="flex items-start justify-between mb-3">
               <h3 className="text-white">{team.hackathon_title}</h3>
               <div className="flex items-center gap-1 text-xs text-text-accent">
@@ -148,112 +148,118 @@ export default function TeamPage() {
             <p className="text-xs text-text-accent mb-4 leading-relaxed">
               {team.hackathon_description}
             </p>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {team.hackathon_topics.map((topic, idx) => (
-                <span
-                  key={idx}
-                  className="px-2.5 py-1 bg-input-background border border-border rounded-sm text-[0.6875rem] text-text-accent"
-                >
-                  {topic}
+            <div className="flex justify-between items-center">
+              <div className="flex flex-wrap gap-2">
+                {team.hackathon_topics.map((topic, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 bg-input-background border border-border rounded-sm text-[0.6875rem] text-text-accent"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-text-accent uppercase">
+                  От {team.hackathon_min_size} до {team.hackathon_max_size} чел.
                 </span>
-              ))}
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-text-accent">
-                От {team.hackathon_min_size} до {team.hackathon_max_size} чел.
-              </span>
-              <Button
-                onClick={() => alert("Пока не сделал!")}
-                className="h-5 px-1 text-red hover:text-red/85 text-xs cursor-pointer flex items-center justify-center gap-2 hover:animate-pulse"
-              >
-                <span>Подробнее</span>
-                <img
-                  src="/dropdown-active-icon.svg"
-                  alt=""
-                  className="w-2.5 h-1.5"
-                />
-              </Button>
+                <Button
+                  onClick={() => alert("Пока не сделал!")}
+                  className="h-5 px-1 text-red hover:text-red/85 text-xs cursor-pointer flex items-center justify-center gap-2 hover:animate-pulse"
+                >
+                  <span>Подробнее</span>
+                  <img
+                    src="/dropdown-active-icon.svg"
+                    alt=""
+                    className="w-2.5 h-1.5"
+                  />
+                </Button>
+              </div>
             </div>
           </div>
 
           <div className="bg-card-background border border-border rounded-lg overflow-hidden">
-            <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                   {team.name.substring(0, 2).toUpperCase()}
                 </div>
-                <div>
-                  <h3 className="text-white">{team.name}</h3>
-                  <p className="text-xs text-text-accent">
-                    {team.members.length} / {team.hackathon_max_size} мест
-                  </p>
-                </div>
+                <h3 className="text-white">{team.name}</h3>
               </div>
+              <p className="text-xs text-text-accent">
+                {team.members.length} / {team.hackathon_max_size} мест
+              </p>
             </div>
 
             <div className="divide-y divide-border">
               {currentMember && (
-                <div className="px-5 py-4 flex items-center gap-4">
-                  <div
-                    className={`w-10 h-10 ${currentMember.avatar_color || "bg-red"} rounded-full flex items-center justify-center text-white text-sm font-bold`}
-                  >
-                    {currentMember.full_name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-white text-sm">
-                        {currentMember.full_name}
-                      </span>
-                      <span className="px-2 py-0.5 bg-red/10 border border-red text-red text-[0.6875rem] rounded">
-                        Капитан
-                      </span>
+                <div className="px-5 py-4 flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    <div
+                      className={`w-10 h-10 ${currentMember.avatar_color || "bg-red"} rounded-full flex items-center justify-center text-white text-sm font-bold`}
+                    >
+                      {currentMember.full_name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </div>
-                    <p className="text-xs text-text-accent">
-                      {currentMember.email}
-                    </p>
-                    <div className="flex gap-1.5 mt-2">
-                      {currentMember.skills.map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 bg-input-background border border-border rounded text-[0.6875rem] text-text-accent"
-                        >
-                          {skill}
+                    <div className="flex-1 min-w-0 ">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-white text-sm">
+                          {currentMember.full_name}
                         </span>
-                      ))}
+                        <div className="px-2 py-0.5 bg-red/10 border border-red text-red text-[0.6875rem] rounded flex gap-1 items-center justify-center">
+                          <img
+                            src="./captain-icon.svg"
+                            alt=""
+                            className="w-3 h-3"
+                          />
+                          <span className="translate-y-px">Капитан</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-text-accent">
+                        {currentMember.email}
+                      </p>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {currentMember.skills.map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 bg-input-background border border-border rounded text-[0.6875rem] text-text-accent"
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
               )}
 
               {otherMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="px-5 py-4 flex items-center gap-4"
-                >
-                  <div
-                    className={`w-10 h-10 ${member.avatar_color || "bg-green-500"} rounded-full flex items-center justify-center text-white text-sm font-bold`}
-                  >
-                    {member.full_name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-white text-sm">
-                        {member.full_name}
-                      </span>
-                      {member.role !== "Капитан" && (
-                        <span className="px-2 py-0.5 bg-input-background border border-border text-text-accent text-[0.6875rem] rounded">
-                          {member.role}
-                        </span>
-                      )}
+                <div key={member.id} className="px-5 py-4 flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    <div
+                      className={`w-10 h-10 ${member.avatar_color || "bg-green-500"} rounded-full flex items-center justify-center text-white text-sm`}
+                    >
+                      {member.full_name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </div>
-                    <p className="text-xs text-text-accent">{member.email}</p>
-                    <div className="flex gap-1.5 mt-2">
+                    <div className="flex-1 min-w-0 ">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-white text-sm">
+                          {member.full_name}
+                        </span>
+                        <div className="px-2 py-0.5 bg-card-background border border-border text-text-accent text-[0.6875rem] rounded flex gap-1 items-center justify-center">
+                          <span className="translate-y-px">Участник</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-text-accent">{member.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
                       {member.skills.map((skill, idx) => (
                         <span
                           key={idx}
@@ -263,13 +269,15 @@ export default function TeamPage() {
                         </span>
                       ))}
                     </div>
+                    <Button className="cursor-pointer">
+                      <img
+                        src="./delete-member-icon.svg"
+                        alt=""
+                        className="w-4 h-4"
+                      />
+                      <span className="text-xs text-red">Исключить</span>
+                    </Button>
                   </div>
-                  {currentMember?.is_captain && (
-                    <button className="text-red hover:text-red/85 text-xs cursor-pointer flex items-center gap-1">
-                      <Trash2 className="w-3.5 h-3.5" />
-                      Исключить
-                    </button>
-                  )}
                 </div>
               ))}
             </div>
@@ -277,42 +285,43 @@ export default function TeamPage() {
         </div>
 
         <div className="flex flex-col gap-5">
-          <div className="bg-card-background border border-border rounded-lg p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-1.5 h-1.5 rounded-full bg-red" />
+          <div className="bg-card-background border border-border rounded-lg p-4.5">
+            <div className="flex items-center gap-2 mb-2">
+              <img src="./info-icon.svg" alt="" className="w-3.5 h-3.5" />
               <h3 className="text-xs text-text-accent uppercase">
                 Информация о команде
               </h3>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-text-accent block mb-1">
-                  Название
-                </label>
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between py-3 border-b border-border text-xs">
+                <label className="text-text-accent uppercase">Название</label>
                 <p className="text-white">{team.name}</p>
               </div>
 
-              <div>
-                <label className="text-xs text-text-accent block mb-1">
+              <div className="flex items-center justify-between py-3 border-b border-border text-xs">
+                <label className="text-text-accent uppercase">
                   Мероприятие
                 </label>
                 <p className="text-white">{team.hackathon_title}</p>
               </div>
 
-              <div>
-                <label className="text-xs text-text-accent block mb-1">
-                  Капитан
-                </label>
+              <div className="flex items-center justify-between py-3 border-b border-border text-xs">
+                <label className="text-text-accent uppercase">Капитан</label>
                 <p className="text-white">{currentMember?.full_name}</p>
               </div>
 
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="text-xs text-text-accent">О команде</label>
+              <div className="flex flex-col pt-3 text-xs gap-2">
+                <div className="flex items-center gap-3">
+                  <label className="text-xs text-text-accent uppercase">
+                    О команде
+                  </label>
                   {currentMember?.is_captain && (
                     <button className="text-text-accent hover:text-white cursor-pointer">
-                      <Edit2 className="w-3 h-3" />
+                      <img
+                        src="./edit-description-icon.svg"
+                        className="w-3 h-3 -translate-y-px"
+                      />
                     </button>
                   )}
                 </div>
@@ -324,7 +333,7 @@ export default function TeamPage() {
           </div>
 
           {currentMember?.is_captain && (
-            <div className="bg-card-background border border-border rounded-lg p-5">
+            <div className="bg-card-background border border-border rounded-lg p-4">
               <div className="flex items-center gap-2 mb-4">
                 <UserPlus className="w-4 h-4 text-red" />
                 <h3 className="text-xs text-text-accent uppercase">
@@ -338,21 +347,18 @@ export default function TeamPage() {
                     Email участника
                   </label>
                   <div className="flex gap-2">
-                    <div className="flex-1 relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-accent" />
-                      <input
-                        type="email"
-                        value={inviteEmail}
-                        onChange={(e) => setInviteEmail(e.target.value)}
-                        placeholder="user@example.com"
-                        className="w-full h-10 pl-10 pr-4 bg-input-background border border-border rounded-sm text-sm text-white placeholder-text-accent outline-none focus:border-red transition-colors"
-                      />
-                    </div>
+                    <input
+                      type="email"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      placeholder="user@example.com"
+                      className="w-full h-10 pl-3 pr-4 bg-input-background border border-border rounded-sm text-sm text-white placeholder-text-accent outline-none focus:border-red transition-colors"
+                    />
                     <button
                       type="submit"
-                      className="h-10 w-10 bg-red hover:bg-red/90 rounded-sm flex items-center justify-center transition-colors cursor-pointer"
+                      className="h-10 min-w-10 bg-red hover:bg-red/90 rounded-sm flex items-center justify-center transition-colors cursor-pointer"
                     >
-                      <Mail className="w-4 h-4" />
+                      <img src="./send-invite-icon.svg" className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -361,10 +367,10 @@ export default function TeamPage() {
           )}
 
           {team.pending_invites.length > 0 && (
-            <div className="bg-card-background border border-border rounded-lg p-5">
+            <div className="bg-card-background border border-border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red" />
+                  <img src="./info-icon.svg" alt="" className="w-3.5 h-3.5" />
                   <h3 className="text-xs text-text-accent uppercase">
                     Приглашены
                   </h3>
@@ -375,11 +381,11 @@ export default function TeamPage() {
               </div>
               <div className="space-y-2">
                 {team.pending_invites.map((email, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 px-3 py-2 bg-input-background border border-border rounded-sm"
-                  >
-                    <Users className="w-3.5 h-3.5 text-text-accent" />
+                  <div key={idx} className="flex items-center gap-2">
+                    <div className="border border-border rounded-full p-1.5">
+                      <Users className="w-3.5 h-3.5 text-text-accent" />
+                    </div>
+
                     <span className="text-xs text-white">{email}</span>
                   </div>
                 ))}
