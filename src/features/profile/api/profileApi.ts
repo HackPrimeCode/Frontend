@@ -1,5 +1,23 @@
 import { api } from "@/store/api";
-import type { UserProfile, CurrentHackathon, HackathonParticipation } from "../model/profileTypes";
+import type {
+  UserProfile,
+  UserProfileUpdate,
+  UserReadResponse,
+} from "../model/profileTypes";
+
+function mapUserToProfile(user: UserReadResponse): UserProfile {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    skills: user.tech_stack ?? [],
+    stats: {
+      total_hackathons: 0,
+      total_wins: 0,
+      average_score: 0,
+    },
+  };
+}
 
 export const profileApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -8,34 +26,22 @@ export const profileApi = api.injectEndpoints({
         url: "/users/me",
         method: "GET",
       }),
+      transformResponse: (response: UserReadResponse) =>
+        mapUserToProfile(response),
       providesTags: ["User"],
     }),
-    getCurrentHackathon: builder.query<CurrentHackathon | null, void>({
-      query: () => ({
-        url: "/users/current-hackathon",
-        method: "GET",
-      }),
-    }),
-    getHackathonHistory: builder.query<HackathonParticipation[], void>({
-      query: () => ({
-        url: "/users/hackathon-history",
-        method: "GET",
-      }),
-    }),
-    updateUserProfile: builder.mutation<UserProfile, Partial<UserProfile>>({
+    updateUserProfile: builder.mutation<UserProfile, UserProfileUpdate>({
       query: (updates) => ({
         url: "/users/me",
-        method: "PATCH",
+        method: "PUT",
         data: updates,
       }),
+      transformResponse: (response: UserReadResponse) =>
+        mapUserToProfile(response),
       invalidatesTags: ["User"],
     }),
   }),
 });
 
-export const {
-  useGetUserProfileQuery,
-  useGetCurrentHackathonQuery,
-  useGetHackathonHistoryQuery,
-  useUpdateUserProfileMutation,
-} = profileApi;
+export const { useGetUserProfileQuery, useUpdateUserProfileMutation } =
+  profileApi;

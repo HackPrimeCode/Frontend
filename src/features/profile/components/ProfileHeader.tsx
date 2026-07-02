@@ -100,7 +100,7 @@ export default function ProfileHeader({
                 {profile.stats.total_hackathons}
               </span>
               <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
-                Хакатона
+                Хакатонов
               </span>
             </div>
             <div className="flex flex-col items-center gap-1">

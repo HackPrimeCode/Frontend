@@ -1,3 +1,18 @@
+import type { GlobalRole } from "@/features/auth/model/authTypes";
+
+export interface UserReadResponse {
+  id: number;
+  name: string;
+  email: string;
+  tech_stack: string[];
+  global_role: GlobalRole;
+}
+
+export interface UserProfileUpdate {
+  name?: string;
+  tech_stack?: string[];
+}
+
 export interface ProfileStats {
   total_hackathons: number;
   total_wins: number;

@@ -1,5 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AuthState, AuthResponse, CurrentContext } from "./authTypes";
+import type {
+  AuthState,
+  AuthResponse,
+  CurrentContext,
+  User,
+} from "./authTypes";
 
 const initialState: AuthState = {
   user: null,
@@ -30,9 +35,19 @@ const authSlice = createSlice({
     setContext(state: AuthState, action: PayloadAction<CurrentContext | null>) {
       state.currentContext = action.payload;
     },
+    updateUser(state: AuthState, action: PayloadAction<Partial<User>>) {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
   },
 });
 
-export const { setCredentials, logout, updateAccessToken, setInitialized } =
-  authSlice.actions;
+export const {
+  setCredentials,
+  logout,
+  updateAccessToken,
+  setInitialized,
+  updateUser,
+} = authSlice.actions;
 export default authSlice.reducer;
