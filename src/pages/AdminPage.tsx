@@ -328,11 +328,7 @@ function OrganizersTab({
                   type="submit"
                   className="absolute top-1/2 right-1 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md bg-red hover:bg-red/90"
                 >
-                  <img
-                    src="/send_invite-icon.svg"
-                    alt=""
-                    className="h-3.5 w-3.5"
-                  />
+                  <img src="./send-invite-icon.svg" className="w-4 h-4" />
                 </button>
               </div>
             </form>
