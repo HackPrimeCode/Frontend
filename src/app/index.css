@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@theme {
+  --font-sans: "JetBrains Mono", ui-sans-serif, system-ui, sans-serif;
+  --color-red: #c71c25;
+  --color-border: #2a2a3a;
+  --color-background: #0a0a0e;
+  --color-card-background: #15151b;
+  --color-text: #ffffff;
+  --color-text-accent: #8a8a9a;
+  --color-yellow: #ffcc00;
+  --color-input-background: #111118;
+}
+
+@utility transition-base {
+  transition-property:
+    color, background-color, border-color, text-decoration-color, fill, stroke,
+    opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+*:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 1px var(--color-red) !important;
+  border-color: var(--color-red) !important;
+}
+
+@layer base {
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  .clickable {
+    @apply transition-base;
+  }
+
+  html,
+  body,
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-red) var(--color-card-background);
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-card-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-red);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-red);
+  }
+}
