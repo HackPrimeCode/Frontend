@@ -1,44 +1,37 @@
 import { api } from "@/store/api";
-import type {
-  UserProfile,
-  UserProfileUpdate,
-  UserReadResponse,
-} from "../model/profileTypes";
-
-function mapUserToProfile(user: UserReadResponse): UserProfile {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    skills: user.tech_stack ?? [],
-    stats: {
-      total_hackathons: 0,
-      total_wins: 0,
-      average_score: 0,
-    },
-  };
-}
+import { updateUser } from "@/features/auth/model/authSlice";
+import type { User } from "@/features/auth/model/authTypes";
 
 export const profileApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getUserProfile: builder.query<UserProfile, void>({
+    getUserProfile: builder.query<User, void>({
       query: () => ({
         url: "/users/me",
         method: "GET",
       }),
-      transformResponse: (response: UserReadResponse) =>
-        mapUserToProfile(response),
       providesTags: ["User"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateUser(data));
+        } catch (error) {
+          console.error("Failed to sync profile to auth state:", error);
+        }
+      },
     }),
-    updateUserProfile: builder.mutation<UserProfile, UserProfileUpdate>({
+    updateUserProfile: builder.mutation<User, Partial<User>>({
       query: (updates) => ({
         url: "/users/me",
         method: "PUT",
         data: updates,
       }),
-      transformResponse: (response: UserReadResponse) =>
-        mapUserToProfile(response),
       invalidatesTags: ["User"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateUser(data));
+        } catch {}
+      },
     }),
   }),
 });

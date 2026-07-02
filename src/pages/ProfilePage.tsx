@@ -19,10 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { GlobalRole } from "@/features/auth/model/authTypes";
 import { updateUser } from "@/features/auth/model/authSlice";
-import type {
-  CurrentHackathon,
-  HackathonParticipation,
-} from "@/features/profile/model/profileTypes";
+import type { HackathonParticipation } from "@/features/profile/model/profileTypes";
+import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
+import { calculateDurationHours, formatDate } from "@/lib/utils";
 
 function getRoleLabel(role: GlobalRole | undefined) {
   if (role === "admin") return "Администратор";
@@ -45,29 +44,34 @@ export default function ProfilePage() {
     isLoading: profileLoading,
     isError: profileError,
   } = useGetUserProfileQuery();
-  const [updateProfile, { isLoading: isSaving }] = useUpdateUserProfileMutation();
+  const [updateProfile, { isLoading: isSaving }] =
+    useUpdateUserProfileMutation();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editName, setEditName] = useState("");
   const [editSkills, setEditSkills] = useState("");
   const [saveError, setSaveError] = useState<string | null>(null);
   const [selectedHackathon, setSelectedHackathon] =
-    useState<CurrentHackathon | null>(null);
+    useState<HackathonDetailRead | null>(null);
   const [selectedHistoryEvent, setSelectedHistoryEvent] =
     useState<HackathonParticipation | null>(null);
   const [isHackathonModalOpen, setIsHackathonModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
-  const isParticipant = user?.global_role === "user";
-  const roleLabel = getRoleLabel(user?.global_role);
-
   useEffect(() => {
     if (isEditDialogOpen && profile) {
       setEditName(profile.name);
-      setEditSkills(profile.skills.join(", "));
+      setEditSkills(profile.tech_stack.join(", "));
       setSaveError(null);
     }
   }, [isEditDialogOpen, profile]);
+
+  const isParticipant = user?.global_role === "user";
+  const roleLabel = getRoleLabel(user?.global_role);
+  const durationHours = calculateDurationHours(
+    selectedHackathon?.start_date,
+    selectedHackathon?.end_date,
+  );
 
   const handleSaveProfile = async () => {
     const name = editName.trim();
@@ -89,7 +93,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleHackathonDetailsClick = (hackathon: CurrentHackathon) => {
+  const handleHackathonDetailsClick = (hackathon: HackathonDetailRead) => {
     setSelectedHackathon(hackathon);
     setIsHackathonModalOpen(true);
   };
@@ -101,7 +105,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background px-6 py-5">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-300 flex-col gap-6">
         {profileError && (
           <div className="rounded-lg border border-red bg-red/10 px-4 py-3 text-sm text-red">
             Ошибка при загрузке профиля
@@ -131,7 +135,7 @@ export default function ProfilePage() {
             />
             {isParticipant && (
               <HackathonHistorySection
-                history={[]}
+                history={profile?.hackathon_participations ?? []}
                 isLoading={profileLoading}
                 onDetailsClick={handleHistoryDetailsClick}
               />
@@ -143,7 +147,9 @@ export default function ProfilePage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="border-border bg-card-background text-text">
           <DialogHeader>
-            <DialogTitle className="text-text">Редактировать профиль</DialogTitle>
+            <DialogTitle className="text-text">
+              Редактировать профиль
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -164,9 +170,7 @@ export default function ProfilePage() {
                 className="mt-2 border-border bg-input-background text-text"
               />
             </div>
-            {saveError && (
-              <p className="text-sm text-red">{saveError}</p>
-            )}
+            {saveError && <p className="text-sm text-red">{saveError}</p>}
             <div className="flex gap-2 pt-4">
               <Button
                 variant="outline"
@@ -188,7 +192,10 @@ export default function ProfilePage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isHackathonModalOpen} onOpenChange={setIsHackathonModalOpen}>
+      <Dialog
+        open={isHackathonModalOpen}
+        onOpenChange={setIsHackathonModalOpen}
+      >
         <DialogContent className="max-w-2xl border-border bg-card-background text-text">
           <DialogHeader>
             <DialogTitle className="text-text">
@@ -203,14 +210,14 @@ export default function ProfilePage() {
               <p className="text-text">{selectedHackathon?.description}</p>
             </div>
 
-            {selectedHackathon?.skills &&
-              selectedHackathon.skills.length > 0 && (
+            {selectedHackathon?.topics &&
+              selectedHackathon.topics.length > 0 && (
                 <div>
                   <h3 className="mb-2 text-sm font-semibold text-text-accent">
                     Требуемые навыки
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {selectedHackathon.skills.map((skill) => (
+                    {selectedHackathon.topics.map((skill) => (
                       <span
                         key={skill}
                         className="rounded border border-border bg-transparent px-2.5 py-1 text-xs text-text-accent"
@@ -226,27 +233,26 @@ export default function ProfilePage() {
               <div>
                 <p className="mb-1 text-xs text-text-accent">Дата</p>
                 <p className="font-medium text-text">
-                  {selectedHackathon?.date}
+                  {formatDate(selectedHackathon?.start_date)} -{" "}
+                  {formatDate(selectedHackathon?.end_date)}
                 </p>
               </div>
               <div>
                 <p className="mb-1 text-xs text-text-accent">Место</p>
                 <p className="font-medium text-text">
-                  {selectedHackathon?.location}
+                  {selectedHackathon?.event_location}
                 </p>
               </div>
               <div>
                 <p className="mb-1 text-xs text-text-accent">
                   Продолжительность
                 </p>
-                <p className="font-medium text-text">
-                  {selectedHackathon?.duration_hours} часов
-                </p>
+                <p className="font-medium text-text">{durationHours} часов</p>
               </div>
               <div>
                 <p className="mb-1 text-xs text-text-accent">Участников</p>
                 <p className="font-medium text-text">
-                  {selectedHackathon?.team_members}
+                  {selectedHackathon?.total_participants}
                 </p>
               </div>
             </div>

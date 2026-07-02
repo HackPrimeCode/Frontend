@@ -1,5 +1,6 @@
+import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
+import { calculateDurationHours, formatDate } from "@/lib/utils";
 import { Calendar, CircleCheck, Clock, MapPin } from "lucide-react";
-import type { CurrentHackathon } from "../model/profileTypes";
 
 function HackathonCard({ children }: { children: React.ReactNode }) {
   return (
@@ -12,9 +13,9 @@ function HackathonCard({ children }: { children: React.ReactNode }) {
 }
 
 interface CurrentHackathonSectionProps {
-  hackathon: CurrentHackathon | null | undefined;
+  hackathon: HackathonDetailRead | null | undefined;
   isLoading: boolean;
-  onDetailsClick: (hackathon: CurrentHackathon) => void;
+  onDetailsClick: (hackathon: HackathonDetailRead) => void;
 }
 
 export default function CurrentHackathonSection({
@@ -22,6 +23,11 @@ export default function CurrentHackathonSection({
   isLoading,
   onDetailsClick,
 }: CurrentHackathonSectionProps) {
+  const durationHours = calculateDurationHours(
+    hackathon?.start_date,
+    hackathon?.end_date,
+  );
+
   if (isLoading) {
     return (
       <section className="space-y-4">
@@ -68,9 +74,9 @@ export default function CurrentHackathonSection({
             </p>
           </div>
 
-          {hackathon.skills && hackathon.skills.length > 0 && (
+          {hackathon.topics && hackathon.topics.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {hackathon.skills.map((skill) => (
+              {hackathon.topics.map((skill) => (
                 <span
                   key={skill}
                   className="rounded-md bg-input-background px-2.5 py-1 text-xs text-text-accent"
@@ -85,15 +91,16 @@ export default function CurrentHackathonSection({
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text-accent">
               <span className="flex items-center gap-2">
                 <Calendar className="size-4 text-red" />
-                {hackathon.date}
+                {formatDate(hackathon?.start_date)} -{" "}
+                {formatDate(hackathon?.end_date)}
               </span>
               <span className="flex items-center gap-2">
                 <MapPin className="size-4 text-red" />
-                {hackathon.location}
+                {hackathon.event_location}
               </span>
               <span className="flex items-center gap-2">
                 <Clock className="size-4 text-red" />
-                {hackathon.duration_hours} часов
+                {durationHours} часов
               </span>
             </div>
 

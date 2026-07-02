@@ -68,12 +68,11 @@ export default function HackathonHistorySection({
       </div>
 
       <div className="relative pl-6">
-        <div className="absolute top-2 bottom-2 left-[7px] w-px bg-red/40" />
+        <div className="absolute top-2 bottom-2 left-1.75 w-px bg-red/40" />
 
         <div className="space-y-4">
           {history.map((event, index) => {
-            const roleLabel =
-              event.role === "captain" ? "Капитан" : "Участник";
+            const roleLabel = event.role === "captain" ? "Капитан" : "Участник";
             const positionLabel = formatPosition(event.position);
 
             return (

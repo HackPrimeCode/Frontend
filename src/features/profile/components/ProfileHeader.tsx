@@ -1,9 +1,9 @@
-import { Link, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import type { UserProfile } from "../model/profileTypes";
+import type { User } from "@/features/auth/model/authTypes";
 
 interface ProfileHeaderProps {
-  profile: UserProfile | undefined;
+  profile: User | undefined;
   isLoading: boolean;
   onEditClick: () => void;
   showSkills?: boolean;
@@ -39,52 +39,55 @@ export default function ProfileHeader({
     );
   }
 
-  const initials = profile.name
+  const initials = (profile.name || "User")
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
-    .slice(0, 1);
+    .slice(0, 2);
+
+  // СЧИТАЕМ СТАТИСТИКУ НА ЛЕТУ ИЗ МАССИВА УЧАСТИЙ 🚀
+  // Пока бэк не возвращает это поле, будет пустой массив (везде отобразятся 0)
+  const participations = profile.hackathon_participations ?? [];
+  const totalHackathons = participations.length;
+
+  const scores = participations
+    .filter((h) => h.score !== undefined)
+    .map((h) => h.score!);
+  const averageScore = scores.length
+    ? scores.reduce((a, b) => a + b, 0) / scores.length
+    : 0;
 
   return (
     <Card className="border border-border bg-card-background ring-0">
-      <CardContent className="flex flex-col items-center gap-5 pt-8 pb-6">
-        <div className="flex h-28 w-28 items-center justify-center rounded-full border-2 border-red bg-red text-5xl font-bold text-text shadow-[0_0_0_4px_rgba(199,28,37,0.25)]">
+      <CardContent className="flex flex-col items-center gap-4 pt-6">
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-red text-2xl font-bold text-white">
           {initials}
         </div>
 
         <div className="text-center">
-          <h2 className="text-xl font-bold text-text">{profile.name}</h2>
-          <p className="mt-1 text-sm text-text-accent">{profile.email}</p>
+          <h2 className="text-xl font-bold text-text">
+            {profile.name ?? "Не указано"}
+          </h2>
+          <p className="text-sm text-text-accent">{profile.email}</p>
           {roleLabel && (
-            <p className="mt-2 text-xs font-medium uppercase tracking-wide text-red">
+            <span className="mt-1 inline-block rounded bg-red/10 px-2 py-0.5 text-xs text-red">
               {roleLabel}
-            </p>
+            </span>
           )}
         </div>
 
-        {profile.github_url && (
-          <a
-            href={profile.github_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-text-accent hover:text-text"
-          >
-            <Link className="size-4 shrink-0" />
-            <span>{profile.github_url}</span>
-          </a>
-        )}
-
-        {showSkills && profile.skills && profile.skills.length > 0 && (
-          <div className="w-full">
-            <p className="mb-2.5 text-[0.6875rem] uppercase tracking-wide text-text-accent">
-              Навыки
+        {/* Заменяем profile.skills на твой profile.tech_stack */}
+        {showSkills && profile.tech_stack && profile.tech_stack.length > 0 && (
+          <div className="w-full border-t border-border pt-4">
+            <p className="mb-2 text-[0.6875rem] uppercase tracking-wide text-text-accent">
+              Стек технологий
             </p>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill) => (
+            <div className="flex flex-wrap gap-1.5">
+              {profile.tech_stack.map((skill) => (
                 <span
                   key={skill}
-                  className="rounded-md bg-input-background px-2.5 py-1 text-xs text-text"
+                  className="rounded bg-input-background px-2 py-1 text-xs text-text"
                 >
                   {skill}
                 </span>
@@ -94,10 +97,10 @@ export default function ProfileHeader({
         )}
 
         {showStats && (
-          <div className="grid w-full grid-cols-3 gap-2 border-t border-border pt-6 text-center">
+          <div className="grid w-full grid-cols-2 gap-2 border-t border-border pt-6 text-center">
             <div className="flex flex-col items-center gap-1">
               <span className="text-3xl font-bold text-red">
-                {profile.stats.total_hackathons}
+                {totalHackathons}
               </span>
               <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
                 Хакатонов
@@ -105,7 +108,7 @@ export default function ProfileHeader({
             </div>
             <div className="flex flex-col items-center gap-1">
               <span className="text-3xl font-bold text-red">
-                {profile.stats.average_score.toFixed(1)}
+                {averageScore.toFixed(1)}
               </span>
               <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
                 Ср. балл
@@ -121,7 +124,7 @@ export default function ProfileHeader({
             className="flex cursor-pointer items-center gap-1.5 rounded-md bg-input-background px-3 py-1.5 text-xs text-text-accent hover:text-text"
           >
             <Pencil className="size-3.5" />
-            Редактировать
+            <span>Редактировать</span>
           </button>
         </div>
       </CardContent>
