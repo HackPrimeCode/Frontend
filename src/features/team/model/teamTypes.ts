@@ -28,7 +28,7 @@ export interface TeamMember {
   user_id: number;
   team_id: number;
   email: string;
-  full_name: string;
+  name: string;
   skills: string[];
   is_captain: boolean;
   avatar_color?: string;

@@ -10,10 +10,15 @@ export type HackathonLocation =
   | "Online"
   | "Kazan";
 
-interface PrizeResponse {
+export interface PrizeResponse {
   id: number;
   title: string;
   reward: string;
+}
+
+export interface File {
+  name: string;
+  size: string;
 }
 
 export interface HackathonDetailRead {
@@ -32,5 +37,13 @@ export interface HackathonDetailRead {
   start_date: string;
   end_date: string;
   submission_requirements: string[] | null;
+}
+
+export interface HackathonDetailsWithTask extends HackathonDetailRead {
+  task: string;
+  task_description: string | null;
+  functional_requirements: string[] | null;
+  technical_limitations: string[] | null;
   evaluation_criteria: string[] | null;
+  files: File[] | null;
 }

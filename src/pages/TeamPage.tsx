@@ -198,7 +198,7 @@ export default function TeamPage() {
                     <div
                       className={`w-10 h-10 ${currentMember.avatar_color || "bg-red"} rounded-full flex items-center justify-center text-white text-sm font-bold`}
                     >
-                      {currentMember.full_name
+                      {currentMember.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
@@ -206,7 +206,7 @@ export default function TeamPage() {
                     <div className="flex-1 min-w-0 ">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-white text-sm">
-                          {currentMember.full_name}
+                          {currentMember.name}
                         </span>
                         <div className="px-2 py-0.5 bg-red/10 border border-red text-red text-[0.6875rem] rounded flex gap-1 items-center justify-center">
                           <img
@@ -241,7 +241,7 @@ export default function TeamPage() {
                     <div
                       className={`w-10 h-10 ${member.avatar_color || "bg-green-500"} rounded-full flex items-center justify-center text-white text-sm`}
                     >
-                      {member.full_name
+                      {member.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
@@ -249,7 +249,7 @@ export default function TeamPage() {
                     <div className="flex-1 min-w-0 ">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-white text-sm">
-                          {member.full_name}
+                          {member.name}
                         </span>
                         <div className="px-2 py-0.5 bg-card-background border border-border text-text-accent text-[0.6875rem] rounded flex gap-1 items-center justify-center">
                           <span className="translate-y-px">Участник</span>
@@ -308,7 +308,7 @@ export default function TeamPage() {
 
               <div className="flex items-center justify-between py-3 border-b border-border text-xs">
                 <label className="text-text-accent uppercase">Капитан</label>
-                <p className="text-white">{currentMember?.full_name}</p>
+                <p className="text-white">{currentMember?.name}</p>
               </div>
 
               <div className="flex flex-col pt-3 text-xs gap-2">
