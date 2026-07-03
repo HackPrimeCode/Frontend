@@ -98,43 +98,42 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        <div className="overflow-x-auto -mx-3 -mb-3 md:-mx-4 md:-mb-4">
-          <table className="w-full text-sm text-left align-middle">
+        <div className="w-full overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[600px] text-sm text-left align-middle whitespace-nowrap">
             <thead>
-              <tr className="text-white">
+              <tr className="text-white border-b border-border">
                 <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Команда</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm hidden sm:table-cell">Капитан</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm hidden md:table-cell">Участников</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm hidden lg:table-cell">Сдача</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Капитан</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Участников</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Сдача</th>
                 <th
                   className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm cursor-pointer select-none"
                   onClick={() => setSortDirection((current) => (current === "desc" ? "asc" : "desc"))}
                 >
                   <div className="flex items-center gap-2 text-white">
-                    <span className="hidden sm:inline">Оценка</span>
-                    <span className="sm:hidden">О.</span>
+                    <span>Оценка</span>
                     <span className="text-text-accent text-xs">{sortDirection === "desc" ? "↓" : "↑"}</span>
                   </div>
                 </th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm hidden lg:table-cell">Действие</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Действие</th>
               </tr>
             </thead>
             <tbody>
               {filteredTeams.map((t) => (
-                <tr key={t.name} className="border-t border-border hover:bg-input-background/30 transition-colors">
+                <tr key={t.name} className="border-b border-border last:border-0 hover:bg-input-background/30 transition-colors">
                   <td className="px-3 md:px-4 py-3 md:py-4 text-white">
                     <div className="flex items-center gap-2 md:gap-3">
                       <TeamAvatar name={t.name} />
                       <span className="text-xs md:text-sm">{t.name}</span>
                     </div>
                   </td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm hidden sm:table-cell">{t.captain}</td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm hidden md:table-cell">{t.members}</td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 hidden lg:table-cell">
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.captain}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.members}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4">
                     <span className="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-2 py-1 rounded">Сдан</span>
                   </td>
                   <td className="px-3 md:px-4 py-3 md:py-4 text-red font-bold text-xs md:text-sm">{t.score}</td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent hidden lg:table-cell">
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent">
                     <button className="px-3 py-1 rounded bg-input-background text-xs hover:bg-input-background/80 transition-colors">Профиль</button>
                   </td>
                 </tr>

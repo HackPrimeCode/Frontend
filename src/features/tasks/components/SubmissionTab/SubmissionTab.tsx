@@ -12,7 +12,7 @@ export default function SubmissionTab() {
   const [presentationFile, setPresentationFile] = useState<File | null>(null);
   const [projectDescription, setProjectDescription] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submittedTime, setSubmittedTime] = useState(null);
+  const [submittedTime, setSubmittedTime] = useState<string | null>(null);
   const { data: team, isLoading } = useGetMyTeamQuery();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,6 +26,7 @@ export default function SubmissionTab() {
     { value: minutes, label: "Мин" },
     { value: seconds, label: "Сек" },
   ];
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -56,7 +57,7 @@ export default function SubmissionTab() {
     }
   };
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log("=== Отправка проекта ===");
@@ -80,7 +81,7 @@ export default function SubmissionTab() {
   if (isSubmitted) {
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fadeIn">
-        <div className="flex flex-col bg-card-background border border-border items-center min-w-85 min-h-75 text-center p-5 animate-fadeIn rounded-lg">
+        <div className="flex flex-col bg-card-background border border-border items-center w-full max-w-sm min-h-75 text-center p-5 animate-fadeIn rounded-lg">
           <div className="flex w-full justify-end mb-3">
             <button
               type="button"
@@ -123,7 +124,7 @@ export default function SubmissionTab() {
   }
 
   return (
-    <div className="w-full max-w-2xl animate-fadeIn mx-auto grid grid-cols-[1fr_auto] items-start gap-10 pt-8">
+    <div className="w-full max-w-2xl animate-fadeIn mx-auto grid grid-cols-[1fr_auto] items-start gap-10 pt-8 px-4 md:px-0">
       <div className="flex flex-col items-center gap-6">
         <div className="flex gap-1 items-center bg-red/5 text-red border border-red rounded-md px-4 py-2 text-xs">
           <Upload className="w-3 h-4" />
@@ -135,7 +136,7 @@ export default function SubmissionTab() {
             Отправить проект
           </h2>
           <p className="text-xs text-text-accent">
-            // Команда {team.name} • {team.hackathon_title}
+            // Команда {team?.name} • {team?.hackathon_title}
           </p>
         </div>
 
@@ -143,7 +144,7 @@ export default function SubmissionTab() {
 
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[0.6875rem] text-text-accent uppercase ">
+            <label className="text-[0.6875rem] text-text-accent uppercase">
               Название проекта
             </label>
             <div className="relative flex items-center">
@@ -164,10 +165,9 @@ export default function SubmissionTab() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[0.6875rem] text-text-accent uppercase ">
+            <label className="text-[0.6875rem] text-text-accent uppercase">
               Описание проекта
             </label>
-
             <textarea
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
@@ -198,7 +198,7 @@ export default function SubmissionTab() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[0.6875rem] text-text-accent uppercase ">
+            <label className="text-[0.6875rem] text-text-accent uppercase">
               Ссылка на демо
             </label>
             <div className="relative flex items-center">
@@ -236,13 +236,13 @@ export default function SubmissionTab() {
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dotted border-red hover:border-red/60 rounded-lg py-6 flex flex-col items-center justify-center gap-2.5 bg-red/3 cursor-pointer transition-all group"
+                className="w-full border-2 border-dotted border-red hover:border-red/60 rounded-lg py-6 flex flex-col items-center justify-center gap-2.5 bg-red/3 cursor-pointer transition-all group px-4 text-center"
               >
                 <div className="w-9 h-9 bg-red/20 rounded-full flex items-center justify-center text-text-accent transition-colors">
                   <Upload className="w-4 h-4 text-red" />
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-white ">
+                <div>
+                  <p className="text-xs text-white">
                     Нажмите для загрузки или перетащите файл
                   </p>
                   <p className="text-xs text-text-accent mt-3">
@@ -257,7 +257,7 @@ export default function SubmissionTab() {
                     <FileText className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col overflow-hidden">
-                    <span className="text-xs text-white truncate ">
+                    <span className="text-xs text-white truncate">
                       {presentationFile.name}
                     </span>
                     <span className="text-[10px] text-text-accent mt-0.5">
@@ -285,7 +285,8 @@ export default function SubmissionTab() {
           </button>
         </form>
       </div>
-      <div className="flex flex-col gap-1 items-end bg-input-background border border-red rounded-lg px-3.5 py-2">
+
+      <div className="hidden md:flex flex-col gap-1 items-end bg-input-background border border-red rounded-lg px-3.5 py-2">
         <p className="text-text-accent text-xs uppercase">Дедлайн</p>
         <div className="flex items-center">
           {isExpired ? (
