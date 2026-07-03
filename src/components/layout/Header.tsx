@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { useLogoutMutation } from "@/features/auth/api/authApi";
 import { Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 interface NavItem {
   path: string;
@@ -167,6 +168,7 @@ export default function Header() {
               className="w-9 h-7 -translate-y-0.5"
             />
             <span className="text-white hidden sm:inline">
+            <span className="text-white hidden sm:inline">
               Hack<span className="text-red">Prime</span>Code
             </span>
           </Button>
@@ -270,7 +272,7 @@ export default function Header() {
             <div className="relative" ref={logoutRef}>
               <Button
                 onClick={toggleDropdownMenu}
-                className="flex items-center gap-2 cursor-pointer p-0"
+                className="flex items-center gap-1 md:gap-2 cursor-pointer p-0 text-sm md:text-base"
               >
                 <span className="hidden sm:inline text-sm">{user.name}</span>
                 <img
@@ -300,7 +302,8 @@ export default function Header() {
             to={"/login"}
             className="border-[0.5px] h-9 sm:h-10 border-red px-3 sm:px-5 py-2 text-white text-xs sm:text-sm flex items-center gap-2 sm:gap-3 cursor-pointer rounded-lg hover:bg-red/5 transition-colors"
           >
-            <span>Войти в аккаунт</span>
+            <span className="hidden sm:inline">Войти в аккаунт</span>
+            <span className="sm:hidden">Вход</span>
             <img
               src="/arrow-icon.svg"
               alt=""
@@ -308,6 +311,38 @@ export default function Header() {
             />
           </Link>
         )
+      )}
+
+      {/* Mobile navigation menu */}
+      {isMobileMenuOpen && user && (
+        <div
+          ref={mobileMenuRef}
+          className="absolute top-15 left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-2 lg:hidden z-40"
+        >
+          {visibleNavItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            const currentIcon = isActive
+              ? IconImages[item.icon].active
+              : IconImages[item.icon].default;
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  isActive
+                    ? "bg-red/6 border border-red text-red "
+                    : "bg-transparent border-none text-text-accent hover:text-text"
+                }`}
+              >
+                <img src={currentIcon} alt="" className="w-3 h-3" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       )}
     </header>
   );

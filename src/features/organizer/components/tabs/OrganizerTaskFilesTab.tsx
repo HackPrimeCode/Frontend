@@ -59,7 +59,7 @@ export default function OrganizerTaskFilesTab() {
   return (
     <div className="flex flex-col gap-2.5 animate-fadeIn">
       {files.length === 0 ? (
-        <div className="flex items-center justify-center px-5 py-8 bg-card-background border border-border rounded-lg">
+        <div className="flex items-center justify-center px-3 md:px-5 py-6 md:py-8 bg-card-background border border-border rounded-lg min-h-[200px]">
           <button
             onClick={handleAddFile}
             className="flex items-center gap-2 text-text-accent hover:text-white transition-colors cursor-pointer"
@@ -73,13 +73,13 @@ export default function OrganizerTaskFilesTab() {
           {files.map((file) => (
             <div
               key={file.id}
-              className="flex items-center justify-between px-5 py-3.5 bg-card-background border border-border rounded-lg"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-3 md:px-5 py-3 md:py-3.5 bg-card-background border border-border rounded-lg gap-2 sm:gap-0"
             >
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-red" />
-                <span className="text-xs text-white">{file.name}</span>
+              <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                <FileText className="w-4 h-4 text-red flex-shrink-0" />
+                <span className="text-xs text-white truncate">{file.name}</span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 md:gap-4 self-end sm:self-auto">
                 <span className="text-[0.6875rem] text-text-accent border border-border px-1.5 py-0.5 rounded-sm">
                   {file.size}
                 </span>
@@ -93,7 +93,7 @@ export default function OrganizerTaskFilesTab() {
             </div>
           ))}
 
-          <div className="flex items-center justify-center px-5 py-3 bg-card-background border border-border rounded-lg">
+          <div className="flex items-center justify-center px-3 md:px-5 py-3 md:py-3 bg-card-background border border-border rounded-lg">
             <button
               onClick={handleAddFile}
               className="flex items-center gap-2 text-text-accent hover:text-white transition-colors cursor-pointer"

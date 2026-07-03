@@ -103,7 +103,7 @@ export default function OrganizerTaskSpecTab() {
           >
             <button
               onClick={() => toggleSection(id)}
-              className="w-full px-5 py-4 flex items-center justify-between text hover:bg-input-background/60 transition-colors cursor-pointer text-left"
+              className="w-full px-3 md:px-5 py-3 md:py-4 flex items-center justify-between text-xs md:text-sm hover:bg-input-background/60 transition-colors cursor-pointer text-left"
             >
               <span>{title}</span>
               <Plus className="w-3.5 h-3.5 text-text-accent shrink-0" />
@@ -117,7 +117,7 @@ export default function OrganizerTaskSpecTab() {
               }`}
             >
               <div className="overflow-hidden">
-                <div className="px-5 py-4 text-xs text-white">
+                <div className="px-3 md:px-5 py-3 md:py-4 text-xs text-white">
                   {conditions.length > 0 && (
                     <ul className="flex flex-col gap-2 mb-4">
                       {conditions.map((condition) => (
@@ -126,7 +126,7 @@ export default function OrganizerTaskSpecTab() {
                           className="flex items-start gap-2.5 group"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-                          <span className="flex-1">{condition.value}</span>
+                          <span className="flex-1 text-xs">{condition.value}</span>
                           <button
                             onClick={() => handleDeleteCondition(id, condition.id)}
                             className="opacity-0 group-hover:opacity-100 transition-opacity text-text-accent hover:text-red cursor-pointer"
@@ -148,19 +148,19 @@ export default function OrganizerTaskSpecTab() {
                         }))
                       }
                       placeholder="Введите условие..."
-                      className="h-10 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent text-xs"
+                      className="h-10 bg-input-background border border-border rounded-sm px-3 md:px-4 text-white placeholder:text-text-accent text-xs"
                     />
 
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-col sm:flex-row justify-end gap-2">
                       <button
                         onClick={() => handleCancelCondition(id)}
-                        className="h-8 px-4 text-xs text-text-accent hover:text-white transition-colors cursor-pointer"
+                        className="h-8 px-3 md:px-4 text-xs text-text-accent hover:text-white transition-colors cursor-pointer"
                       >
                         Отменить
                       </button>
                       <button
                         onClick={() => handleAddCondition(id)}
-                        className="h-8 px-4 bg-red text-white text-xs rounded-sm hover:bg-red/90 transition-colors cursor-pointer"
+                        className="h-8 px-3 md:px-4 bg-red text-white text-xs rounded-sm hover:bg-red/90 transition-colors cursor-pointer"
                       >
                         Сохранить
                       </button>
