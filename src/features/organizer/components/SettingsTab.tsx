@@ -1,7 +1,265 @@
+import { useState } from "react";
+import { Tag, MapPin, Calendar, Users, Plus, Award, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import type { HackathonLocation } from "@/features/organizer/model/organizerTypes";
+
+interface Prize {
+  title: string;
+  reward: string;
+}
+
 export default function SettingsTab() {
+  const [eventTitle, setEventTitle] = useState("HackPrimeCode Лето 2026");
+  const [eventDescription, setEventDescription] = useState("");
+  const [eventLocation, setEventLocation] = useState<HackathonLocation>("Online");
+  const [startDate, setStartDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [minTeamSize, setMinTeamSize] = useState("1");
+  const [maxTeamSize, setMaxTeamSize] = useState("5");
+  const [maxParticipants, setMaxParticipants] = useState("");
+  const [topics, setTopics] = useState("");
+  const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
+
   return (
-    <div className="rounded-lg border border-border bg-card-background p-6 text-text-accent">
-      <div className="text-sm">Содержимое вкладки Настройки будет здесь.</div>
+    <div className="flex flex-col gap-6 ml-10">
+      <div className="grid grid-cols-4 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Название мероприятия
+          </label>
+          <div className="relative flex items-center group">
+            <Tag className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <Input
+              value={eventTitle}
+              onChange={(e) => setEventTitle(e.target.value)}
+              placeholder="HackPrimeCode Лето 2026"
+              className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Место проведения
+          </label>
+          <div className="relative flex items-center group">
+            <MapPin className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <select
+              value={eventLocation}
+              onChange={(e) => setEventLocation(e.target.value as HackathonLocation)}
+              className="h-12 w-full bg-input-background border border-border rounded-sm pl-10 pr-4 text-white appearance-none cursor-pointer"
+            >
+              <option value="Online">Online</option>
+              <option value="Moscow">Moscow</option>
+              <option value="Saint Petersburg">Saint Petersburg</option>
+              <option value="Kazan">Kazan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Описание мероприятия
+          </label>
+          <div className="relative flex items-center group">
+            <Input
+              value={eventDescription}
+              onChange={(e) => setEventDescription(e.target.value)}
+              placeholder="Описание мероприятия..."
+              className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>  
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Навыки
+          </label>
+          <div className="relative flex items-center group">
+            <Tag className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <Input
+              value={topics}
+              onChange={(e) => setTopics(e.target.value)}
+              placeholder="Python, React, AI..."
+              className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Максимальное количество участников
+          </label>
+          <div className="relative flex items-center group">
+            <Users className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <Input
+              type="number"
+              value={maxParticipants}
+              onChange={(e) => setMaxParticipants(e.target.value)}
+              placeholder="Не ограничено"
+              className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Дата и время начала
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative flex items-center group">
+              <Calendar className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+              />
+            </div>
+            <div className="relative flex items-center group">
+              <Input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Дата и время окончания
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative flex items-center group">
+              <Calendar className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+              />
+            </div>
+            <div className="relative flex items-center group">
+              <Input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Размер команды (от)
+          </label>
+          <div className="relative flex items-center group">
+            <Users className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <Input
+              type="number"
+              value={minTeamSize}
+              onChange={(e) => setMinTeamSize(e.target.value)}
+              placeholder="1"
+              className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs uppercase tracking-wide text-text-accent">
+            Размер команды (до)
+          </label>
+          <div className="relative flex items-center group">
+            <Users className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+            <Input
+              type="number"
+              value={maxTeamSize}
+              onChange={(e) => setMaxTeamSize(e.target.value)}
+              placeholder="5"
+              className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-xs uppercase tracking-wide text-text-accent">
+          Призы
+        </label>
+        <div className="flex flex-col gap-2">
+          {prizes.map((prize, index) => (
+            <div key={index} className="grid grid-cols-[1fr_1fr_auto] gap-6 items-start w-full max-w-[700px]">
+              <div className="relative flex items-center group">
+                <Award className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
+                <Input
+                  value={prize.title}
+                  onChange={(e) => {
+                    const newPrizes = [...prizes];
+                    newPrizes[index].title = e.target.value;
+                    setPrizes(newPrizes);
+                  }}
+                  placeholder="Название места"
+                  className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+                />
+              </div>
+              <div className="relative flex items-center group">
+                <Input
+                  value={prize.reward}
+                  onChange={(e) => {
+                    const newPrizes = [...prizes];
+                    newPrizes[index].reward = e.target.value;
+                    setPrizes(newPrizes);
+                  }}
+                  placeholder="Приз за место"
+                  className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+                />
+              </div>
+              {prizes.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newPrizes = prizes.filter((_, i) => i !== index);
+                    setPrizes(newPrizes);
+                  }}
+                  className="h-12 w-12 flex items-center justify-center border border-border rounded-sm text-text-accent hover:text-white hover:border-red transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setPrizes([...prizes, { title: "", reward: "" }])}
+            className="h-10 w-fit px-6 border border-border rounded-sm text-text-accent text-sm hover:text-white hover:border-red transition-colors cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Добавить приз
+          </button>
+        </div>
+      </div>
+
+      <div className="flex justify-start">
+        <button
+          type="button"
+          className="flex h-10 w-fit items-center justify-center gap-2 px-6 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
+        >
+          Сохранить изменения
+        </button>
+      </div>
     </div>
   );
 }
