@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award, Menu } from "lucide-react";
+import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import OverviewTab from "@/features/organizer/components/OverviewTab";
 import TaskTab from "@/features/organizer/components/TaskTab";
@@ -30,7 +30,6 @@ export default function OrganizerPage() {
   const [maxParticipants, setMaxParticipants] = useState("");
   const [topics, setTopics] = useState("");
   const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (!hasEvent) {
     return (
@@ -361,100 +360,77 @@ export default function OrganizerPage() {
 
 
   return (
-    <div className="w-full min-h-[calc(100vh-3.75rem)] flex flex-col md:grid md:grid-cols-[240px_1fr]">
-      {/* Mobile/Tablet Sidebar Toggle */}
-      <div className="md:hidden px-4 py-3 border-b border-border flex items-center justify-between bg-card-background/50">
-        <div className="flex items-center gap-2">
-          <h3 className="text-white text-sm font-medium truncate">HackPrimeCode Лето 2026</h3>
-        </div>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 hover:bg-card-background rounded transition-colors"
-        >
-          {isSidebarOpen ? (
-            <X className="w-5 h-5 text-white" />
-          ) : (
-            <Menu className="w-5 h-5 text-white" />
-          )}
-        </button>
-      </div>
-
-      {/* Sidebar */}
-      <aside className={`flex flex-col items-center border-r border-border ${
-        isSidebarOpen ? "block" : "hidden md:block"
-      }`}>
-        <div className="w-full border-b border-border p-4 md:p-5 hidden md:block">
-          <span className="text-xs text-red uppercase block mb-2">Мероприятие</span>
-          <h2 className="text-white text-sm truncate">HackPrimeCode Лето 2026</h2>
+    <div className="w-full min-h-[calc(100vh-3.75rem)] flex flex-col lg:grid lg:grid-cols-[240px_1fr]">
+      <aside className="w-full flex flex-col lg:h-full border-b lg:border-b-0 lg:border-r border-border bg-background z-20">
+        <div className="w-full border-b border-border p-4 lg:p-5 flex lg:flex-col justify-between items-center lg:items-start gap-2">
+          <div className="min-w-0">
+            <span className="text-[10px] sm:text-xs text-red uppercase block mb-0.5 lg:mb-2 tracking-wider">
+              Мероприятие
+            </span>
+            <h2 className="text-white text-xs sm:text-sm font-medium truncate max-w-50 sm:max-w-xs lg:max-w-full">
+              HackPrimeCode Лето 2026
+            </h2>
+          </div>
+          <div className="lg:hidden p-1.5 bg-red/10 border border-red/20 rounded-md">
+            <BookOpen className="w-3.5 h-3.5 text-red" />
+          </div>
         </div>
 
-        <nav className="w-full flex flex-col gap-1 p-2 md:p-2">
+        <nav className="w-full flex lg:flex-col gap-1 p-2 overflow-x-auto custom-scrollbar whitespace-nowrap">
           <button
-            onClick={() => {
-              setActiveTab("overview");
-              setIsSidebarOpen(false);
-            }}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
+            onClick={() => setActiveTab("overview")}
+            className={`flex-1 lg:flex-none h-9 lg:h-10 px-3 rounded-lg flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-medium lg:font-normal cursor-pointer transition-all shrink-0 ${
               activeTab === "overview"
-                ? "bg-red/6 border border-red text-red"
-                : "text-text-accent hover:text-white hover:bg-input-background/50"
+                ? "bg-red/6 border border-red text-red shadow-xs"
+                : "text-text-accent hover:text-white hover:bg-input-background/50 border border-transparent"
             }`}
           >
-            <BarChart2 className={`w-4 h-4 ${activeTab === "overview" ? "text-red" : ""}`} />
+            <BarChart2 className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeTab === "overview" ? "text-red" : ""}`} />
             <span>Обзор</span>
           </button>
 
           <button
-            onClick={() => {
-              setActiveTab("task");
-              setIsSidebarOpen(false);
-            }}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
+            onClick={() => setActiveTab("task")}
+            className={`flex-1 lg:flex-none h-9 lg:h-10 px-3 rounded-lg flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-medium lg:font-normal cursor-pointer transition-all shrink-0 ${
               activeTab === "task"
-                ? "bg-red/6 border border-red text-red"
-                : "text-text-accent hover:text-white hover:bg-input-background/50"
+                ? "bg-red/6 border border-red text-red shadow-xs"
+                : "text-text-accent hover:text-white hover:bg-input-background/50 border border-transparent"
             }`}
           >
-            <FileText className={`w-4 h-4 ${activeTab === "task" ? "text-red" : ""}`} />
+            <FileText className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeTab === "task" ? "text-red" : ""}`} />
             <span>Задание</span>
           </button>
 
           <button
-            onClick={() => {
-              setActiveTab("settings");
-              setIsSidebarOpen(false);
-            }}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
+            onClick={() => setActiveTab("settings")}
+            className={`flex-1 lg:flex-none h-9 lg:h-10 px-3 rounded-lg flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-medium lg:font-normal cursor-pointer transition-all shrink-0 ${
               activeTab === "settings"
-                ? "bg-red/6 border border-red text-red"
-                : "text-text-accent hover:text-white hover:bg-input-background/50"
+                ? "bg-red/6 border border-red text-red shadow-xs"
+                : "text-text-accent hover:text-white hover:bg-input-background/50 border border-transparent"
             }`}
           >
-            <Settings className={`w-4 h-4 ${activeTab === "settings" ? "text-red" : ""}`} />
+            <Settings className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeTab === "settings" ? "text-red" : ""}`} />
             <span>Настройки</span>
           </button>
 
           <button
-            onClick={() => {
-              setActiveTab("jury");
-              setIsSidebarOpen(false);
-            }}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
+            onClick={() => setActiveTab("jury")}
+            className={`flex-1 lg:flex-none h-9 lg:h-10 px-3 rounded-lg flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-medium lg:font-normal cursor-pointer transition-all shrink-0 ${
               activeTab === "jury"
-                ? "bg-red/6 border border-red text-red"
-                : "text-text-accent hover:text-white hover:bg-input-background/50"
+                ? "bg-red/6 border border-red text-red shadow-xs"
+                : "text-text-accent hover:text-white hover:bg-input-background/50 border border-transparent"
             }`}
           >
-            <UserCheck className={`w-4 h-4 ${activeTab === "jury" ? "text-red" : ""}`} />
+            <UserCheck className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeTab === "jury" ? "text-red" : ""}`} />
             <span>Жюри</span>
           </button>
         </nav>
       </aside>
 
-      <main className="flex flex-col p-4 md:p-6">
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-xl md:text-2xl text-white mb-1">{activeTab === "overview" ? "Обзор" : activeTab === "task" ? "Задание" : activeTab === "settings" ? "Настройки" : "Жюри"}</h1>
-          <p className="text-xs text-text-accent">// Панель организатора · HackPrimeCode Лето 2026</p>
+      <main className="flex flex-col p-4 sm:p-6 min-w-0">
+        <div className="mb-4 lg:mb-6">
+          <h1 className="text-xl sm:text-2xl text-white mb-1">{activeTab === "overview" ? "Обзор" : activeTab === "task" ? "Задание" : activeTab === "settings" ? "Настройки" : "Жюри"}</h1>
+          <p className="text-[10px] sm:text-xs text-text-accent">// Панель организатора · HackPrimeCode Лето 2026</p>
         </div>
 
         {activeTab === "overview" && <OverviewTab />}
