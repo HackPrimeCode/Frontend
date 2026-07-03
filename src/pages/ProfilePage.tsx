@@ -100,16 +100,16 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background px-6 py-5">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+    <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background p-4 sm:p-6">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 sm:gap-6">
         {profileError && (
-          <div className="rounded-lg border border-red bg-red/10 px-4 py-3 text-sm text-red">
+          <div className="rounded-lg border border-red bg-red/10 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-red">
             Ошибка при загрузке профиля
           </div>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <div className="space-y-4">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="space-y-3 sm:space-y-4">
             <ProfileHeader
               profile={profile}
               isLoading={profileLoading}
@@ -123,7 +123,7 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             <CurrentHackathonSection
               hackathon={null}
               isLoading={profileLoading}

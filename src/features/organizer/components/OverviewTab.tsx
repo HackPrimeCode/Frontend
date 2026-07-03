@@ -68,25 +68,25 @@ export default function OverviewTab() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
         {stats.map((s) => {
           const Icon = s.icon as any;
           return (
-            <div key={s.title} className="rounded-lg border border-border bg-card-background p-4">
-              <div className="flex items-center justify-between">
+            <div key={s.title} className="rounded-lg border border-border bg-card-background p-3 md:p-4">
+              <div className="flex items-center justify-between gap-2">
                 <div className="text-xs text-text-accent">{s.title}</div>
-                <Icon className="w-5 h-5 text-red" />
+                <Icon className="w-4 md:w-5 h-4 md:h-5 text-red flex-shrink-0" />
               </div>
-              <div className="text-2xl text-white mt-3 font-bold">{s.value}</div>
+              <div className="text-xl md:text-2xl text-white mt-3 font-bold">{s.value}</div>
             </div>
           );
         })}
       </div>
 
-      <div className="rounded-lg border border-border bg-card-background p-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+      <div className="rounded-lg border border-border bg-card-background p-3 md:p-4 overflow-hidden flex flex-col">
+        <div className="flex flex-col gap-3 md:gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6">
           <h3 className="text-base text-white">Все команды</h3>
-          <div className="relative w-full max-w-[320px]">
+          <div className="relative w-full sm:max-w-[320px]">
             <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-text-accent" />
             <Input
               type="text"
@@ -98,43 +98,43 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left align-middle">
+        <div className="w-full overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[600px] text-sm text-left align-middle whitespace-nowrap">
             <thead>
-              <tr className="text-white">
-                <th className="w-[150px] py-4 px-4">Команда</th>
-                <th className="w-[150px] py-4 px-4">Капитан</th>
-                <th className="w-[150px] py-4 px-4">Участников</th>
-                <th className="w-[150px] py-4 px-4">Сдача</th>
+              <tr className="text-white border-b border-border">
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Команда</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Капитан</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Участников</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Сдача</th>
                 <th
-                  className="w-[150px] py-4 px-4 cursor-pointer select-none"
+                  className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm cursor-pointer select-none"
                   onClick={() => setSortDirection((current) => (current === "desc" ? "asc" : "desc"))}
                 >
                   <div className="flex items-center gap-2 text-white">
-                    Оценка
+                    <span>Оценка</span>
                     <span className="text-text-accent text-xs">{sortDirection === "desc" ? "↓" : "↑"}</span>
                   </div>
                 </th>
-                <th className="w-[150px] py-4 px-4">Действие</th>
+                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Действие</th>
               </tr>
             </thead>
             <tbody>
               {filteredTeams.map((t) => (
-                <tr key={t.name} className="border-t border-border">
-                  <td className="py-4 px-4 text-white">
-                    <div className="flex items-center gap-3">
+                <tr key={t.name} className="border-b border-border last:border-0 hover:bg-input-background/30 transition-colors">
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-white">
+                    <div className="flex items-center gap-2 md:gap-3">
                       <TeamAvatar name={t.name} />
-                      <span>{t.name}</span>
+                      <span className="text-xs md:text-sm">{t.name}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-text-accent">{t.captain}</td>
-                  <td className="py-4 px-4 text-text-accent">{t.members}</td>
-                  <td className="py-4 px-4">
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.captain}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.members}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4">
                     <span className="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-2 py-1 rounded">Сдан</span>
                   </td>
-                  <td className="py-4 px-4 text-red font-bold">{t.score}</td>
-                  <td className="py-4 px-4 text-text-accent">
-                    <button className="px-3 py-1 rounded bg-input-background text-xs">Профиль</button>
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-red font-bold text-xs md:text-sm">{t.score}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent">
+                    <button className="px-3 py-1 rounded bg-input-background text-xs hover:bg-input-background/80 transition-colors">Профиль</button>
                   </td>
                 </tr>
               ))}

@@ -240,16 +240,16 @@ export default function LeaderboardPage() {
   }, [hasMore, loadMore]);
 
   return (
-    <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background px-6 py-5">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+    <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background p-4 sm:p-6">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 sm:gap-6">
         <div className="flex items-center gap-2.5">
-          <Award className="h-6 w-6 text-red" strokeWidth={2.25} />
-          <h1 className="text-2xl text-text">Лидерборд</h1>
+          <Award className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+          <h1 className="text-xl sm:text-2xl text-text">Лидерборд</h1>
         </div>
 
-        <div className="flex items-end justify-between gap-6">
-          <div className="flex w-full max-w-[420px] flex-col gap-2">
-            <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 sm:gap-6">
+          <div className="flex w-full sm:max-w-[420px] flex-col gap-2">
+            <span className="text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
               Выберите мероприятие
             </span>
 
@@ -267,27 +267,27 @@ export default function LeaderboardPage() {
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex flex-wrap shrink-0 items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-2 rounded-lg border border-border bg-input-background px-3 py-2">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-red" />
               </span>
 
-              <span className="text-xs text-text-accent">
+              <span className="text-[10px] sm:text-xs text-text-accent">
                 Обновляется в реальном времени
               </span>
             </div>
 
             <div className="flex items-center gap-2 rounded-lg border border-red bg-red/6 px-3 py-2">
               <span className="h-2 w-2 rounded-full bg-red" />
-              <span className="text-xs text-red">Активный</span>
+              <span className="text-[10px] sm:text-xs text-red">Активный</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-6">
-          <div className="relative w-full max-w-[280px]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+          <div className="relative w-full sm:max-w-[280px]">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-text-accent" />
 
             <Input
@@ -299,12 +299,12 @@ export default function LeaderboardPage() {
             />
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-[0.6875rem] uppercase tracking-wide text-text-accent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <span className="text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
               Сортировка:
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {sortOptions.map((option) => {
                 const isActive = activeSort === option.id;
 
@@ -314,7 +314,7 @@ export default function LeaderboardPage() {
                     type="button"
                     onClick={() => setActiveSort(option.id)}
                     className={cn(
-                      "h-8 cursor-pointer rounded-lg border px-3 text-xs whitespace-nowrap transition-all duration-150",
+                      "h-8 cursor-pointer rounded-lg border px-2.5 sm:px-3 text-[10px] sm:text-xs whitespace-nowrap transition-all duration-150",
                       isActive
                         ? "border-red bg-red text-text shadow-lg shadow-red/10"
                         : "border-border bg-input-background/40 text-text-accent hover:border-text-accent/40 hover:text-text",
@@ -330,36 +330,36 @@ export default function LeaderboardPage() {
 
         <div
           ref={scrollContainerRef}
-          className="max-h-[550px] overflow-y-auto rounded-lg border border-border bg-card-background"
+          className="max-h-[550px] overflow-x-auto overflow-y-auto rounded-lg border border-border bg-card-background"
         >
-          <table className="w-full table-fixed border-collapse">
+          <table className="w-full min-w-[700px] table-fixed border-collapse">
             <thead>
               <tr className="border-b border-border">
-                <th className="w-[100px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[100px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Место
                 </th>
 
-                <th className="w-[220px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[220px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Команда
                 </th>
 
-                <th className="w-[180px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[180px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Баллы
                 </th>
 
-                <th className="w-[180px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[180px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Идея
                 </th>
 
-                <th className="w-[180px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[180px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Реализ.
                 </th>
 
-                <th className="w-[180px] px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="w-[180px] px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Качество
                 </th>
 
-                <th className="px-5 py-4 text-left text-[0.6875rem] font-normal uppercase text-text-accent">
+                <th className="px-3 sm:px-5 py-3 sm:py-4 text-left text-[0.625rem] sm:text-[0.6875rem] font-normal uppercase text-text-accent">
                   Дизайн
                 </th>
               </tr>
@@ -374,40 +374,40 @@ export default function LeaderboardPage() {
                     key={entry.id}
                     className="border-b border-border last:border-b-0"
                   >
-                    <td className="px-5 py-4">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4">
                       <PlaceBadge place={place} />
                     </td>
 
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <TeamAvatar
                           initial={entry.teamInitial}
                           color={entry.teamColor}
                         />
 
-                        <span className="truncate text-sm text-text">
+                        <span className="truncate text-xs sm:text-sm text-text">
                           {entry.teamName}
                         </span>
                       </div>
                     </td>
 
-                    <td className="px-5 py-4 text-sm font-bold text-red">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm font-bold text-red">
                       {entry.total.toFixed(1)}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-text-accent">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm text-text-accent">
                       {entry.idea.toFixed(1)}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-text-accent">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm text-text-accent">
                       {entry.implementation.toFixed(1)}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-text-accent">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm text-text-accent">
                       {entry.quality.toFixed(1)}
                     </td>
 
-                    <td className="px-5 py-4 text-sm text-text-accent">
+                    <td className="px-3 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm text-text-accent">
                       {entry.design.toFixed(1)}
                     </td>
                   </tr>
@@ -419,14 +419,14 @@ export default function LeaderboardPage() {
           {hasMore && (
             <div
               ref={loadMoreRef}
-              className="flex h-14 items-center justify-center border-t border-border text-xs text-text-accent"
+              className="flex h-14 items-center justify-center border-t border-border text-[10px] sm:text-xs text-text-accent"
             >
               {isLoadingMore ? "Загрузка..." : ""}
             </div>
           )}
 
           {visibleEntries.length === 0 && (
-            <div className="flex h-40 items-center justify-center text-sm text-text-accent">
+            <div className="flex h-40 items-center justify-center text-xs sm:text-sm text-text-accent">
               Команды не найдены
             </div>
           )}

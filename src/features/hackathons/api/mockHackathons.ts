@@ -2,44 +2,11 @@ import type { HackathonDetailRead } from "../model/hackathonTypes";
 
 export const mockHackathons: HackathonDetailRead[] = [
   {
-    id: 1,
-    title: "HackPrimeCode Лето 2026",
-    description:
-      "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
-    status: "IN_PROGRESS",
-    topics: ["ML", "Python", "React", "Go"],
-    total_participants: 847,
-    total_teams: 142,
-    min_team_size: 1,
-    max_team_size: 4,
-    max_participants: 1000,
-    event_location: "Moscow",
-    start_date: "2026-06-25T18:00:00",
-    end_date: "2026-06-29T18:00:00",
-    prizes: [
-      { id: 1, title: "1-е место", reward: "300000" },
-      { id: 2, title: "2-е место", reward: "150000" },
-      { id: 3, title: "3-е место", reward: "50000" },
-    ],
-    submission_requirements: [
-      "Команда от 1 до 4 человек",
-      "Регистрация обязательна до начала хакатона",
-      "Наличие GitHub аккаунта",
-      "Готовность работать 48 часов",
-    ],
-    evaluation_criteria: [
-      "Инновационность решения",
-      "Техническая реализация",
-      "Презентация проекта",
-      "Практическая ценность",
-    ],
-  },
-  {
     id: 2,
     title: "AI Challenge 2026",
     description:
       "Хакатон по искусственному интеллекту и машинному обучению. Работайте с реальными датасетами от компаний-партнеров, создавайте ML-модели и AI-решения для актуальных бизнес-задач.",
-    status: "REGISTRATION",
+    status: "IN_PROGRESS",
     topics: ["AI", "LLM", "Computer Vision", "Python"],
     total_participants: 312,
     total_teams: 64,
@@ -60,12 +27,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Опыт в Machine Learning или Deep Learning",
       "Знание Python и основных ML-библиотек (TensorFlow, PyTorch, sklearn)",
       "Решение должно быть оформлено в виде Jupyter Notebook",
-    ],
-    evaluation_criteria: [
-      "Точность модели",
-      "Качество предобработки данных",
-      "Оптимальность выбранного алгоритма",
-      "Интерпретируемость результатов",
     ],
   },
   {
@@ -94,12 +55,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Понимание принципов блокчейна",
       "Развернутый смарт-контракт в тестовой сети",
     ],
-    evaluation_criteria: [
-      "Безопасность смарт-контракта",
-      "Оптимальность использования газа",
-      "Инновационность идеи",
-      "Работоспособность прототипа",
-    ],
   },
   {
     id: 4,
@@ -126,12 +81,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Рабочий билд игры",
       "Исходный код проекта",
       "Краткое описание геймплея",
-    ],
-    evaluation_criteria: [
-      "Геймплей и механики",
-      "Графика и дизайн",
-      "Оригинальность идеи",
-      "Техническая реализация",
     ],
   },
   {
@@ -160,12 +109,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Презентация решения",
       "Исходный код на GitHub",
     ],
-    evaluation_criteria: [
-      "Практическая применимость",
-      "Безопасность решения",
-      "Масштабируемость",
-      "UX/UI дизайн",
-    ],
   },
   {
     id: 6,
@@ -193,11 +136,32 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Решенные задачи (флаги)",
       "Write-up для топ-3 решений",
     ],
-    evaluation_criteria: [
-      "Количество решенных задач",
-      "Сложность решенных задач",
-      "Скорость решения",
-      "Качество write-up",
+  },
+  {
+    id: 1,
+    title: "HackPrimeCode Лето 2026",
+    description:
+      "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
+    status: "FINISHED",
+    topics: ["ML", "Python", "React", "Go"],
+    total_participants: 847,
+    total_teams: 142,
+    min_team_size: 1,
+    max_team_size: 4,
+    max_participants: 1000,
+    event_location: "Moscow",
+    start_date: "2026-06-25T18:00:00",
+    end_date: "2026-06-29T18:00:00",
+    prizes: [
+      { id: 1, title: "1-е место", reward: "300000" },
+      { id: 2, title: "2-е место", reward: "150000" },
+      { id: 3, title: "3-е место", reward: "50000" },
+    ],
+    submission_requirements: [
+      "Команда от 1 до 4 человек",
+      "Регистрация обязательна до начала хакатона",
+      "Наличие GitHub аккаунта",
+      "Готовность работать 48 часов",
     ],
   },
 ];
