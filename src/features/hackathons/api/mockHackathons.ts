@@ -6,7 +6,7 @@ export const mockHackathons: HackathonDetailRead[] = [
     title: "HackPrimeCode Лето 2026",
     description:
       "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
-    status: "IN_PROGRESS",
+    status: "FINISHED",
     topics: ["ML", "Python", "React", "Go"],
     total_participants: 847,
     total_teams: 142,
@@ -26,12 +26,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Регистрация обязательна до начала хакатона",
       "Наличие GitHub аккаунта",
       "Готовность работать 48 часов",
-    ],
-    evaluation_criteria: [
-      "Инновационность решения",
-      "Техническая реализация",
-      "Презентация проекта",
-      "Практическая ценность",
     ],
   },
   {
@@ -61,12 +55,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Знание Python и основных ML-библиотек (TensorFlow, PyTorch, sklearn)",
       "Решение должно быть оформлено в виде Jupyter Notebook",
     ],
-    evaluation_criteria: [
-      "Точность модели",
-      "Качество предобработки данных",
-      "Оптимальность выбранного алгоритма",
-      "Интерпретируемость результатов",
-    ],
   },
   {
     id: 3,
@@ -93,12 +81,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Знание Solidity или Rust",
       "Понимание принципов блокчейна",
       "Развернутый смарт-контракт в тестовой сети",
-    ],
-    evaluation_criteria: [
-      "Безопасность смарт-контракта",
-      "Оптимальность использования газа",
-      "Инновационность идеи",
-      "Работоспособность прототипа",
     ],
   },
   {
@@ -127,12 +109,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Исходный код проекта",
       "Краткое описание геймплея",
     ],
-    evaluation_criteria: [
-      "Геймплей и механики",
-      "Графика и дизайн",
-      "Оригинальность идеи",
-      "Техническая реализация",
-    ],
   },
   {
     id: 5,
@@ -160,12 +136,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Презентация решения",
       "Исходный код на GitHub",
     ],
-    evaluation_criteria: [
-      "Практическая применимость",
-      "Безопасность решения",
-      "Масштабируемость",
-      "UX/UI дизайн",
-    ],
   },
   {
     id: 6,
@@ -192,12 +162,6 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Регистрация на платформе CTF",
       "Решенные задачи (флаги)",
       "Write-up для топ-3 решений",
-    ],
-    evaluation_criteria: [
-      "Количество решенных задач",
-      "Сложность решенных задач",
-      "Скорость решения",
-      "Качество write-up",
     ],
   },
 ];
