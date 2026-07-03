@@ -6,7 +6,6 @@ import type { HackathonDetailsWithTask } from "@/features/hackathons/model/hacka
 import { formatDate } from "@/lib/utils";
 import { useCountdown } from "@/lib/hooks/useCountdown";
 
-// Тестовые данные строго по макету
 export const mockHackathon: HackathonDetailsWithTask = {
   id: 101010,
   title: "HackPrimeCode Лето 2026",
@@ -87,7 +86,7 @@ export default function TaskTab() {
             </div>
             <div className="flex flex-col justify-between gap-1">
               <h3 className="text-lg font-medium text-white">
-                {mockHackathon.title}
+                {mockHackathon.task}
               </h3>
               <div className="flex flex-wrap items-center gap-4 text-text-accent">
                 <div className="flex items-center gap-2">
