@@ -79,28 +79,30 @@ export default function TaskTab() {
 
   return (
     <div className="flex flex-col gap-5 animate-fadeIn">
-      <div className="p-4.5">
-        <div className="flex items-start justify-between gap-4 mb-1">
-          <div className="flex gap-4 h-14.5 items-center">
-            <div className="h-12 w-12 bg-red/6 border border-red rounded-lg flex items-center justify-center">
+      <div className="px-4.5 py-2">
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div className="flex gap-4 min-h-14.5 md:h-14.5 items-center min-w-0">
+            <div className="h-12 w-12 bg-red/6 border border-red rounded-lg flex items-center justify-center shrink-0">
               <FileCheck className="w-6.5 h-6.5 text-red" />
             </div>
-            <div className="flex flex-col justify-between gap-1">
-              <h3 className="text-lg font-medium text-white">
+            <div className="flex flex-col justify-between gap-2 md:gap-1 min-w-0">
+              <h3 className="text-lg font-medium text-white truncate">
                 {mockHackathon.title}
               </h3>
-              <div className="flex flex-wrap items-center gap-4 text-text-accent">
-                <div className="flex items-center gap-2">
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 text-text-accent">
+                <div className="flex flex-wrap items-center gap-2">
                   {mockHackathon.topics.map((topic, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 bg-input-background border border-border rounded text-xs text-text-accent font-medium"
+                      className="px-2 py-0.5 bg-input-background border border-border rounded text-xs text-text-accent font-medium whitespace-nowrap"
                     >
                       {topic}
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center gap-1.5 text-xs">
+
+                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap">
                   <Calendar className="w-3.5 h-3.5 text-red" />
                   <div>
                     <p>
@@ -109,7 +111,8 @@ export default function TaskTab() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs">
+
+                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap">
                   <Users className="w-3.5 h-3.5 text-red" />
                   <span>
                     {mockHackathon.total_participants} /{" "}
@@ -120,11 +123,11 @@ export default function TaskTab() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 items-end bg-input-background border border-red rounded-lg px-3.5 py-2 min-w-30">
+          <div className="hidden md:flex flex-col gap-1 items-end bg-input-background border border-red rounded-lg px-3.5 py-2 min-w-30 shrink-0">
             <p className="text-text-accent text-sm uppercase">Дедлайн</p>
             <div className="flex items-center">
               {isExpired ? (
-                <span className="text-red text-xs">Время истекло!</span>
+                <span className="text-red text-xs">Время充ело!</span>
               ) : (
                 timeBlocks.map((block, index) => (
                   <div key={index} className="flex text-red">
@@ -141,10 +144,10 @@ export default function TaskTab() {
           </div>
         </div>
 
-        <div className="flex bg-card-background border border-border p-1 rounded-lg w-fit mb-6 text-white text-xs">
+        <div className="flex bg-card-background border border-border p-1 rounded-lg w-full sm:w-fit text-white text-xs mb-4">
           <button
             onClick={() => setActiveContentTab("spec")}
-            className={`h-8 px-4 rounded-md transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none h-8 px-4 rounded-md transition-all cursor-pointer font-medium ${
               activeContentTab === "spec" && "bg-red"
             }`}
           >
@@ -152,7 +155,7 @@ export default function TaskTab() {
           </button>
           <button
             onClick={() => setActiveContentTab("files")}
-            className={`h-8 px-4 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`flex-1 sm:flex-none h-8 px-4 rounded-md transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
               activeContentTab === "files"
                 ? "bg-red text-white"
                 : "text-text-accent hover:text-white"
@@ -165,11 +168,13 @@ export default function TaskTab() {
           </button>
         </div>
 
-        {activeContentTab === "spec" ? (
-          <TaskSpecTab hackathon={mockHackathon} />
-        ) : (
-          <TaskFilesTab files={mockHackathon.files} />
-        )}
+        <div className="w-full">
+          {activeContentTab === "spec" ? (
+            <TaskSpecTab hackathon={mockHackathon} />
+          ) : (
+            <TaskFilesTab files={mockHackathon.files} />
+          )}
+        </div>
       </div>
     </div>
   );
