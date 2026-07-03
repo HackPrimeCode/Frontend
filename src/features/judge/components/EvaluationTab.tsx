@@ -60,8 +60,8 @@ export default function EvaluationTab() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fadeIn max-w-2xl w-full mx-22">
-      <div className="flex items-start justify-between gap-6">
+    <div className="flex flex-col gap-6 animate-fadeIn max-w-2xl w-full mx-auto pb-10">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3 mb-1">
             <span className="text-text-accent text-sm">#1</span>
@@ -75,7 +75,7 @@ export default function EvaluationTab() {
           </p>
         </div>
 
-        <div className="bg-card-background border border-border rounded-lg p-4 flex flex-col items-center justify-center min-w-32.5">
+        <div className="bg-card-background border border-border rounded-lg p-4 flex flex-col items-center justify-center sm:min-w-32.5 w-full sm:w-auto">
           <span className="text-[10px] text-text-accent uppercase tracking-wider mb-1">
             Итоговый балл
           </span>
@@ -85,7 +85,8 @@ export default function EvaluationTab() {
           <span className="text-xs text-text-accent">/ 10.0</span>
         </div>
       </div>
-      <div className="bg-card-background border border-border rounded-lg p-5">
+
+      <div className="bg-card-background border border-border rounded-lg p-4 md:p-5">
         <h3 className="text-[10px] text-text-accent uppercase tracking-wider mb-3">
           Описание
         </h3>
@@ -96,30 +97,30 @@ export default function EvaluationTab() {
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <button className="flex items-center gap-2 px-4 py-2 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+        <button className="flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors cursor-pointer">
           <img src="./send-project-github-icon.svg" className="w-4 h-4" />
-          Репозиторий
+          <span>Репозиторий</span>
           <ExternalLink className="w-3 h-3 ml-1 opacity-60" />
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors">
+        <button className="flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors cursor-pointer">
           <Globe className="w-4 h-4" />
-          Демо
+          <span>Демо</span>
           <ExternalLink className="w-3 h-3 ml-1 opacity-60" />
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors">
+        <button className="flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 bg-card-background border border-border rounded-lg text-xs text-text-accent hover:text-white hover:border-text-accent/30 transition-colors cursor-pointer">
           <Box className="w-4 h-4" />
-          Презентация
+          <span>Презентация</span>
           <ExternalLink className="w-3 h-3 ml-1 opacity-60" />
         </button>
       </div>
 
-      <div className="bg-card-background border border-border rounded-lg p-6">
-        <h3 className="text-xs text-text-accent uppercase tracking-wider mb-8">
+      <div className="bg-card-background border border-border rounded-lg p-4 md:p-6">
+        <h3 className="text-xs text-text-accent uppercase tracking-wider mb-6 md:mb-8">
           // Критерии оценки
         </h3>
 
-        <div className="flex flex-col gap-7">
+        <div className="flex flex-col gap-6 md:gap-7">
           {criteria.map((criterion) => (
             <div key={criterion.id} className="flex flex-col gap-2.5">
               <div className="flex items-center justify-between">
@@ -135,9 +136,9 @@ export default function EvaluationTab() {
         </div>
       </div>
 
-      <button className="w-full bg-red hover:bg-red/90 text-white py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-red/10">
+      <button className="w-full bg-red hover:bg-red/90 text-white py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-red/10 cursor-pointer">
         <Star className="w-4 h-4" />
-        Сохранить оценку
+        <span>Сохранить оценку</span>
       </button>
     </div>
   );
