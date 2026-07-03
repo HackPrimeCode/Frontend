@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award } from "lucide-react";
+import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import OverviewTab from "@/features/organizer/components/OverviewTab";
 import TaskTab from "@/features/organizer/components/TaskTab";
@@ -30,26 +30,27 @@ export default function OrganizerPage() {
   const [maxParticipants, setMaxParticipants] = useState("");
   const [topics, setTopics] = useState("");
   const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (!hasEvent) {
     return (
       <>
-        <div className="w-full max-w-232 mx-auto pt-8">
-          <div className="mb-20">
-            <h1 className="text-2xl text-white mb-1">Создайте свое мероприятие</h1>
+        <div className="w-full max-w-232 mx-auto pt-4 md:pt-8 px-4 md:px-0">
+          <div className="mb-12 md:mb-20">
+            <h1 className="text-xl md:text-2xl text-white mb-1">Создайте свое мероприятие</h1>
           </div>
 
-          <div className="w-full bg-card-background border border-border rounded-lg p-10.5 flex flex-col items-center justify-center">
+          <div className="w-full bg-card-background border border-border rounded-lg p-6 md:p-10.5 flex flex-col items-center justify-center">
             <div className="mb-6 flex items-center justify-center">
               <BookOpen className="w-10 h-10 text-text-accent" />
             </div>
-            <h2 className="text-white mb-2.5">У вас нет мероприятий</h2>
-            <p className="text-sm text-text-accent text-center mb-7">
+            <h2 className="text-white mb-2.5 text-center">У вас нет мероприятий</h2>
+            <p className="text-sm text-text-accent text-center mb-7 px-4">
               Создайте свое мероприятие, введите общую информацию, а затем добавьте все пункты
             </p>
             <button
               onClick={() => setIsCreateEventModalOpen(true)}
-              className="h-10 px-19 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
+              className="h-10 px-4 md:px-19 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
             >
               <img src="./create-team-icon.svg" alt="" className="w-3.5 h-3.5" />
               Создать мероприятие
@@ -66,7 +67,7 @@ export default function OrganizerPage() {
 
             <div className="relative w-full max-w-[600px] max-h-[90vh] rounded-lg border-2 border-border bg-card-background overflow-hidden text-white animate-in fade-in zoom-in-95 duration-150 flex flex-col">
 
-              <div className="flex flex-col border-b-2 border-border px-6 py-5 gap-1 shrink-0">
+              <div className="flex flex-col border-b-2 border-border px-4 md:px-6 py-5 gap-1 shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <img
@@ -88,13 +89,13 @@ export default function OrganizerPage() {
                   </button>
                 </div>
 
-                <h3 className="text-lg">
+                <h3 className="text-base md:text-lg">
                   Создайте свое мероприятие
                 </h3>
               </div>
 
-              <div className="p-6 flex flex-col gap-4 overflow-y-auto">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 md:p-6 flex flex-col gap-4 overflow-y-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs uppercase tracking-wide text-text-accent">
                       Название мероприятия
@@ -149,7 +150,7 @@ export default function OrganizerPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs uppercase tracking-wide text-text-accent">
                       Навыки
@@ -186,7 +187,7 @@ export default function OrganizerPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs uppercase tracking-wide text-text-accent">
                       Дата и время начала
@@ -240,7 +241,7 @@ export default function OrganizerPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs uppercase tracking-wide text-text-accent">
                       Размер команды (от)
@@ -360,17 +361,40 @@ export default function OrganizerPage() {
 
 
   return (
-    <div className="w-full mx-auto min-h-[calc(100vh-3.75rem)] grid grid-cols-[240px_1fr]">
-      <aside className="flex flex-col items-center border-r border-border">
-        <div className="w-full border-b border-border p-5">
+    <div className="w-full min-h-[calc(100vh-3.75rem)] flex flex-col md:grid md:grid-cols-[240px_1fr]">
+      {/* Mobile/Tablet Sidebar Toggle */}
+      <div className="md:hidden px-4 py-3 border-b border-border flex items-center justify-between bg-card-background/50">
+        <div className="flex items-center gap-2">
+          <h3 className="text-white text-sm font-medium truncate">HackPrimeCode Лето 2026</h3>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-2 hover:bg-card-background rounded transition-colors"
+        >
+          {isSidebarOpen ? (
+            <X className="w-5 h-5 text-white" />
+          ) : (
+            <Menu className="w-5 h-5 text-white" />
+          )}
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <aside className={`flex flex-col items-center border-r border-border ${
+        isSidebarOpen ? "block" : "hidden md:block"
+      }`}>
+        <div className="w-full border-b border-border p-4 md:p-5 hidden md:block">
           <span className="text-xs text-red uppercase block mb-2">Мероприятие</span>
           <h2 className="text-white text-sm truncate">HackPrimeCode Лето 2026</h2>
         </div>
 
-        <nav className="w-full flex flex-col gap-1 p-2">
+        <nav className="w-full flex flex-col gap-1 p-2 md:p-2">
           <button
-            onClick={() => setActiveTab("overview")}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer ${
+            onClick={() => {
+              setActiveTab("overview");
+              setIsSidebarOpen(false);
+            }}
+            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
               activeTab === "overview"
                 ? "bg-red/6 border border-red text-red"
                 : "text-text-accent hover:text-white hover:bg-input-background/50"
@@ -381,8 +405,11 @@ export default function OrganizerPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("task")}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer ${
+            onClick={() => {
+              setActiveTab("task");
+              setIsSidebarOpen(false);
+            }}
+            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
               activeTab === "task"
                 ? "bg-red/6 border border-red text-red"
                 : "text-text-accent hover:text-white hover:bg-input-background/50"
@@ -393,8 +420,11 @@ export default function OrganizerPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("settings")}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer ${
+            onClick={() => {
+              setActiveTab("settings");
+              setIsSidebarOpen(false);
+            }}
+            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
               activeTab === "settings"
                 ? "bg-red/6 border border-red text-red"
                 : "text-text-accent hover:text-white hover:bg-input-background/50"
@@ -405,8 +435,11 @@ export default function OrganizerPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("jury")}
-            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer ${
+            onClick={() => {
+              setActiveTab("jury");
+              setIsSidebarOpen(false);
+            }}
+            className={`w-full h-10 px-3 rounded-lg flex items-center gap-2.5 text-xs cursor-pointer transition-all ${
               activeTab === "jury"
                 ? "bg-red/6 border border-red text-red"
                 : "text-text-accent hover:text-white hover:bg-input-background/50"
@@ -418,9 +451,9 @@ export default function OrganizerPage() {
         </nav>
       </aside>
 
-      <main className="flex flex-col p-6">
-        <div className="mb-8">
-          <h1 className="text-2xl text-white mb-1">{activeTab === "overview" ? "Обзор" : activeTab === "task" ? "Задание" : activeTab === "settings" ? "Настройки" : "Жюри"}</h1>
+      <main className="flex flex-col p-4 md:p-6">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-xl md:text-2xl text-white mb-1">{activeTab === "overview" ? "Обзор" : activeTab === "task" ? "Задание" : activeTab === "settings" ? "Настройки" : "Жюри"}</h1>
           <p className="text-xs text-text-accent">// Панель организатора · HackPrimeCode Лето 2026</p>
         </div>
 

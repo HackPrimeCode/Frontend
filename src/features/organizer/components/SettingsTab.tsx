@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tag, MapPin, Calendar, Users, Plus, Award, X } from "lucide-react";
+import { Tag, MapPin, Users, Plus, Award, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { HackathonLocation } from "@/features/organizer/model/organizerTypes";
 
@@ -23,8 +23,8 @@ export default function SettingsTab() {
   const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
 
   return (
-    <div className="flex flex-col gap-6 ml-10">
-      <div className="grid grid-cols-4 gap-6">
+    <div className="flex flex-col gap-4 md:gap-6 ml-0 md:ml-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wide text-text-accent">
             Название мероприятия
@@ -60,7 +60,7 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wide text-text-accent">
             Описание мероприятия
@@ -76,7 +76,7 @@ export default function SettingsTab() {
         </div>  
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wide text-text-accent">
             Навыки
@@ -109,7 +109,7 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wide text-text-accent">
             Дата и время начала
@@ -159,7 +159,7 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wide text-text-accent">
             Размер команды (от)
@@ -199,7 +199,7 @@ export default function SettingsTab() {
         </label>
         <div className="flex flex-col gap-2">
           {prizes.map((prize, index) => (
-            <div key={index} className="grid grid-cols-[1fr_1fr_auto] gap-6 items-start w-full max-w-[700px]">
+            <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 md:gap-6 items-start w-full max-w-[700px]">
               <div className="relative flex items-center group">
                 <Award className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
                 <Input
@@ -232,7 +232,7 @@ export default function SettingsTab() {
                     const newPrizes = prizes.filter((_, i) => i !== index);
                     setPrizes(newPrizes);
                   }}
-                  className="h-12 w-12 flex items-center justify-center border border-border rounded-sm text-text-accent hover:text-white hover:border-red transition-colors cursor-pointer"
+                  className="h-12 w-full sm:w-12 flex items-center justify-center border border-border rounded-sm text-text-accent hover:text-white hover:border-red transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -242,7 +242,7 @@ export default function SettingsTab() {
           <button
             type="button"
             onClick={() => setPrizes([...prizes, { title: "", reward: "" }])}
-            className="h-10 w-fit px-6 border border-border rounded-sm text-text-accent text-sm hover:text-white hover:border-red transition-colors cursor-pointer flex items-center gap-2"
+            className="h-10 w-full sm:w-fit px-6 border border-border rounded-sm text-text-accent text-sm hover:text-white hover:border-red transition-colors cursor-pointer flex items-center justify-center sm:justify-start gap-2"
           >
             <Plus className="w-4 h-4" />
             Добавить приз
@@ -250,10 +250,10 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      <div className="flex justify-start">
+      <div className="flex flex-col sm:flex-row justify-start gap-2">
         <button
           type="button"
-          className="flex h-10 w-fit items-center justify-center gap-2 px-6 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
+          className="flex h-10 w-full sm:w-fit items-center justify-center gap-2 px-6 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
         >
           Сохранить изменения
         </button>

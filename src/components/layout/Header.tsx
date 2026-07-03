@@ -4,6 +4,7 @@ import type { RootState } from "@/store";
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { useLogoutMutation } from "@/features/auth/api/authApi";
+import { Menu, X } from "lucide-react";
 
 interface NavItem {
   path: string;
@@ -85,8 +86,10 @@ export default function Header() {
   const [logout, { isLoading }] = useLogoutMutation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const logoutRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { user, currentContext } = useSelector(
     (state: RootState) => state.auth,
   );
@@ -104,6 +107,12 @@ export default function Header() {
         !notificationRef.current.contains(event.target as Node)
       ) {
         setIsNotificationsOpen(false);
+      }
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -138,8 +147,8 @@ export default function Header() {
   });
 
   return (
-    <header className="flex justify-between h-15 w-full px-8 items-center border-b border-b-border">
-      <div className="flex gap-9">
+    <header className="flex justify-between h-15 w-full px-4 md:px-8 items-center border-b border-b-border">
+      <div className="flex gap-4 md:gap-9 items-center flex-1">
         <div className="flex gap-1 items-center">
           <Button
             onClick={() => navigate("/", { replace: true })}
@@ -150,12 +159,12 @@ export default function Header() {
               alt="logo"
               className="w-9 h-7 -translate-y-0.5"
             />
-            <span className="text-white">
+            <span className="text-white hidden sm:inline">
               Hack<span className="text-red">Prime</span>Code
             </span>
           </Button>
         </div>
-        <div className="flex gap-6">
+        <div className="hidden lg:flex gap-6">
           {visibleNavItems.map((item) => {
             const isActive = location.pathname === item.path;
 
@@ -179,9 +188,22 @@ export default function Header() {
             );
           })}
         </div>
+        {/* Mobile menu button */}
+        <div className="lg:hidden ml-auto">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-text-accent hover:text-white transition-colors p-2"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </button>
+        </div>
       </div>
       {user ? (
-        <div className="relative flex items-center gap-2.5 text-white">
+        <div className="relative flex items-center gap-2 md:gap-2.5 text-white ml-4">
           <div className="relative" ref={notificationRef}>
             <Button
               onClick={toggleNotificationMenu}
@@ -196,17 +218,17 @@ export default function Header() {
             )}
           </div>
 
-          <div className="items-center w-0.5 bg-border h-6"></div>
+          <div className="items-center w-0.5 bg-border h-6 hidden md:block"></div>
           <div className="flex items-center gap-2">
-            <div className="text-sm w-6.5 h-6.5 bg-red flex items-center justify-center rounded-full">
+            <div className="text-sm w-6.5 h-6.5 bg-red flex items-center justify-center rounded-full hidden sm:flex">
               <span className="-translate-y-px">{user.name[0]}</span>
             </div>
             <div className="relative" ref={logoutRef}>
               <Button
                 onClick={toggleDropdownMenu}
-                className="flex items-center gap-2 cursor-pointer p-0"
+                className="flex items-center gap-1 md:gap-2 cursor-pointer p-0 text-sm md:text-base"
               >
-                <span>{user.name}</span>
+                <span className="hidden sm:inline">{user.name}</span>
                 <img
                   src="/dropdown-icon.svg"
                   alt=""
@@ -231,9 +253,10 @@ export default function Header() {
         !isAuthPage && (
           <Link
             to={"/login"}
-            className="border-[0.5px] h-10 border-red px-5 py-2.5 text-white text-sm flex items-center gap-3 cursor-pointer rounded-lg"
+            className="border-[0.5px] h-10 border-red px-3 md:px-5 py-2.5 text-white text-sm flex items-center gap-2 md:gap-3 cursor-pointer rounded-lg ml-auto"
           >
-            <span>Войти в аккаунт</span>
+            <span className="hidden sm:inline">Войти в аккаунт</span>
+            <span className="sm:hidden">Вход</span>
             <img
               src="/arrow-icon.svg"
               alt=""
@@ -241,6 +264,38 @@ export default function Header() {
             />
           </Link>
         )
+      )}
+
+      {/* Mobile navigation menu */}
+      {isMobileMenuOpen && user && (
+        <div
+          ref={mobileMenuRef}
+          className="absolute top-15 left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-2 lg:hidden z-40"
+        >
+          {visibleNavItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            const currentIcon = isActive
+              ? IconImages[item.icon].active
+              : IconImages[item.icon].default;
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  isActive
+                    ? "bg-red/6 border border-red text-red "
+                    : "bg-transparent border-none text-text-accent hover:text-text"
+                }`}
+              >
+                <img src={currentIcon} alt="" className="w-3 h-3" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       )}
     </header>
   );

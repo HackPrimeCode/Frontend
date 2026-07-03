@@ -74,25 +74,25 @@ export default function JuryTab() {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_340px]">
-        <div className="rounded-lg border border-border bg-card-background">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <span className="text-base text-text">Жюри</span>
-            <span className="text-sm text-text-accent">
+      <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-[1fr_340px]">
+        <div className="rounded-lg border border-border bg-card-background overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border px-4 md:px-5 py-3 md:py-4">
+            <span className="text-sm md:text-base text-text">Жюри</span>
+            <span className="text-xs md:text-sm text-text-accent">
               {jury.length} человек
             </span>
           </div>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border max-h-[400px] overflow-y-auto">
             {jury.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center gap-4 px-5 py-4"
+                className="flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4"
               >
                 <UserAvatar name={member.name} color={member.color} />
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-text">{member.name}</p>
+                  <p className="truncate text-xs md:text-sm text-text">{member.name}</p>
                   <p className="truncate text-xs text-text-accent">
                     {member.email}
                   </p>
@@ -101,10 +101,10 @@ export default function JuryTab() {
                 <button
                   type="button"
                   onClick={() => handleRemove(member.id)}
-                  className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-red hover:text-red/85"
+                  className="flex shrink-0 cursor-pointer items-center gap-1 md:gap-1.5 text-xs text-red hover:text-red/85 transition-colors"
                 >
-                  <UserMinus className="h-3.5 w-3.5" />
-                  Исключить
+                  <UserMinus className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span className="hidden sm:inline">Исключить</span>
                 </button>
               </div>
             ))}
@@ -117,10 +117,10 @@ export default function JuryTab() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="rounded-lg border border-border bg-card-background p-5">
+        <div className="flex flex-col gap-4 md:gap-5">
+          <div className="rounded-lg border border-border bg-card-background p-4 md:p-5">
             <div className="mb-4 flex items-center gap-2">
-              <UserPlus className="h-4 w-4 text-red" strokeWidth={2} />
+              <UserPlus className="h-4 w-4 text-red flex-shrink-0" strokeWidth={2} />
               <h3 className="text-xs uppercase text-text-accent">
                 Пригласить жюри
               </h3>
@@ -137,11 +137,11 @@ export default function JuryTab() {
                   value={inviteEmail}
                   onChange={(event) => setInviteEmail(event.target.value)}
                   placeholder="user@example.com"
-                  className="h-10 w-full rounded-lg border-border bg-input-background pr-12 text-sm text-text placeholder:text-text-accent"
+                  className="h-10 w-full rounded-lg border border-border bg-input-background pr-12 text-sm text-text placeholder:text-text-accent"
                 />
                 <button
                   type="submit"
-                  className="absolute top-1/2 right-1 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md bg-red hover:bg-red/90"
+                  className="absolute top-1/2 right-1 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md bg-red hover:bg-red/90 transition-colors"
                 >
                   <img src="./send-invite-icon.svg" className="w-4 h-4" />
                 </button>
@@ -149,10 +149,10 @@ export default function JuryTab() {
             </form>
           </div>
 
-          <div className="rounded-lg border border-border bg-card-background p-5">
+          <div className="rounded-lg border border-border bg-card-background p-4 md:p-5">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-red" strokeWidth={2} />
+                <Clock className="h-4 w-4 text-red flex-shrink-0" strokeWidth={2} />
                 <h3 className="text-xs uppercase text-text-accent">
                   Приглашены
                 </h3>
@@ -160,13 +160,13 @@ export default function JuryTab() {
               <span className="text-xs text-red">{invitedEmails.length}</span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {invitedEmails.map((email) => (
                 <div
                   key={email}
                   className="flex items-center gap-2.5 rounded-lg border border-border bg-input-background px-3 py-2.5"
                 >
-                  <UserRound className="h-4 w-4 text-text-accent" />
+                  <UserRound className="h-4 w-4 text-text-accent flex-shrink-0" />
                   <span className="truncate text-xs text-text">{email}</span>
                 </div>
               ))}

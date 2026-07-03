@@ -21,21 +21,21 @@ export default function TaskTab() {
   if (!hasTask) {
     return (
       <>
-        <div className="rounded-lg border border-border bg-card-background p-10.5 flex flex-col items-center justify-center text-center gap-4">
+        <div className="rounded-lg border border-border bg-card-background p-6 md:p-10.5 flex flex-col items-center justify-center text-center gap-4 min-h-[300px]">
           <FileText className="w-10 h-10 text-text-accent" />
 
           <h2 className="text-white text-lg">
             У вас пока нет заданий
           </h2>
 
-          <p className="text-sm text-text-accent max-w-xl">
+          <p className="text-sm text-text-accent max-w-xl px-2">
             Создайте задание, назовите его, заполните все требования
           </p>
 
           <button
             type="button"
             onClick={() => setIsCreateTaskModalOpen(true)}
-            className="h-10 px-19 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
+            className="h-10 px-4 md:px-19 bg-red text-white text-sm rounded-lg flex items-center gap-2 hover:bg-red/90 transition-colors cursor-pointer"
           >
             <img
               src="./create-team-icon.svg"
@@ -55,8 +55,7 @@ export default function TaskTab() {
 
             <div className="relative w-full max-w-[435px] rounded-lg border-2 border-border bg-card-background overflow-hidden text-white animate-in fade-in zoom-in-95 duration-150">
 
-
-              <div className="flex flex-col border-b-2 border-border px-6 py-5 gap-1">
+              <div className="flex flex-col border-b-2 border-border px-4 md:px-6 py-4 md:py-5 gap-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <img
@@ -78,13 +77,12 @@ export default function TaskTab() {
                   </button>
                 </div>
 
-                <h3 className="text-lg">
+                <h3 className="text-base md:text-lg">
                   Создайте задание для мероприятия
                 </h3>
               </div>
 
-
-              <div className="p-6">
+              <div className="p-4 md:p-6">
 
                 <div className="flex flex-col gap-2">
                   <label className="text-xs uppercase tracking-wide text-text-accent">
@@ -106,7 +104,7 @@ export default function TaskTab() {
                 <button
                   type="button"
                   onClick={handleCreateTask}
-                  className="mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
+                  className="mt-6 md:mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
                 >
                   <img
                     src="./create-team-icon.svg"
@@ -126,25 +124,25 @@ export default function TaskTab() {
   }
 
   return (
-    <div className="flex flex-col gap-5 animate-fadeIn">
-      <div className="p-4.5">
-        <div className="flex items-start justify-between gap-4 mb-1">
-          <div className="flex gap-4 h-14.5 items-center">
-            <div className="h-12 w-12 bg-red/6 border border-red rounded-lg flex items-center justify-center">
-              <FileText className="w-6.5 h-6.5 text-red" />
+    <div className="flex flex-col gap-3 md:gap-5 animate-fadeIn">
+      <div className="p-3 md:p-4.5">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-3 md:gap-4 mb-4">
+          <div className="flex gap-3 md:gap-4 items-center w-full sm:w-auto">
+            <div className="h-10 md:h-12 w-10 md:w-12 bg-red/6 border border-red rounded-lg flex items-center justify-center flex-shrink-0">
+              <FileText className="w-5 md:w-6.5 h-5 md:h-6.5 text-red" />
             </div>
-            <div className="flex flex-col justify-between gap-1">
-              <h3 className="text-lg font-medium text-white">
+            <div className="flex flex-col justify-between gap-1 min-w-0">
+              <h3 className="text-base md:text-lg font-medium text-white truncate">
                 {newTaskName || "Задание мероприятия"}
               </h3>
             </div>
           </div>
         </div>
 
-        <div className="flex bg-card-background border border-border p-1 rounded-lg w-fit mb-6 text-white text-xs">
+        <div className="flex bg-card-background border border-border p-1 rounded-lg w-full sm:w-fit mb-6 text-white text-xs overflow-x-auto">
           <button
             onClick={() => setActiveContentTab("spec")}
-            className={`h-8 px-4 rounded-md transition-all cursor-pointer ${
+            className={`h-8 px-3 md:px-4 rounded-md transition-all cursor-pointer whitespace-nowrap ${
               activeContentTab === "spec" && "bg-red"
             }`}
           >
@@ -152,7 +150,7 @@ export default function TaskTab() {
           </button>
           <button
             onClick={() => setActiveContentTab("files")}
-            className={`h-8 px-4 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`h-8 px-3 md:px-4 rounded-md transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeContentTab === "files"
                 ? "bg-red text-white"
                 : "text-text-accent hover:text-white"
