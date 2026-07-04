@@ -38,39 +38,52 @@ export default function HackathonHistorySection({
 }: HackathonHistorySectionProps) {
   if (isLoading) {
     return (
-      <section className="space-y-4">
-        <div className="flex items-center gap-2.5">
-          <Activity className="h-6 w-6 text-red" strokeWidth={2.25} />
-          <h3 className="text-2xl text-text">История участия</h3>
+      <section className="space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <Activity
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
+          <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
         </div>
-        <div className="animate-pulse text-text-accent">Загрузка...</div>
+        <div className="animate-pulse text-xs sm:text-sm text-text-accent">
+          Загрузка...
+        </div>
       </section>
     );
   }
 
   if (!history || history.length === 0) {
     return (
-      <section className="space-y-4">
-        <div className="flex items-center gap-2.5">
-          <Activity className="h-6 w-6 text-red" strokeWidth={2.25} />
-          <h3 className="text-2xl text-text">История участия</h3>
+      <section className="space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <Activity
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
+          <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
         </div>
-        <div className="text-sm text-text-accent">Нет истории участия</div>
+        <div className="text-xs sm:text-sm text-text-accent">
+          Нет истории участия
+        </div>
       </section>
     );
   }
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center gap-2.5">
-        <Activity className="h-6 w-6 text-red" strokeWidth={2.25} />
-        <h3 className="text-2xl text-text">История участия</h3>
+    <section className="space-y-3 sm:space-y-4">
+      <div className="flex items-center gap-2 sm:gap-2.5">
+        <Activity
+          className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+          strokeWidth={2.25}
+        />
+        <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
       </div>
 
-      <div className="relative pl-6">
-        <div className="absolute top-2 bottom-2 left-1.75 w-px bg-red/40" />
+      <div className="relative pl-4 sm:pl-6">
+        <div className="absolute top-2 bottom-2 left-[5px] sm:left-[7px] w-px bg-red/40" />
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {history.map((event, index) => {
             const roleLabel = event.role === "captain" ? "Капитан" : "Участник";
             const positionLabel = formatPosition(event.position);
@@ -79,34 +92,34 @@ export default function HackathonHistorySection({
               <div key={event.id} className="relative">
                 <span
                   className={cn(
-                    "absolute top-5 -left-6 h-3.5 w-3.5 rounded-full border-2 border-card-background",
+                    "absolute top-4 sm:top-5 -left-4 sm:-left-6 h-3 sm:h-3.5 w-3 sm:w-3.5 rounded-full border-2 border-card-background",
                     index === 0 ? "bg-red" : "bg-text-accent",
                   )}
                 />
 
-                <div className="rounded-lg border border-border bg-card-background p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <h4 className="text-base font-bold text-text">
+                <div className="rounded-lg border border-border bg-card-background p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-4">
+                    <h4 className="text-sm sm:text-base font-bold text-text">
                       {event.title}
                     </h4>
                     {event.date && (
-                      <span className="shrink-0 text-sm text-text-accent">
+                      <span className="shrink-0 text-xs sm:text-sm text-text-accent">
                         {formatMonthYear(event.date)}
                       </span>
                     )}
                   </div>
 
                   {event.team_name && (
-                    <p className="mt-1 text-sm text-text-accent">
+                    <p className="mt-1 text-xs sm:text-sm text-text-accent">
                       {roleLabel} • {event.team_name}
                     </p>
                   )}
 
                   {positionLabel && event.score !== undefined && (
-                    <div className="mt-2 flex items-center gap-2 text-sm text-red">
+                    <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-red">
                       <span
                         className={cn(
-                          "h-2 w-2 shrink-0 rounded-full",
+                          "h-1.5 sm:h-2 w-1.5 sm:w-2 shrink-0 rounded-full",
                           getResultDotColor(event.position),
                         )}
                       />
@@ -116,11 +129,11 @@ export default function HackathonHistorySection({
                     </div>
                   )}
 
-                  <div className="mt-3 flex justify-end">
+                  <div className="mt-2 sm:mt-3 flex justify-end">
                     <button
                       type="button"
                       onClick={() => onDetailsClick(event)}
-                      className="cursor-pointer text-sm text-red hover:opacity-80"
+                      className="cursor-pointer text-xs sm:text-sm text-red hover:opacity-80"
                     >
                       Подробнее &gt;
                     </button>

@@ -2,38 +2,11 @@ import type { HackathonDetailRead } from "../model/hackathonTypes";
 
 export const mockHackathons: HackathonDetailRead[] = [
   {
-    id: 1,
-    title: "HackPrimeCode Лето 2026",
-    description:
-      "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
-    status: "IN_PROGRESS",
-    topics: ["ML", "Python", "React", "Go"],
-    total_participants: 847,
-    total_teams: 142,
-    min_team_size: 1,
-    max_team_size: 4,
-    max_participants: 1000,
-    event_location: "Moscow",
-    start_date: "2026-06-25T18:00:00",
-    end_date: "2026-06-29T18:00:00",
-    prizes: [
-      { id: 1, title: "1-е место", reward: "300000" },
-      { id: 2, title: "2-е место", reward: "150000" },
-      { id: 3, title: "3-е место", reward: "50000" },
-    ],
-    submission_requirements: [
-      "Команда от 1 до 4 человек",
-      "Регистрация обязательна до начала хакатона",
-      "Наличие GitHub аккаунта",
-      "Готовность работать 48 часов",
-    ],
-  },
-  {
     id: 2,
     title: "AI Challenge 2026",
     description:
       "Хакатон по искусственному интеллекту и машинному обучению. Работайте с реальными датасетами от компаний-партнеров, создавайте ML-модели и AI-решения для актуальных бизнес-задач.",
-    status: "REGISTRATION",
+    status: "IN_PROGRESS",
     topics: ["AI", "LLM", "Computer Vision", "Python"],
     total_participants: 312,
     total_teams: 64,
@@ -162,6 +135,33 @@ export const mockHackathons: HackathonDetailRead[] = [
       "Регистрация на платформе CTF",
       "Решенные задачи (флаги)",
       "Write-up для топ-3 решений",
+    ],
+  },
+  {
+    id: 1,
+    title: "HackPrimeCode Лето 2026",
+    description:
+      "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
+    status: "FINISHED",
+    topics: ["ML", "Python", "React", "Go"],
+    total_participants: 847,
+    total_teams: 142,
+    min_team_size: 1,
+    max_team_size: 4,
+    max_participants: 1000,
+    event_location: "Moscow",
+    start_date: "2026-06-25T18:00:00",
+    end_date: "2026-06-29T18:00:00",
+    prizes: [
+      { id: 1, title: "1-е место", reward: "300000" },
+      { id: 2, title: "2-е место", reward: "150000" },
+      { id: 3, title: "3-е место", reward: "50000" },
+    ],
+    submission_requirements: [
+      "Команда от 1 до 4 человек",
+      "Регистрация обязательна до начала хакатона",
+      "Наличие GitHub аккаунта",
+      "Готовность работать 48 часов",
     ],
   },
 ];

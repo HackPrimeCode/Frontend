@@ -57,8 +57,8 @@ export default function LoginForm() {
   }
 
   return (
-    <>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+    <div className="w-full px-2 sm:px-0">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Controller
           name="email"
           control={form.control}
@@ -67,11 +67,9 @@ export default function LoginForm() {
               data-invalid={fieldState.invalid}
               className="flex flex-col gap-1.5"
             >
-              <div className="flex items-center justify-between">
-                <FieldLabel className="text-xs text-text-accent uppercase">
-                  Email
-                </FieldLabel>
-              </div>
+              <FieldLabel className="text-xs text-text-accent uppercase">
+                Email
+              </FieldLabel>
               <div className="relative flex items-center group">
                 <Hash className="absolute left-3 w-3.5 h-3.5 text-text-accent group-focus-within:text-red transition-colors" />
                 <Input
@@ -100,11 +98,9 @@ export default function LoginForm() {
               data-invalid={fieldState.invalid}
               className="flex flex-col gap-1.5"
             >
-              <div className="flex items-center justify-between">
-                <FieldLabel className="text-xs text-text-accent uppercase tracking-wider">
-                  Пароль
-                </FieldLabel>
-              </div>
+              <FieldLabel className="text-xs text-text-accent uppercase tracking-wider">
+                Пароль
+              </FieldLabel>
               <div className="relative flex items-center group">
                 <Lock className="absolute left-3 w-3.5 h-3.5 text-text-accent group-focus-within:text-red transition-colors" />
                 <Input
@@ -124,21 +120,19 @@ export default function LoginForm() {
           )}
         />
 
-        <div className={isLoading ? "cursor-not-allowed w-full" : "w-full"}>
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full h-12 bg-red hover:bg-red/85 active:bg-red/60 text-white text-sm rounded-sm mt-2 transition-colors duration-150 cursor-pointer"
-          >
-            {isLoading ? "Вход..." : "Войти"}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full h-12 bg-red hover:bg-red/85 active:bg-red/60 disabled:bg-red/50 disabled:cursor-not-allowed text-white text-sm rounded-lg mt-2 transition-colors duration-150 cursor-pointer"
+        >
+          {isLoading ? "Вход..." : "Войти"}
+        </Button>
       </form>
       {submitError && (
-        <p className="text-red text-xs md:text-sm text-center mt-2 animate-pulse">
+        <p className="text-red text-xs md:text-sm text-center mt-3 animate-pulse">
           {submitError}
         </p>
       )}
-    </>
+    </div>
   );
 }

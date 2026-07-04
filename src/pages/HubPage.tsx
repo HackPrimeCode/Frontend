@@ -106,71 +106,77 @@ export default function HubPage() {
     );
   }
 
+  let activeCount = 0;
+  let upcomingCount = 0;
+  let totalParticipants = 0;
+  let totalRewardSum = 0;
+
+  for (const hackathon of hackathons) {
+    if (hackathon.status === "IN_PROGRESS") activeCount++;
+    else if (hackathon.status === "REGISTRATION") upcomingCount++;
+
+    totalParticipants += hackathon.total_participants || 0;
+
+    if (hackathon.prizes) {
+      for (const prize of hackathon.prizes) {
+        totalRewardSum += Number(prize.reward) || 0;
+      }
+    }
+  }
+
   const stats = [
     {
       label: "Активных",
-      value: hackathons.filter(
-        (hackathon) => hackathon.status === "IN_PROGRESS",
-      ).length,
+      value: activeCount,
       icon: "/stats-active-hacks-icon.svg",
     },
     {
       label: "Предстоящих",
-      value: hackathons.filter(
-        (hackathon) => hackathon.status === "REGISTRATION",
-      ).length,
+      value: upcomingCount,
       icon: "/stats-registration-hacks-icon.svg",
     },
     {
       label: "Участников",
-      value: hackathons
-        .map((hackathon) => {
-          return hackathon.total_participants;
-        })
-        .reduce((acc, curVal) => acc + curVal, 0),
+      value: totalParticipants,
       icon: "/stats-total-participants-icon.svg",
     },
     {
       label: "Призов всего",
-      value: formatTotalRewards(
-        hackathons.reduce((total, hackathon) => {
-          const hackathonSum = (hackathon.prizes || []).reduce(
-            (sum, prize) => sum + (+prize.reward || 0),
-            0,
-          );
-          return total + hackathonSum;
-        }, 0),
-      ),
+      value: formatTotalRewards(totalRewardSum),
       icon: "/stats-total-prizes-icon.svg",
     },
   ];
 
   return (
-    <div className="w-full mx-auto grid grid-cols-[16rem_1px_1fr] min-h-[calc(100vh-3.75rem)] bg-background">
-      <div className="p-5 flex flex-col items-center space-y-5">
+    <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[16rem_1px_1fr] min-h-[calc(100vh-3.75rem)] bg-background">
+      <div className="p-4 sm:p-5 flex flex-col items-center space-y-5 order-2 lg:order-1 border-t lg:border-t-0 border-border">
         <div className="flex w-full flex-col gap-3">
           <h2 className="uppercase text-text-accent text-xs">// Статистика</h2>
-          <div className="flex flex-col gap-2.5 ">
+          <div className="grid grid-cols-2 lg:flex lg:flex-col gap-2.5">
             {stats.map((stat) => (
               <div
-                className="bg-input-background border-2 border-border flex items-center gap-3 rounded-lg px-2.5 py-3"
+                className="bg-input-background border-[1.5px] lg:border-2 border-border flex items-center gap-2.5 sm:gap-3 rounded-lg px-2.5 py-3"
                 key={stat.label}
               >
-                <div className="flex items-center justify-center w-6.5 h-6.5 bg-red/14 rounded-sm">
+                <div className="flex items-center justify-center w-6.5 h-6.5 bg-red/14 rounded-sm shrink-0">
                   <img src={stat.icon} alt="" className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <p className="text-[0.6875rem] text-text-accent uppercase">
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <p className="text-[10px] sm:text-[0.6875rem] text-text-accent uppercase truncate">
                     {stat.label}
                   </p>
-                  <p className="text-white">{stat.value}</p>
+                  <p className="text-sm sm:text-base text-white truncate">
+                    {stat.value}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="w-95/100 h-px bg-[#AC302C]/25 px-4"></div>
-        <div className="w-full flex flex-col gap-2">
+
+        <div className="w-full h-px bg-[#AC302C]/25 hidden lg:block"></div>
+
+        <div className="w-full sm:w-fit lg:w-full flex flex-col gap-2 sm:min-w-60">
           <span className="text-xs text-text-accent uppercase">
             Ближайший дедлайн
           </span>
@@ -179,46 +185,50 @@ export default function HubPage() {
               <h4 className="text-[0.6875rem] text-text-accent truncate">
                 {nearestActiveHackathon.title}
               </h4>
-
-              <div className="">
+              <div>
                 <DeadlineTimer targetDate={nearestActiveHackathon.end_date} />
               </div>
             </div>
           ) : (
-            <div className="text-xs text-red text-center py-6 border border-red rounded-lg bg-input-background">
+            <div className="text-xs text-red text-center py-6 border border-red rounded-lg bg-input-background w-full">
               Нет активных дедлайнов
             </div>
           )}
         </div>
       </div>
-      <div className="bg-border w-px"></div>
-      <main className="w-full flex flex-col px-6 py-5">
+
+      <div className="bg-border h-px w-full lg:h-full lg:w-px order-2"></div>
+
+      <main className="w-full flex flex-col px-4 sm:px-6 py-5 order-1 lg:order-3">
         <div>
-          <h2 className="text-2xl text-white mb-0.5">Все мероприятия</h2>
+          <h2 className="text-xl sm:text-2xl text-white mb-0.5">
+            Все мероприятия
+          </h2>
           <span className="text-xs text-text-accent">
             // Выбери мероприятие и подай заявку
           </span>
         </div>
-        <div className="w-full grid grid-cols-[1fr_auto] gap-3 mt-6 mb-4.5">
-          <div className="w-full relative flex items-center group">
+
+        <div className="w-full flex flex-col lg:flex-row gap-3 mt-6 mb-5">
+          <div className="w-full max-w-2xl lg:max-w-full relative flex items-center group">
             <Search className="absolute left-3 w-4 h-4 text-text-accent" />
             <Input
               type="text"
               placeholder="Поиск по названию, тегу или городу..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="h-9.5 w-full bg-input-background border-border text-sm text-white pl-11 pr-4 rounded-sm outline-none placeholder-text-accent"
+              className="h-9.5 w-full bg-input-background border-border text-sm text-white pl-11 pr-4 rounded-sm outline-none placeholder-text-accent focus-visible:border-red"
             />
           </div>
 
-          <div className="w-full flex gap-3 items-center">
+          <div className="w-full lg:w-auto grid grid-cols-2 sm:flex gap-2 items-center">
             {filters.map((tab) => {
               const isActive = activeFilter === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => handleFilterChange(tab.id as FilterStatus)}
-                  className={`flex items-center gap-3 w-full h-8 px-3 rounded-lg text-xs  border transition-all duration-150 cursor-pointer ${
+                  className={`flex items-center justify-center gap-2 h-8 px-3.5 rounded-lg text-xs border transition-all duration-150 cursor-pointer whitespace-nowrap ${
                     isActive
                       ? "bg-red text-white border-red shadow-lg shadow-red/10"
                       : "bg-input-background/40 text-text-accent border-border hover:border-text-accent/40 hover:text-white"
@@ -234,7 +244,7 @@ export default function HubPage() {
         <div className="flex-1">
           {slicedHackathons.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 justify-items-center">
                 {slicedHackathons.map((hackathon) => (
                   <HackathonCard
                     key={hackathon.id}
@@ -248,7 +258,7 @@ export default function HubPage() {
                 <div className="flex justify-center mt-8">
                   <button
                     onClick={() => setVisibleCount((prev) => prev + 12)}
-                    className="h-10 px-6 bg-input-background border border-border text-white text-xs  rounded-sm hover:border-red/50 active:bg-input-background/80 transition-all duration-150 cursor-pointer"
+                    className="h-10 px-6 bg-input-background border border-border text-white text-xs rounded-sm hover:border-red/50 active:bg-input-background/80 transition-all duration-150 cursor-pointer"
                   >
                     Показать еще
                   </button>
@@ -256,14 +266,15 @@ export default function HubPage() {
               )}
             </>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center">
+            <div className="h-60 flex flex-col items-center justify-center">
               <p className="text-sm text-text-accent">
-                По вашему запросу ничего не найдено
+                // По вашему запросу ничего не найдено
               </p>
             </div>
           )}
         </div>
       </main>
+
       <HackathonDetailsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -120,13 +120,13 @@ function SidebarTab({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-xs transition-all duration-150",
+        "flex-1 lg:flex-none h-9 lg:h-10 px-3 rounded-lg flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5 text-[11px] sm:text-xs font-medium lg:font-normal cursor-pointer transition-all duration-150 shrink-0",
         isActive
-          ? "border-red bg-red/6 text-red"
-          : "border-transparent bg-transparent text-text-accent hover:border-border hover:text-text",
+          ? "border-red bg-red/6 text-red shadow-xs"
+          : "border-transparent bg-transparent text-text-accent hover:border-border hover:text-text hover:bg-input-background/50",
       )}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+      <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", isActive ? "text-red" : "")} strokeWidth={2} />
       <span>{label}</span>
     </button>
   );
@@ -179,17 +179,17 @@ function AdminPanelTab({
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl text-text">Админ панель</h1>
+      <div className="mb-2 sm:mb-4">
+        <h1 className="text-xl sm:text-2xl text-text">Админ панель</h1>
       </div>
 
       <div className="rounded-lg border border-border bg-card-background">
-        <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4">
-          <span className="text-sm text-text-accent">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-border px-4 sm:px-5 py-3 sm:py-4">
+          <span className="text-xs sm:text-sm text-text-accent">
             {users.length} человек
           </span>
 
-          <div className="relative w-full max-w-[220px]">
+          <div className="relative w-full sm:max-w-[220px]">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-text-accent" />
             <Input
               type="text"
@@ -205,13 +205,13 @@ function AdminPanelTab({
           {filteredUsers.map((user) => (
             <div
               key={user.id}
-              className="flex items-center gap-4 px-5 py-4"
+              className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4"
             >
               <UserAvatar name={user.name} color={user.color} />
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm text-text">{user.name}</p>
-                <p className="truncate text-xs text-text-accent">{user.email}</p>
+                <p className="truncate text-xs sm:text-sm text-text">{user.name}</p>
+                <p className="truncate text-[10px] sm:text-xs text-text-accent">{user.email}</p>
               </div>
 
               <RoleSelect
@@ -222,7 +222,7 @@ function AdminPanelTab({
           ))}
 
           {filteredUsers.length === 0 && (
-            <div className="flex h-32 items-center justify-center text-sm text-text-accent">
+            <div className="flex h-32 items-center justify-center text-xs sm:text-sm text-text-accent">
               Пользователи не найдены
             </div>
           )}
@@ -255,15 +255,15 @@ function OrganizersTab({
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl text-text">Организаторы мероприятий</h1>
+      <div className="mb-2 sm:mb-4">
+        <h1 className="text-xl sm:text-2xl text-text">Организаторы мероприятий</h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-[1fr_340px]">
         <div className="rounded-lg border border-border bg-card-background">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <span className="text-base text-text">Организаторы</span>
-            <span className="text-sm text-text-accent">
+          <div className="flex items-center justify-between border-b border-border px-4 sm:px-5 py-3 sm:py-4">
+            <span className="text-sm sm:text-base text-text">Организаторы</span>
+            <span className="text-xs sm:text-sm text-text-accent">
               {organizers.length} человек
             </span>
           </div>
@@ -272,13 +272,13 @@ function OrganizersTab({
             {organizers.map((organizer) => (
               <div
                 key={organizer.id}
-                className="flex items-center gap-4 px-5 py-4"
+                className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4"
               >
                 <UserAvatar name={organizer.name} color={organizer.color} />
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-text">{organizer.name}</p>
-                  <p className="truncate text-xs text-text-accent">
+                  <p className="truncate text-xs sm:text-sm text-text">{organizer.name}</p>
+                  <p className="truncate text-[10px] sm:text-xs text-text-accent">
                     {organizer.email}
                   </p>
                 </div>
@@ -286,33 +286,33 @@ function OrganizersTab({
                 <button
                   type="button"
                   onClick={() => onRemove(organizer.id)}
-                  className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-red hover:text-red/85"
+                  className="flex shrink-0 cursor-pointer items-center gap-1.5 text-[10px] sm:text-xs text-red hover:text-red/85"
                 >
-                  <UserMinus className="h-3.5 w-3.5" />
-                  Исключить
+                  <UserMinus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  <span className="hidden sm:inline">Исключить</span>
                 </button>
               </div>
             ))}
 
             {organizers.length === 0 && (
-              <div className="flex h-32 items-center justify-center text-sm text-text-accent">
+              <div className="flex h-32 items-center justify-center text-xs sm:text-sm text-text-accent">
                 Организаторы не найдены
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="rounded-lg border border-border bg-card-background p-5">
-            <div className="mb-4 flex items-center gap-2">
+        <div className="flex flex-col gap-4 sm:gap-5">
+          <div className="rounded-lg border border-border bg-card-background p-4 sm:p-5">
+            <div className="mb-3 sm:mb-4 flex items-center gap-2">
               <UserPlus className="h-4 w-4 text-red" strokeWidth={2} />
-              <h3 className="text-xs uppercase text-text-accent">
+              <h3 className="text-[10px] sm:text-xs uppercase text-text-accent">
                 Пригласить организатора
               </h3>
             </div>
 
-            <form onSubmit={handleInvite} className="flex flex-col gap-3">
-              <label className="text-xs text-text-accent">
+            <form onSubmit={handleInvite} className="flex flex-col gap-2 sm:gap-3">
+              <label className="text-[10px] sm:text-xs text-text-accent">
                 Email организатора
               </label>
 
@@ -328,25 +328,21 @@ function OrganizersTab({
                   type="submit"
                   className="absolute top-1/2 right-1 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md bg-red hover:bg-red/90"
                 >
-                  <img
-                    src="/send_invite-icon.svg"
-                    alt=""
-                    className="h-3.5 w-3.5"
-                  />
+                  <img src="./send-invite-icon.svg" className="w-4 h-4" />
                 </button>
               </div>
             </form>
           </div>
 
-          <div className="rounded-lg border border-border bg-card-background p-5">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="rounded-lg border border-border bg-card-background p-4 sm:p-5">
+            <div className="mb-3 sm:mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-red" strokeWidth={2} />
-                <h3 className="text-xs uppercase text-text-accent">
+                <h3 className="text-[10px] sm:text-xs uppercase text-text-accent">
                   Приглашены
                 </h3>
               </div>
-              <span className="text-xs text-red">{invitedEmails.length}</span>
+              <span className="text-[10px] sm:text-xs text-red">{invitedEmails.length}</span>
             </div>
 
             <div className="space-y-2">
@@ -356,7 +352,7 @@ function OrganizersTab({
                   className="flex items-center gap-2.5 rounded-lg border border-border bg-input-background px-3 py-2.5"
                 >
                   <UserRound className="h-4 w-4 text-text-accent" />
-                  <span className="truncate text-xs text-text">{email}</span>
+                  <span className="truncate text-[10px] sm:text-xs text-text">{email}</span>
                 </div>
               ))}
             </div>
@@ -383,10 +379,23 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="grid min-h-[calc(100vh-3.75rem)] w-full grid-cols-[16rem_1px_1fr] bg-background">
-      <aside className="flex flex-col gap-4 p-5">
+    <div className="w-full min-h-[calc(100vh-3.75rem)] flex flex-col lg:grid lg:grid-cols-[240px_1px_1fr] bg-background">
+      <aside className="w-full flex flex-col lg:h-full border-b lg:border-b-0 lg:border-r border-border bg-background z-20">
+        <div className="w-full border-b border-border p-4 lg:p-5 flex lg:flex-col justify-between items-center lg:items-start gap-2">
+          <div className="min-w-0">
+            <span className="text-[10px] sm:text-xs text-red uppercase block mb-0.5 lg:mb-2 tracking-wider">
+              Админка
+            </span>
+            <h2 className="text-white text-xs sm:text-sm font-medium truncate max-w-50 sm:max-w-xs lg:max-w-full">
+              Управление
+            </h2>
+          </div>
+          <div className="lg:hidden p-1.5 bg-red/10 border border-red/20 rounded-md">
+            <Cpu className="w-3.5 h-3.5 text-red" />
+          </div>
+        </div>
 
-        <nav className="flex flex-col gap-2">
+        <nav className="w-full flex lg:flex-col gap-1 p-2 overflow-x-auto custom-scrollbar whitespace-nowrap">
           <SidebarTab
             label="Админ панель"
             icon={Cpu}
@@ -404,7 +413,7 @@ export default function AdminPage() {
 
       <div className="bg-border" />
 
-      <main className="flex flex-col gap-6 px-6 py-5">
+      <main className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 min-w-0">
         {activeTab === "panel" ? (
           <AdminPanelTab users={users} onRoleChange={handleRoleChange} />
         ) : (

@@ -37,21 +37,21 @@ export default function CurrentTeamSection({
 
   return (
     <Card className="border border-border bg-card-background ring-0">
-      <CardContent className="pt-5 pb-5">
-        <p className="mb-4 text-[0.6875rem] uppercase tracking-wide text-text-accent">
+      <CardContent className="pt-4 sm:pt-5 pb-4 sm:pb-5">
+        <p className="mb-3 sm:mb-4 text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
           Текущая команда
         </p>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-text"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm font-bold text-text"
             style={{ backgroundColor: team.color ?? "#7B5EA7" }}
           >
             {initials}
           </span>
           <div>
-            <h4 className="text-base font-bold text-text">{team.name}</h4>
-            <p className="text-sm text-text-accent">
+            <h4 className="text-sm sm:text-base font-bold text-text">{team.name}</h4>
+            <p className="text-xs sm:text-sm text-text-accent">
               {roleLabel} • {getMembersLabel(team.members_count)}
             </p>
           </div>
