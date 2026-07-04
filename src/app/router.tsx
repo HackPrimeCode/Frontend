@@ -53,21 +53,30 @@ const routes = [
             path: "/profile",
             lazy: () => wrapLazy(() => import("@/pages/ProfilePage")),
           },
+        ],
+      },
+      {
+        element: <RoleProtectedRoute allowedRoles={["user", "admin"]} />,
+        children: [
           {
-            path: "/team",
-            lazy: () => wrapLazy(() => import("@/pages/TeamPage")),
-          },
-          {
-            path: "/worktable",
-            lazy: () => wrapLazy(() => import("@/pages/WorkTablePage")),
+            element: <MainLayout />,
+            children: [
+              {
+                path: "/team",
+                lazy: () => wrapLazy(() => import("@/pages/TeamPage")),
+              },
+              {
+                path: "/worktable",
+                lazy: () => wrapLazy(() => import("@/pages/WorkTablePage")),
+              },
+            ],
           },
         ],
       },
       {
         element: (
           <RoleProtectedRoute
-            allowedRoles={["admin"]}
-            allowedLocalRoles={["judge"]}
+            allowedRoles={["judge", "organizator", "admin"]}
           />
         ),
         children: [

@@ -1,9 +1,9 @@
-import { Link, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import type { UserProfile } from "../model/profileTypes";
+import type { User } from "@/features/auth/model/authTypes";
 
 interface ProfileHeaderProps {
-  profile: UserProfile | undefined;
+  profile: User | undefined;
   isLoading: boolean;
   onEditClick: () => void;
   showSkills?: boolean;
@@ -39,12 +39,24 @@ export default function ProfileHeader({
     );
   }
 
-  const initials = profile.name
+  const initials = (profile.name || "User")
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
-    .slice(0, 1);
+    .slice(0, 2);
+
+  // СЧИТАЕМ СТАТИСТИКУ НА ЛЕТУ ИЗ МАССИВА УЧАСТИЙ 🚀
+  // Пока бэк не возвращает это поле, будет пустой массив (везде отобразятся 0)
+  const participations = profile.hackathon_participations ?? [];
+  const totalHackathons = participations.length;
+
+  const scores = participations
+    .filter((h) => h.score !== undefined)
+    .map((h) => h.score!);
+  const averageScore = scores.length
+    ? scores.reduce((a, b) => a + b, 0) / scores.length
+    : 0;
 
   return (
     <Card className="border border-border bg-card-background ring-0">
@@ -59,7 +71,7 @@ export default function ProfileHeader({
           {roleLabel && (
             <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-red">
               {roleLabel}
-            </p>
+            </span>
           )}
         </div>
 

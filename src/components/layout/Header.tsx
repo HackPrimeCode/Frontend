@@ -95,9 +95,7 @@ export default function Header() {
   const notificationRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLDivElement>(null);
 
-  const { user, currentContext } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -150,7 +148,8 @@ export default function Header() {
 
   const visibleNavItems = navItems.filter((item) => {
     if (!user) return false;
-    return item.hasAccess(user.global_role, currentContext?.localRole);
+
+    return item.hasAccess(user.global_role);
   });
 
   return (
@@ -310,7 +309,6 @@ export default function Header() {
           </Link>
         )
       )}
-
     </header>
   );
 }

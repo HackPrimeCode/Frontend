@@ -1,5 +1,6 @@
+import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
+import { calculateDurationHours, formatDate } from "@/lib/utils";
 import { Calendar, CircleCheck, Clock, MapPin } from "lucide-react";
-import type { CurrentHackathon } from "../model/profileTypes";
 
 function HackathonCard({ children }: { children: React.ReactNode }) {
   return (
@@ -12,9 +13,9 @@ function HackathonCard({ children }: { children: React.ReactNode }) {
 }
 
 interface CurrentHackathonSectionProps {
-  hackathon: CurrentHackathon | null | undefined;
+  hackathon: HackathonDetailRead | null | undefined;
   isLoading: boolean;
-  onDetailsClick: (hackathon: CurrentHackathon) => void;
+  onDetailsClick: (hackathon: HackathonDetailRead) => void;
 }
 
 export default function CurrentHackathonSection({
@@ -22,15 +23,25 @@ export default function CurrentHackathonSection({
   isLoading,
   onDetailsClick,
 }: CurrentHackathonSectionProps) {
+  const durationHours = calculateDurationHours(
+    hackathon?.start_date,
+    hackathon?.end_date,
+  );
+
   if (isLoading) {
     return (
       <section className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2 sm:gap-2.5">
-          <CircleCheck className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+          <CircleCheck
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
           <h3 className="text-xl sm:text-2xl text-text">Текущее мероприятие</h3>
         </div>
         <HackathonCard>
-          <div className="animate-pulse text-xs sm:text-sm text-text-accent">Загрузка...</div>
+          <div className="animate-pulse text-xs sm:text-sm text-text-accent">
+            Загрузка...
+          </div>
         </HackathonCard>
       </section>
     );
@@ -40,7 +51,10 @@ export default function CurrentHackathonSection({
     return (
       <section className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2 sm:gap-2.5">
-          <CircleCheck className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+          <CircleCheck
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
           <h3 className="text-xl sm:text-2xl text-text">Текущее мероприятие</h3>
         </div>
         <HackathonCard>
@@ -55,14 +69,19 @@ export default function CurrentHackathonSection({
   return (
     <section className="space-y-3 sm:space-y-4">
       <div className="flex items-center gap-2 sm:gap-2.5">
-        <CircleCheck className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+        <CircleCheck
+          className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+          strokeWidth={2.25}
+        />
         <h3 className="text-xl sm:text-2xl text-text">Текущее мероприятие</h3>
       </div>
 
       <HackathonCard>
         <div className="space-y-3 sm:space-y-4">
           <div>
-            <h4 className="text-sm sm:text-base font-bold text-text">{hackathon.title}</h4>
+            <h4 className="text-sm sm:text-base font-bold text-text">
+              {hackathon.title}
+            </h4>
             <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-relaxed text-text-accent">
               {hackathon.description}
             </p>

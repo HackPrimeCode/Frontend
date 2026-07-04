@@ -1,3 +1,5 @@
+export type ParticipantRole = "captain" | "member";
+
 export interface TeamCreateRequest {
   team_name: string;
 }
@@ -48,4 +50,11 @@ export interface Team {
   members: TeamMember[];
   pending_invites: string[];
   created_at: string;
+}
+
+export interface TeamProfileRead {
+  id: number;
+  team_name: string;
+  members_count: number;
+  role_in_team: ParticipantRole;
 }

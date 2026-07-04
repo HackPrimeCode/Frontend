@@ -1,33 +1,3 @@
-import type { GlobalRole } from "@/features/auth/model/authTypes";
-
-export interface UserReadResponse {
-  id: number;
-  name: string;
-  email: string;
-  tech_stack: string[];
-  global_role: GlobalRole;
-}
-
-export interface UserProfileUpdate {
-  name?: string;
-  tech_stack?: string[];
-}
-
-export interface ProfileStats {
-  total_hackathons: number;
-  total_wins: number;
-  average_score: number;
-}
-
-export interface UserProfile {
-  id: number;
-  name: string;
-  email: string;
-  github_url?: string;
-  skills: string[];
-  stats: ProfileStats;
-}
-
 export interface HackathonParticipation {
   id: number;
   hackathon_id: number;
@@ -47,18 +17,4 @@ export interface CurrentTeam {
   members_count: number;
   initials?: string;
   color?: string;
-}
-
-export interface CurrentHackathon {
-  id: number;
-  title: string;
-  description: string;
-  status: "REGISTRATION" | "IN_PROGRESS" | "FINISHED";
-  skills?: string[];
-  date: string;
-  location: string;
-  duration_hours: number;
-  team_name?: string;
-  team_members?: number;
-  deadline?: string;
 }
