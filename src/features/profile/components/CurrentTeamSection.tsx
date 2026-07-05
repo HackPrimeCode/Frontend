@@ -17,8 +17,8 @@ function getMembersLabel(count: number) {
 }
 
 export default function CurrentTeamSection({ team }: CurrentTeamSectionProps) {
-  const roleLabel = team.role_in_team === "captain" ? "Капитан" : "Участник";
-  const initials = team.team_name
+  const roleLabel = team?.role_in_team === "captain" ? "Капитан" : "Участник";
+  const initials = team?.team_name
     ?.split(" ")
     .map((part) => part[0])
     .join("")
@@ -38,10 +38,10 @@ export default function CurrentTeamSection({ team }: CurrentTeamSectionProps) {
           </span>
           <div>
             <h4 className="text-sm sm:text-base font-bold text-text">
-              {team.team_name}
+              {team?.team_name}
             </h4>
             <p className="text-xs sm:text-sm text-text-accent">
-              {roleLabel} • {getMembersLabel(team.members_count)}
+              {roleLabel} • {getMembersLabel(team?.members_count)}
             </p>
           </div>
         </div>

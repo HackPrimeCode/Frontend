@@ -71,7 +71,8 @@ export default function HackathonDetailsModal({
   onApply,
 }: HackathonDetailsModalProps) {
   const authContext = useSelector(selectCurrentContext);
-  const isParticipant = authContext?.teamId !== null;
+  const isParticipant =
+    authContext === null ? false : authContext?.teamId !== null;
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";

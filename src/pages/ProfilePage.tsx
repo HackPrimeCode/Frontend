@@ -113,7 +113,9 @@ export default function ProfilePage() {
               showStats={isParticipant}
               roleLabel={roleLabel}
             />
-            {isParticipant && <CurrentTeamSection team={user.current_team} />}
+            {isParticipant && user.current_team && (
+              <CurrentTeamSection team={user.current_team} />
+            )}
           </div>
 
           <div className="space-y-6 sm:space-y-8">
