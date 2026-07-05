@@ -1,22 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Tag, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import OrganizerTaskSpecTab from "@/features/organizer/components/tabs/OrganizerTaskSpecTab";
 import OrganizerTaskFilesTab from "@/features/organizer/components/tabs/OrganizerTaskFilesTab";
+import { useGetOrganizerHackathonDetailsQuery, useCreateHackathonSpecificationMutation } from "@/features/organizer/api";
 
-export default function TaskTab() {
+interface TaskTabProps {
+  hackathonId: number | null;
+}
+
+export default function TaskTab({ hackathonId }: TaskTabProps) {
   const [hasTask, setHasTask] = useState(false);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const [newTaskName, setNewTaskName] = useState("");
   const [activeContentTab, setActiveContentTab] = useState<"spec" | "files">("spec");
 
-  const handleCreateTask = () => {
-    if (newTaskName.trim()) {
+  const { data: hackathonData, isLoading } = useGetOrganizerHackathonDetailsQuery(hackathonId ?? 0, {
+    skip: !hackathonId,
+  });
+
+  const [createSpecification] = useCreateHackathonSpecificationMutation();
+  const specification = hackathonData?.specification ?? null;
+
+  useEffect(() => {
+    if (hackathonData?.specification) {
+      setHasTask(true);
+      setNewTaskName(hackathonData.specification.task || "");
+    }
+  }, [hackathonData]);
+
+  const handleCreateTask = async () => {
+    if (!hackathonId || !newTaskName.trim()) return;
+
+    try {
+      await createSpecification({
+        hackathonId,
+        data: {
+          task: newTaskName,
+          task_description: null,
+          functional_requirements: [],
+          technical_limitations: [],
+          evaluation_criteria: [],
+          files: [],
+        },
+      }).unwrap();
       setHasTask(true);
       setIsCreateTaskModalOpen(false);
-      setNewTaskName("");
+    } catch (error) {
+      console.error("Failed to create task specification:", error);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Загрузка...</div>
+      </div>
+    );
+  }
+
+  if (!hackathonId) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Выберите хакатон</div>
+      </div>
+    );
+  }
 
   if (!hasTask) {
     return (
@@ -161,9 +210,9 @@ export default function TaskTab() {
         </div>
 
         {activeContentTab === "spec" ? (
-          <OrganizerTaskSpecTab />
+          <OrganizerTaskSpecTab hackathonId={hackathonId} initialData={specification} taskName={newTaskName} />
         ) : (
-          <OrganizerTaskFilesTab />
+          <OrganizerTaskFilesTab hackathonId={hackathonId} />
         )}
       </div>
     </div>

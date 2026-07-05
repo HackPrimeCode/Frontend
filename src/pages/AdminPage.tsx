@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ChevronDown,
   Clock,
@@ -9,12 +9,14 @@ import {
   UserPlus,
   UserRound,
 } from "lucide-react";
+import apiClient from "@/api/apiClient";
 import { Input } from "@/components/ui/input";
+import type { GlobalRole } from "@/features/auth/model/authTypes";
 import { cn } from "@/lib/utils";
 
 type AdminTab = "panel" | "organizers";
 
-type UserRole = "user" | "judge" | "organizator" | "admin";
+type UserRole = GlobalRole;
 
 interface AdminUser {
   id: number;
@@ -22,6 +24,13 @@ interface AdminUser {
   email: string;
   role: UserRole;
   color: string;
+}
+
+interface ApiUser {
+  id: number;
+  name: string | null;
+  email: string;
+  global_role: GlobalRole;
 }
 
 const roleOptions: { value: UserRole; label: string }[] = [
@@ -33,56 +42,13 @@ const roleOptions: { value: UserRole; label: string }[] = [
 
 const avatarPalette = ["#C71C25", "#3D9A6A", "#FFCC00", "#7B5EA7", "#3B82F6"];
 
-const mockUsers: AdminUser[] = [
-  {
-    id: 1,
-    name: "Алексей Иванов",
-    email: "killog7@gmail.com",
-    role: "user",
-    color: avatarPalette[0],
-  },
-  {
-    id: 2,
-    name: "Мария Волкова",
-    email: "m.volkova@gmail.com",
-    role: "judge",
-    color: avatarPalette[1],
-  },
-  {
-    id: 3,
-    name: "Дмитрий Булдыков",
-    email: "d.kim@mail.com",
-    role: "organizator",
-    color: avatarPalette[2],
-  },
-  {
-    id: 4,
-    name: "Елена Соколова",
-    email: "e.sokolova@gmail.com",
-    role: "user",
-    color: avatarPalette[3],
-  },
-  {
-    id: 5,
-    name: "Иван Петров",
-    email: "i.petrov@mail.ru",
-    role: "judge",
-    color: avatarPalette[4],
-  },
-  {
-    id: 6,
-    name: "Андрей Профатов",
-    email: "a.profatov@mail.com",
-    role: "admin",
-    color: avatarPalette[2],
-  },
-];
-
-const mockOrganizers: AdminUser[] = [
-  mockUsers[0],
-  mockUsers[1],
-  mockUsers[2],
-];
+const mapUserToAdminUser = (user: ApiUser): AdminUser => ({
+  id: user.id,
+  name: user.name?.trim() || user.email,
+  email: user.email,
+  role: user.global_role,
+  color: avatarPalette[user.id % avatarPalette.length],
+});
 
 function getInitials(name: string) {
   return name
@@ -135,16 +101,19 @@ function SidebarTab({
 function RoleSelect({
   value,
   onChange,
+  disabled = false,
 }: {
   value: UserRole;
   onChange: (role: UserRole) => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="relative w-[140px] shrink-0">
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as UserRole)}
-        className="h-9 w-full cursor-pointer appearance-none rounded-lg border border-border bg-input-background px-3 pr-8 text-sm text-text outline-none"
+        disabled={disabled}
+        className="h-9 w-full cursor-pointer appearance-none rounded-lg border border-border bg-input-background px-3 pr-8 text-sm text-text outline-none disabled:cursor-not-allowed disabled:opacity-60"
       >
         {roleOptions.map((option) => (
           <option key={option.value} value={option.value}>
@@ -160,9 +129,15 @@ function RoleSelect({
 function AdminPanelTab({
   users,
   onRoleChange,
+  isLoading,
+  error,
+  isUpdatingUserId,
 }: {
   users: AdminUser[];
   onRoleChange: (id: number, role: UserRole) => void;
+  isLoading: boolean;
+  error: string | null;
+  isUpdatingUserId: number | null;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -201,30 +176,45 @@ function AdminPanelTab({
           </div>
         </div>
 
+        {error && (
+          <div className="border-b border-border bg-red/10 px-4 py-3 text-sm text-red">
+            {error}
+          </div>
+        )}
+
         <div className="divide-y divide-border">
-          {filteredUsers.map((user) => (
-            <div
-              key={user.id}
-              className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4"
-            >
-              <UserAvatar name={user.name} color={user.color} />
-
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-xs sm:text-sm text-text">{user.name}</p>
-                <p className="truncate text-[10px] sm:text-xs text-text-accent">{user.email}</p>
-              </div>
-
-              <RoleSelect
-                value={user.role}
-                onChange={(role) => onRoleChange(user.id, role)}
-              />
-            </div>
-          ))}
-
-          {filteredUsers.length === 0 && (
+          {isLoading ? (
             <div className="flex h-32 items-center justify-center text-xs sm:text-sm text-text-accent">
-              Пользователи не найдены
+              Загрузка пользователей...
             </div>
+          ) : (
+            <>
+              {filteredUsers.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4"
+                >
+                  <UserAvatar name={user.name} color={user.color} />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs sm:text-sm text-text">{user.name}</p>
+                    <p className="truncate text-[10px] sm:text-xs text-text-accent">{user.email}</p>
+                  </div>
+
+                  <RoleSelect
+                    value={user.role}
+                    onChange={(role) => onRoleChange(user.id, role)}
+                    disabled={isUpdatingUserId === user.id}
+                  />
+                </div>
+              ))}
+
+              {filteredUsers.length === 0 && (
+                <div className="flex h-32 items-center justify-center text-xs sm:text-sm text-text-accent">
+                  Пользователи не найдены
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -244,7 +234,7 @@ function OrganizersTab({
     "o.sidorova@example.com",
   ]);
 
-  const handleInvite = (event: React.FormEvent) => {
+  const handleInvite = (event: FormEvent) => {
     event.preventDefault();
     const email = inviteEmail.trim();
     if (!email || invitedEmails.includes(email)) return;
@@ -365,17 +355,85 @@ function OrganizersTab({
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("panel");
-  const [users, setUsers] = useState(mockUsers);
-  const [organizers, setOrganizers] = useState(mockOrganizers);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
 
-  const handleRoleChange = (id: number, role: UserRole) => {
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUsers = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const { data } = await apiClient.get<ApiUser[]>("/admin/users");
+
+        if (!isMounted) {
+          return;
+        }
+
+        setUsers(data.map(mapUserToAdminUser));
+      } catch (err) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.error(err);
+        setError("Не удалось загрузить пользователей");
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadUsers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const organizers = useMemo(
+    () => users.filter((user) => user.role === "organizator" || user.role === "admin"),
+    [users],
+  );
+
+  const handleRoleChange = async (id: number, role: UserRole) => {
+    const previousUser = users.find((user) => user.id === id);
+    if (!previousUser) {
+      return;
+    }
+
     setUsers((prev) =>
       prev.map((user) => (user.id === id ? { ...user, role } : user)),
     );
+    setUpdatingUserId(id);
+    setError(null);
+
+    try {
+      const { data } = await apiClient.patch<ApiUser>(`/admin/users/${id}/role`, {
+        global_role: role,
+      });
+
+      setUsers((prev) =>
+        prev.map((user) => (user.id === id ? mapUserToAdminUser(data) : user)),
+      );
+    } catch (err) {
+      console.error(err);
+      setUsers((prev) =>
+        prev.map((user) => (user.id === id ? previousUser : user)),
+      );
+      setError("Не удалось сохранить роль пользователя");
+    } finally {
+      setUpdatingUserId(null);
+    }
   };
 
   const handleRemoveOrganizer = (id: number) => {
-    setOrganizers((prev) => prev.filter((organizer) => organizer.id !== id));
+    void handleRoleChange(id, "user");
   };
 
   return (
@@ -415,7 +473,13 @@ export default function AdminPage() {
 
       <main className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 min-w-0">
         {activeTab === "panel" ? (
-          <AdminPanelTab users={users} onRoleChange={handleRoleChange} />
+          <AdminPanelTab
+            users={users}
+            onRoleChange={handleRoleChange}
+            isLoading={isLoading}
+            error={error}
+            isUpdatingUserId={updatingUserId}
+          />
         ) : (
           <OrganizersTab
             organizers={organizers}
