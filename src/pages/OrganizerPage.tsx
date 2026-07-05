@@ -264,12 +264,11 @@ export default function OrganizerPage() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="relative flex items-center group">
-                      <Calendar className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
                       <Input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+                        className="h-12 bg-input-background border border-border rounded-sm text-white placeholder:text-text-accent [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                     <div className="relative flex items-center group">
@@ -277,7 +276,7 @@ export default function OrganizerPage() {
                         type="time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+                        className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
@@ -290,12 +289,11 @@ export default function OrganizerPage() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="relative flex items-center group">
-                      <Calendar className="absolute left-3 w-4 h-4 text-text-accent group-focus-within:text-red transition-colors" />
                       <Input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="h-12 bg-input-background border border-border rounded-sm pl-10 pr-4 text-white placeholder:text-text-accent"
+                        className="h-12 bg-input-background border border-border rounded-sm text-white placeholder:text-text-accent [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                     <div className="relative flex items-center group">
@@ -303,7 +301,7 @@ export default function OrganizerPage() {
                         type="time"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
-                        className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent"
+                        className="h-12 bg-input-background border border-border rounded-sm px-4 text-white placeholder:text-text-accent [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
