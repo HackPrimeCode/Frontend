@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "../api/authApi";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { useState } from "react";
 
 const loginFormSchema = z.object({
@@ -21,6 +21,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
@@ -30,7 +31,7 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const from = location.state?.from || "/hub";
+  const from = searchParams.get("redirect") || location.state?.from || "/hub";
   const applyHackathonId = location.state?.applyHackathonId;
 
   async function onSubmit(data: LoginFormValues) {

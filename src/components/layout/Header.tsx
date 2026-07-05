@@ -138,7 +138,7 @@ export default function Header() {
   async function handleLogout() {
     try {
       await logout().unwrap();
-      navigate("/", { replace: true });
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Не удалось выйти из системы:", error);
     } finally {
@@ -212,7 +212,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* Десктопная навигация (отображается при >= 1024px) */}
             <div className="hidden lg:flex gap-6">
               {visibleNavItems.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -240,7 +239,6 @@ export default function Header() {
         )}
       </div>
 
-      {/* Правая часть: Уведомления и Профиль */}
       {user ? (
         <div className="relative flex items-center gap-1.5 sm:gap-2.5 text-white">
           <div className="relative" ref={notificationRef}>

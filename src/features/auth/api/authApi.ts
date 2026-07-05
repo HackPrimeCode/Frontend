@@ -65,6 +65,7 @@ export const authApi = api.injectEndpoints({
         try {
           await queryFulfilled;
           dispatch(logout());
+          dispatch(api.util.resetApiState());
         } catch {
           console.error("Logout failed");
         }

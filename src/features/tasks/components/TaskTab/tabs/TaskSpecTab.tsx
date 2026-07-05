@@ -1,4 +1,5 @@
 import type { HackathonDetailsWithTask } from "@/features/hackathons/model/hackathonTypes";
+import { BarChart3, ClipboardList, ShieldAlert } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 interface TaskSpecTabProps {
@@ -24,67 +25,93 @@ export default function TaskSpecTab({ hackathon }: TaskSpecTabProps) {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+  const EmptySection = ({ text }: { text: string }) => (
+    <div className="flex items-center gap-2 text-text-accent/50 py-2 italic font-normal">
+      <span>{text}</span>
+    </div>
+  );
+
   const accordionConfig: AccordionItemConfig[] = [
     {
       id: "description",
       title: "Общее описание задачи",
-      content: hackathon.task_description,
+      content: hackathon.task_description ? (
+        hackathon.task_description
+      ) : (
+        <EmptySection text="Описание задачи не предоставлено организаторами." />
+      ),
     },
     {
       id: "functional",
       title: "Функциональные требования",
-      content: (
-        <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white">
-          {hackathon.functional_requirements.map((req, idx) => (
-            <li key={idx} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-              <span className="leading-relaxed">{req}</span>
-            </li>
-          ))}
-        </ul>
-      ),
+      content:
+        hackathon.functional_requirements &&
+        hackathon.functional_requirements.length > 0 ? (
+          <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white list-none pl-0">
+            {hackathon.functional_requirements.map((req, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <span className="text-red mt-0.5 shrink-0">•</span>
+                <span className="leading-relaxed">{req}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptySection text="Функциональные требования не указаны." />
+        ),
     },
     {
       id: "technical",
       title: "Технические ограничения",
-      content: (
-        <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white">
-          {hackathon.technical_limitations.map((req, idx) => (
-            <li key={idx} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-              <span className="leading-relaxed">{req}</span>
-            </li>
-          ))}
-        </ul>
-      ),
+      content:
+        hackathon.technical_limitations &&
+        hackathon.technical_limitations.length > 0 ? (
+          <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white list-none pl-0">
+            {hackathon.technical_limitations.map((req, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <ShieldAlert className="w-3.5 h-3.5 text-red mt-0.5 shrink-0" />
+                <span className="leading-relaxed">{req}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptySection text="Особые технические ограничения отсутствуют." />
+        ),
     },
     {
       id: "criteria",
       title: "Критерии оценки",
-      content: (
-        <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white">
-          {hackathon.evaluation_criteria.map((req, idx) => (
-            <li key={idx} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-              <span className="leading-relaxed">{req}</span>
-            </li>
-          ))}
-        </ul>
-      ),
+      content:
+        hackathon.evaluation_criteria &&
+        hackathon.evaluation_criteria.length > 0 ? (
+          <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white list-none pl-0">
+            {hackathon.evaluation_criteria.map((req, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <BarChart3 className="w-3.5 h-3.5 text-red mt-0.5 shrink-0" />
+                <span className="leading-relaxed">{req}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptySection text="Критерии оценки будут добавлены позже." />
+        ),
     },
     {
       id: "requirements",
-      title: "Требования к сдаче",
-      content: (
-        <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white">
-          {hackathon.submission_requirements.map((req, idx) => (
-            <li key={idx} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-              <span className="leading-relaxed">{req}</span>
-            </li>
-          ))}
-        </ul>
-      ),
+      title: "Требования к сдаче проекта",
+      content:
+        hackathon.submission_requirements &&
+        hackathon.submission_requirements.length > 0 ? (
+          <ul className="flex flex-col gap-2 text-xs md:text-[0.8125rem] text-white list-none pl-0">
+            {hackathon.submission_requirements.map((req, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <ClipboardList className="w-3.5 h-3.5 text-red mt-0.5 shrink-0" />
+                <span className="leading-relaxed">{req}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptySection text="Специфические требования к сдаче отсутствуют." />
+        ),
     },
   ];
 

@@ -1,9 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import type { CurrentTeam } from "../model/profileTypes";
+import type { TeamProfileRead } from "@/features/team/model/teamTypes";
 
 interface CurrentTeamSectionProps {
-  team: CurrentTeam | null | undefined;
-  isLoading: boolean;
+  team: TeamProfileRead | null;
 }
 
 function getMembersLabel(count: number) {
@@ -17,23 +16,15 @@ function getMembersLabel(count: number) {
   return `${count} участников`;
 }
 
-export default function CurrentTeamSection({
-  team,
-  isLoading,
-}: CurrentTeamSectionProps) {
-  if (isLoading || !team) {
-    return null;
-  }
-
-  const roleLabel = team.role === "captain" ? "Капитан" : "Участник";
-  const initials =
-    team.initials ??
-    team.name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
+export default function CurrentTeamSection({ team }: CurrentTeamSectionProps) {
+  console.log(team);
+  const roleLabel = team.role_in_team === "captain" ? "Капитан" : "Участник";
+  const initials = team.team_name
+    ?.split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <Card className="border border-border bg-card-background ring-0">
@@ -43,14 +34,13 @@ export default function CurrentTeamSection({
         </p>
 
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <span
-            className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm font-bold text-text"
-            style={{ backgroundColor: team.color ?? "#7B5EA7" }}
-          >
+          <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm font-bold text-text bg-red">
             {initials}
           </span>
           <div>
-            <h4 className="text-sm sm:text-base font-bold text-text">{team.name}</h4>
+            <h4 className="text-sm sm:text-base font-bold text-text">
+              {team.team_name}
+            </h4>
             <p className="text-xs sm:text-sm text-text-accent">
               {roleLabel} • {getMembersLabel(team.members_count)}
             </p>

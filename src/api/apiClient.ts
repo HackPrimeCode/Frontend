@@ -27,6 +27,9 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    const { store } = await import("../store");
+    const currentToken = store.getState().auth.accessToken;
+
     if (originalRequest.url?.includes("/auth/refresh")) {
       const { store } = await import("../store");
       store.dispatch(logout());
@@ -35,10 +38,12 @@ apiClient.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
+      currentToken &&
       !originalRequest._retry &&
       !originalRequest.url?.includes("/auth/refresh") &&
       !originalRequest.url?.includes("/auth/login") &&
-      !originalRequest.url?.includes("/auth/register")
+      !originalRequest.url?.includes("/auth/register") &&
+      !originalRequest.url?.includes("/invite/")
     ) {
       originalRequest._retry = true;
 

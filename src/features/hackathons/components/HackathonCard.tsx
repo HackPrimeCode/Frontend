@@ -23,7 +23,7 @@ export default function HackathonCard({
   );
 
   const participantPercent =
-    (hackathon.total_participants / hackathon.max_participants) * 100;
+    (hackathon.current_participants / hackathon.max_participants) * 100;
 
   const currentStatus = statusConfig[hackathon.status] || {
     text: hackathon.status,
@@ -44,11 +44,13 @@ export default function HackathonCard({
             <span>{currentStatus.text}</span>
           </div>
           <span className="text-red text-lg">
-            {formatTotalRewards(
-              hackathon.prizes
-                .map((prize) => Number(prize.reward))
-                .reduce((acc, curVal) => acc + curVal),
-            )}
+            {hackathon.prizes.length === 0
+              ? 0
+              : formatTotalRewards(
+                  hackathon.prizes
+                    .map((prize) => Number(prize.reward))
+                    .reduce((acc, curVal) => acc + curVal),
+                )}
           </span>
         </div>
 
@@ -95,7 +97,7 @@ export default function HackathonCard({
       <div className="flex flex-col gap-2.5">
         <div className="flex justify-between items-center text-[0.6875rem]">
           <span className="text-text-accent">
-            {hackathon.total_participants} / {hackathon.max_participants}{" "}
+            {hackathon.current_participants} / {hackathon.max_participants}{" "}
             участников
           </span>
           <span className="text-red">{Math.ceil(participantPercent)} %</span>
@@ -111,7 +113,7 @@ export default function HackathonCard({
 
       <div className="flex items-center justify-between w-full mt-1">
         <div className="text-xs text-text-accent">
-          {hackathon.total_teams} команд
+          {hackathon.current_teams} команд
         </div>
 
         <Button
