@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award } from "lucide-react";
+import { useState, useEffect } from "react";
+import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import OverviewTab from "@/features/organizer/components/OverviewTab";
 import TaskTab from "@/features/organizer/components/TaskTab";
 import SettingsTab from "@/features/organizer/components/SettingsTab";
 import JuryTab from "@/features/organizer/components/JuryTab";
+import { useCreateHackathonMutation, useGetAdminHackathonsListQuery, useGetOrganizerHackathonQuery } from "@/features/organizer/api";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 import type { HackathonLocation } from "@/features/organizer/model/organizerTypes";
 
 interface Prize {
@@ -15,12 +18,12 @@ interface Prize {
 type TabKey = "overview" | "task" | "settings" | "jury";
 
 export default function OrganizerPage() {
-  const [hasEvent] = useState<boolean>(true);
+  const [hasEvent, setHasEvent] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
-  const [eventLocation, setEventLocation] = useState<HackathonLocation>("Online");
+  const [eventLocation, setEventLocation] = useState<HackathonLocation>("Онлайн");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -30,6 +33,97 @@ export default function OrganizerPage() {
   const [maxParticipants, setMaxParticipants] = useState("");
   const [topics, setTopics] = useState("");
   const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
+  const [currentHackathonId, setCurrentHackathonId] = useState<number | null>(null);
+  const [currentHackathonTitle, setCurrentHackathonTitle] = useState<string>("");
+  const [isHackathonDropdownOpen, setIsHackathonDropdownOpen] = useState(false);
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isAdmin = user?.global_role === "admin";
+  const isOrganizer = user?.global_role === "organizator";
+
+  const { data: hackathonsList } = useGetAdminHackathonsListQuery(undefined, {
+    skip: !isAdmin,
+  });
+
+  const { data: organizerHackathon } = useGetOrganizerHackathonQuery(undefined, {
+    skip: !isOrganizer,
+  });
+
+  const [createHackathon] = useCreateHackathonMutation();
+
+  // Load saved hackathon selection from localStorage
+  useEffect(() => {
+    const savedHackathonId = localStorage.getItem('selectedHackathonId');
+    const savedHackathonTitle = localStorage.getItem('selectedHackathonTitle');
+    
+    if (savedHackathonId && savedHackathonTitle) {
+      setCurrentHackathonId(parseInt(savedHackathonId));
+      setCurrentHackathonTitle(savedHackathonTitle);
+      setHasEvent(true);
+    }
+  }, []);
+
+  // Save hackathon selection to localStorage when it changes
+  useEffect(() => {
+    if (currentHackathonId && currentHackathonTitle) {
+      localStorage.setItem('selectedHackathonId', currentHackathonId.toString());
+      localStorage.setItem('selectedHackathonTitle', currentHackathonTitle);
+    }
+  }, [currentHackathonId, currentHackathonTitle]);
+
+  // Load organizer's hackathon automatically
+  useEffect(() => {
+    if (isOrganizer && organizerHackathon && !currentHackathonId) {
+      setCurrentHackathonId(organizerHackathon.id);
+      setCurrentHackathonTitle(organizerHackathon.title);
+      setHasEvent(true);
+    }
+  }, [isOrganizer, organizerHackathon, currentHackathonId]);
+
+  const handleCreateEvent = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", eventTitle);
+      formData.append("description", eventDescription);
+      formData.append("place", eventLocation);
+      formData.append("min_team_size", minTeamSize);
+      formData.append("max_team_size", maxTeamSize);
+      if (maxParticipants) formData.append("max_participants", maxParticipants);
+      if (startDate && startTime) {
+        formData.append("start_date", `${startDate}T${startTime}`);
+      }
+      if (endDate && endTime) {
+        formData.append("end_date", `${endDate}T${endTime}`);
+      }
+      if (topics) {
+        formData.append("topics", JSON.stringify(topics.split(",").map(t => t.trim())));
+      }
+      if (prizes.length > 0) {
+        const validPrizes = prizes.filter(p => p.title && p.reward);
+        if (validPrizes.length > 0) {
+          formData.append("prizes", JSON.stringify(validPrizes));
+        }
+      }
+
+      const result = await createHackathon(formData).unwrap();
+      setCurrentHackathonId(result.id);
+      setCurrentHackathonTitle(result.title);
+      setHasEvent(true);
+      setIsCreateEventModalOpen(false);
+      
+      // Save to localStorage
+      localStorage.setItem('selectedHackathonId', result.id.toString());
+      localStorage.setItem('selectedHackathonTitle', result.title);
+    } catch (error) {
+      console.error("Failed to create hackathon:", error);
+    }
+  };
+
+  const handleSelectHackathon = (hackathonId: number, hackathonTitle: string) => {
+    setCurrentHackathonId(hackathonId);
+    setCurrentHackathonTitle(hackathonTitle);
+    setIsHackathonDropdownOpen(false);
+  };
 
   if (!hasEvent) {
     return (
@@ -125,10 +219,11 @@ export default function OrganizerPage() {
                         onChange={(e) => setEventLocation(e.target.value as HackathonLocation)}
                         className="h-12 w-full bg-input-background border border-border rounded-sm pl-10 pr-4 text-white appearance-none cursor-pointer"
                       >
-                        <option value="Online">Online</option>
-                        <option value="Moscow">Moscow</option>
-                        <option value="Saint Petersburg">Saint Petersburg</option>
-                        <option value="Kazan">Kazan</option>
+                        <option value="Онлайн">Онлайн</option>
+                        <option value="Москва">Москва</option>
+                        <option value="Санкт-Петербург">Санкт-Петербург</option>
+                        <option value="Казань">Казань</option>
+                        <option value="Нижний-Новгород">Нижний-Новгород</option>
                       </select>
                     </div>
                   </div>
@@ -338,7 +433,7 @@ export default function OrganizerPage() {
 
                 <button
                   type="button"
-                  onClick={() => setIsCreateEventModalOpen(false)}
+                  onClick={handleCreateEvent}
                   className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer shrink-0"
                 >
                   <img
@@ -363,13 +458,38 @@ export default function OrganizerPage() {
     <div className="w-full min-h-[calc(100vh-3.75rem)] flex flex-col lg:grid lg:grid-cols-[240px_1fr]">
       <aside className="w-full flex flex-col lg:h-full border-b lg:border-b-0 lg:border-r border-border bg-background z-20">
         <div className="w-full border-b border-border p-4 lg:p-5 flex lg:flex-col justify-between items-center lg:items-start gap-2">
-          <div className="min-w-0">
+          <div className="min-w-0 relative">
             <span className="text-[10px] sm:text-xs text-red uppercase block mb-0.5 lg:mb-2 tracking-wider">
               Мероприятие
             </span>
-            <h2 className="text-white text-xs sm:text-sm font-medium truncate max-w-50 sm:max-w-xs lg:max-w-full">
-              HackPrimeCode Лето 2026
-            </h2>
+            {isAdmin ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsHackathonDropdownOpen(!isHackathonDropdownOpen)}
+                  className="flex items-center gap-2 text-white text-xs sm:text-sm font-medium truncate max-w-50 sm:max-w-xs lg:max-w-full hover:text-red transition-colors"
+                >
+                  {currentHackathonTitle || "Выберите хакатон"}
+                  <ChevronDown className="w-4 h-4 flex-shrink-0" />
+                </button>
+                {isHackathonDropdownOpen && hackathonsList && (
+                  <div className="absolute top-full left-0 mt-2 w-full bg-card-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                    {hackathonsList.map((hackathon) => (
+                      <button
+                        key={hackathon.id}
+                        onClick={() => handleSelectHackathon(hackathon.id, hackathon.title)}
+                        className="w-full text-left px-3 py-2 text-xs sm:text-sm text-white hover:bg-input-background/50 transition-colors truncate"
+                      >
+                        {hackathon.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <h2 className="text-white text-xs sm:text-sm font-medium truncate max-w-50 sm:max-w-xs lg:max-w-full">
+                {currentHackathonTitle || "Нет мероприятия"}
+              </h2>
+            )}
           </div>
           <div className="lg:hidden p-1.5 bg-red/10 border border-red/20 rounded-md">
             <BookOpen className="w-3.5 h-3.5 text-red" />
@@ -430,16 +550,16 @@ export default function OrganizerPage() {
       <main className="flex flex-col p-4 sm:p-6 min-w-0">
         <div className="mb-4 lg:mb-6">
           <h1 className="text-xl sm:text-2xl text-white mb-1">{activeTab === "overview" ? "Обзор" : activeTab === "task" ? "Задание" : activeTab === "settings" ? "Настройки" : "Жюри"}</h1>
-          <p className="text-[10px] sm:text-xs text-text-accent">// Панель организатора · HackPrimeCode Лето 2026</p>
+          <p className="text-[10px] sm:text-xs text-text-accent">// Панель организатора · {currentHackathonTitle || "Нет мероприятия"}</p>
         </div>
 
-        {activeTab === "overview" && <OverviewTab />}
+        {activeTab === "overview" && <OverviewTab hackathonId={currentHackathonId} />}
 
-        {activeTab === "task" && <TaskTab />}
+        {activeTab === "task" && <TaskTab hackathonId={currentHackathonId} />}
 
-        {activeTab === "settings" && <SettingsTab />}
+        {activeTab === "settings" && <SettingsTab hackathonId={currentHackathonId} />}
 
-        {activeTab === "jury" && <JuryTab />}
+        {activeTab === "jury" && <JuryTab hackathonId={currentHackathonId} />}
       </main>
     </div>
   );

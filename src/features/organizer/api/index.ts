@@ -2,52 +2,12 @@ import { api } from "@/store/api";
 import type {
   HackathonDetailRead,
   HackathonDetailsWithTask,
+  HackathonAdminListItem,
+  AdminHackathonDetailRead,
+  HackathonCreate,
+  HackathonSpecificationCreate,
+  HackathonSpecificationRead,
 } from "@/features/organizer/model/organizerTypes";
-
-const mockOrganizerHackathon: HackathonDetailsWithTask = {
-  id: 1,
-  title: "HackPrimeCode Лето 2026",
-  description:
-    "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами.",
-  status: "IN_PROGRESS",
-  event_location: "Moscow",
-  prizes: [
-    { id: 1, title: "1-е место", reward: "300000" },
-    { id: 2, title: "2-е место", reward: "150000" },
-    { id: 3, title: "3-е место", reward: "50000" },
-  ],
-  topics: ["ML", "Python", "React", "Go"],
-  min_team_size: 1,
-  max_team_size: 4,
-  max_participants: 1000,
-  total_participants: 847,
-  total_teams: 142,
-  start_date: "2026-07-01T18:00:00",
-  end_date: "2026-07-12T12:00:00",
-  submission_requirements: [
-    "Команда от 1 до 4 человек",
-    "Регистрация обязательна до начала хакатона",
-  ],
-  task: "Умный AI-мерчандайзер и персональный шопер",
-  task_description:
-    "Участникам предстоит создать прототип интеллектуальной мультимодальной системы для физических магазинов.",
-  functional_requirements: [
-    "Команда от 1 до 4 человек",
-    "Регистрация обязательна до начала хакатона",
-  ],
-  technical_limitations: [
-    "Команда от 1 до 4 человек",
-    "Регистрация обязательна до начала хакатона",
-  ],
-  evaluation_criteria: [
-    "Команда от 1 до 4 человек",
-    "Регистрация обязательна до начала хакатона",
-  ],
-  files: [
-    { name: "task_specification.pdf", size: "1.2 MB" },
-    { name: "starter_template.zip", size: "4.7 MB" },
-  ],
-};
 
 export const organizerApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -55,18 +15,88 @@ export const organizerApi = api.injectEndpoints({
       HackathonDetailsWithTask | null,
       void
     >({
-      queryFn: () => ({ data: mockOrganizerHackathon }),
+      query: () => ({
+        url: "/hackathons/details-with-task",
+        method: "GET",
+      }),
       providesTags: ["OrganizerHackathon"],
     }),
     getOrganizerHackathonDetails: builder.query<
-      HackathonDetailRead | null,
+      AdminHackathonDetailRead | null,
       number
     >({
-      queryFn: () => ({ data: mockOrganizerHackathon }),
+      query: (hackathonId) => ({
+        url: `/admin/hackathons/${hackathonId}`,
+        method: "GET",
+      }),
       providesTags: ["OrganizerHackathon"],
+    }),
+    getAdminHackathonsList: builder.query<
+      HackathonAdminListItem[],
+      void
+    >({
+      query: () => ({
+        url: "/admin/hackathons/hack_list",
+        method: "GET",
+      }),
+      providesTags: ["AdminHackathons"],
+    }),
+    createHackathon: builder.mutation<
+      HackathonDetailRead,
+      FormData
+    >({
+      query: (formData) => ({
+        url: "/admin/hackathons",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+      invalidatesTags: ["OrganizerHackathon"],
+    }),
+    updateHackathon: builder.mutation<
+      HackathonDetailRead,
+      { hackathonId: number; data: Partial<HackathonCreate> }
+    >({
+      query: ({ hackathonId, data }) => ({
+        url: `/admin/hackathons/${hackathonId}`,
+        method: "PATCH",
+        data,
+      }),
+      invalidatesTags: ["OrganizerHackathon"],
+    }),
+    createHackathonSpecification: builder.mutation<
+      HackathonSpecificationRead,
+      { hackathonId: number; data: HackathonSpecificationCreate }
+    >({
+      query: ({ hackathonId, data }) => ({
+        url: `/admin/hackathons/${hackathonId}/specification`,
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["OrganizerHackathon"],
+    }),
+    updateHackathonSpecification: builder.mutation<
+      HackathonSpecificationRead,
+      { hackathonId: number; data: HackathonSpecificationCreate }
+    >({
+      query: ({ hackathonId, data }) => ({
+        url: `/admin/hackathons/${hackathonId}/specification`,
+        method: "PUT",
+        data,
+      }),
+      invalidatesTags: ["OrganizerHackathon"],
     }),
   }),
 });
 
-export const { useGetOrganizerHackathonQuery, useGetOrganizerHackathonDetailsQuery } =
-  organizerApi;
+export const {
+  useGetOrganizerHackathonQuery,
+  useGetOrganizerHackathonDetailsQuery,
+  useGetAdminHackathonsListQuery,
+  useCreateHackathonMutation,
+  useUpdateHackathonMutation,
+  useCreateHackathonSpecificationMutation,
+  useUpdateHackathonSpecificationMutation,
+} = organizerApi;
