@@ -40,10 +40,15 @@ export default function HackathonHistorySection({
     return (
       <section className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2 sm:gap-2.5">
-          <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+          <Activity
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
           <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
         </div>
-        <div className="animate-pulse text-xs sm:text-sm text-text-accent">Загрузка...</div>
+        <div className="animate-pulse text-xs sm:text-sm text-text-accent">
+          Загрузка...
+        </div>
       </section>
     );
   }
@@ -52,10 +57,15 @@ export default function HackathonHistorySection({
     return (
       <section className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2 sm:gap-2.5">
-          <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+          <Activity
+            className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+            strokeWidth={2.25}
+          />
           <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
         </div>
-        <div className="text-xs sm:text-sm text-text-accent">Нет истории участия</div>
+        <div className="text-xs sm:text-sm text-text-accent">
+          Нет истории участия
+        </div>
       </section>
     );
   }
@@ -63,7 +73,10 @@ export default function HackathonHistorySection({
   return (
     <section className="space-y-3 sm:space-y-4">
       <div className="flex items-center gap-2 sm:gap-2.5">
-        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-red" strokeWidth={2.25} />
+        <Activity
+          className="h-5 w-5 sm:h-6 sm:w-6 text-red"
+          strokeWidth={2.25}
+        />
         <h3 className="text-xl sm:text-2xl text-text">История участия</h3>
       </div>
 
@@ -72,8 +85,7 @@ export default function HackathonHistorySection({
 
         <div className="space-y-3 sm:space-y-4">
           {history.map((event, index) => {
-            const roleLabel =
-              event.role === "captain" ? "Капитан" : "Участник";
+            const roleLabel = event.role === "captain" ? "Капитан" : "Участник";
             const positionLabel = formatPosition(event.position);
 
             return (

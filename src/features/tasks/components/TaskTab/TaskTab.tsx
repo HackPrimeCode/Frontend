@@ -6,7 +6,6 @@ import type { HackathonDetailsWithTask } from "@/features/hackathons/model/hacka
 import { formatDate } from "@/lib/utils";
 import { useCountdown } from "@/lib/hooks/useCountdown";
 
-// Тестовые данные строго по макету
 export const mockHackathon: HackathonDetailsWithTask = {
   id: 101010,
   title: "HackPrimeCode Лето 2026",
@@ -85,9 +84,9 @@ export default function TaskTab() {
             <div className="h-12 w-12 bg-red/6 border border-red rounded-lg flex items-center justify-center shrink-0">
               <FileCheck className="w-6.5 h-6.5 text-red" />
             </div>
-            <div className="flex flex-col justify-between gap-2 md:gap-1 min-w-0">
-              <h3 className="text-lg font-medium text-white truncate">
-                {mockHackathon.title}
+            <div className="flex flex-col justify-between gap-1">
+              <h3 className="text-lg font-medium text-white">
+                {mockHackathon.task}
               </h3>
 
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 text-text-accent">

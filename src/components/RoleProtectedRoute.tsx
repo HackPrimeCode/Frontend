@@ -6,32 +6,16 @@ import { Outlet } from "react-router";
 
 interface RoleProtectedRouteProps {
   allowedRoles?: GlobalRole[];
-  allowedLocalRoles?: string[];
 }
 
 export default function RoleProtectedRoute({
   allowedRoles,
-  allowedLocalRoles,
 }: RoleProtectedRouteProps) {
-  const { user, currentContext } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { user } = useSelector((state: RootState) => state.auth);
 
   if (!user) return <ForbiddenPage />;
 
-  const hasGlobalAccess = allowedRoles
-    ? allowedRoles.includes(user.global_role)
-    : false;
-
-  const hasLocalAccess =
-    allowedLocalRoles && currentContext?.localRole
-      ? allowedLocalRoles.includes(currentContext.localRole)
-      : false;
-
-  const isAllowed =
-    (allowedRoles && hasGlobalAccess) ||
-    (allowedLocalRoles && hasLocalAccess) ||
-    (!allowedRoles && !allowedLocalRoles);
+  const isAllowed = allowedRoles.includes(user.global_role);
 
   return isAllowed ? <Outlet /> : <ForbiddenPage />;
 }
