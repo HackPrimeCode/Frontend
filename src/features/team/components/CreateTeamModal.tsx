@@ -67,10 +67,11 @@ export default function CreateTeamModal({
       setSubmitError(null);
       await onSubmit({
         hackathon_id: data.hackathon_id,
-        team_name: data.team_name,
-        description: data.description || "",
+        teamPayload: {
+          team_name: data.team_name,
+          description: data.description || "",
+        },
       });
-      onClose();
     } catch (err: any) {
       const detailError = err?.data?.detail;
       if (detailError === "User is already registered for this hackathon") {

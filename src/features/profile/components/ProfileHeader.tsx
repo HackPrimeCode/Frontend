@@ -4,7 +4,6 @@ import type { User } from "@/features/auth/model/authTypes";
 
 interface ProfileHeaderProps {
   profile: User | undefined;
-  isLoading: boolean;
   onEditClick: () => void;
   showSkills?: boolean;
   showStats?: boolean;
@@ -13,32 +12,11 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({
   profile,
-  isLoading,
   onEditClick,
   showSkills = true,
   showStats = true,
   roleLabel,
 }: ProfileHeaderProps) {
-  if (isLoading) {
-    return (
-      <Card className="border border-border bg-card-background ring-0">
-        <CardContent className="pt-6">
-          <div className="animate-pulse text-text-accent">Загрузка...</div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <Card className="border border-border bg-card-background ring-0">
-        <CardContent className="pt-6 text-text-accent">
-          Ошибка загрузки профиля
-        </CardContent>
-      </Card>
-    );
-  }
-
   const initials = (profile.name || "User")
     .split(" ")
     .map((n) => n[0])
@@ -46,17 +24,14 @@ export default function ProfileHeader({
     .toUpperCase()
     .slice(0, 2);
 
-  // СЧИТАЕМ СТАТИСТИКУ НА ЛЕТУ ИЗ МАССИВА УЧАСТИЙ 🚀
-  // Пока бэк не возвращает это поле, будет пустой массив (везде отобразятся 0)
-  const participations = profile.hackathon_participations ?? [];
-  const totalHackathons = participations.length;
+  const totalHackathons = profile.past_hackathons.length ?? 0;
 
-  const scores = participations
-    .filter((h) => h.score !== undefined)
-    .map((h) => h.score!);
-  const averageScore = scores.length
-    ? scores.reduce((a, b) => a + b, 0) / scores.length
-    : 0;
+  // const scores = participations
+  //   .filter((h) => h.score !== undefined)
+  //   .map((h) => h.score!);
+  // const averageScore = scores.length
+  //   ? scores.reduce((a, b) => a + b, 0) / scores.length
+  //   : 0;
 
   return (
     <Card className="border border-border bg-card-background ring-0">
@@ -66,34 +41,26 @@ export default function ProfileHeader({
         </div>
 
         <div className="text-center">
-          <h2 className="text-lg sm:text-xl font-bold text-text">{profile.name}</h2>
-          <p className="mt-1 text-xs sm:text-sm text-text-accent">{profile.email}</p>
+          <h2 className="text-lg sm:text-xl font-bold text-text">
+            {profile.name}
+          </h2>
+          <p className="mt-1 text-xs sm:text-sm text-text-accent">
+            {profile.email}
+          </p>
           {roleLabel && (
             <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-red">
               {roleLabel}
-            </span>
+            </p>
           )}
         </div>
 
-        {profile.github_url && (
-          <a
-            href={profile.github_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs sm:text-sm text-text-accent hover:text-text"
-          >
-            <Link className="size-3.5 sm:size-4 shrink-0" />
-            <span className="truncate max-w-[200px] sm:max-w-none">{profile.github_url}</span>
-          </a>
-        )}
-
-        {showSkills && profile.skills && profile.skills.length > 0 && (
+        {showSkills && profile.tech_stack && profile.tech_stack.length > 0 && (
           <div className="w-full">
             <p className="mb-2 sm:mb-2.5 text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
               Навыки
             </p>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {profile.skills.map((skill) => (
+              {profile.tech_stack.map((skill) => (
                 <span
                   key={skill}
                   className="rounded-md bg-input-background px-2 sm:px-2.5 py-0.75 sm:py-1 text-[10px] sm:text-xs text-text"
@@ -109,16 +76,14 @@ export default function ProfileHeader({
           <div className="grid w-full grid-cols-3 gap-2 border-t border-border pt-4 sm:pt-6 text-center">
             <div className="flex flex-col items-center gap-1">
               <span className="text-2xl sm:text-3xl font-bold text-red">
-                {profile.stats.total_hackathons}
+                {totalHackathons}
               </span>
               <span className="text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
                 Хакатонов
               </span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl sm:text-3xl font-bold text-red">
-                {profile.stats.average_score.toFixed(1)}
-              </span>
+              <span className="text-2xl sm:text-3xl font-bold text-red">0</span>
               <span className="text-[0.625rem] sm:text-[0.6875rem] uppercase tracking-wide text-text-accent">
                 Ср. балл
               </span>

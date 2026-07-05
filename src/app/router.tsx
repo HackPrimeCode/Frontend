@@ -40,6 +40,10 @@ const routes = [
     ],
   },
   {
+    path: "/invite/:token",
+    lazy: () => wrapLazy(() => import("@/pages/InvitePage")),
+  },
+  {
     element: <ProtectedRoute />,
     children: [
       {

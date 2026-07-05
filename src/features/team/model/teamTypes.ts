@@ -1,16 +1,46 @@
+import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
+
 export type ParticipantRole = "captain" | "member";
 
-export interface TeamCreateRequest {
-  team_name: string;
-}
-
-export interface TeamInviteRequest {
-  emails: string[];
+export interface TeamMemberRead {
+  id: number;
+  name: string;
+  role: ParticipantRole;
+  email: string;
+  tech_stack: string[];
 }
 
 export interface InviteTokenRead {
   token: string;
   email: string;
+}
+
+export interface TeamProfileRead {
+  id: number;
+  team_name: string;
+  members_count: number;
+  role_in_team: ParticipantRole;
+}
+
+export interface TeamDetailRead {
+  id: number;
+  name: string;
+  hackathon: HackathonDetailRead;
+  description: string;
+  members: TeamMemberRead[];
+  members_count: number;
+  max_team_size: number | null;
+  pending_invites: InviteTokenRead[];
+}
+
+export interface TeamCreateRequest {
+  team_name: string;
+  description: string;
+}
+
+export interface TeamCreateFormData {
+  hackathon_id: number;
+  teamPayload: TeamCreateRequest;
 }
 
 export interface TeamCreateResponse {
@@ -19,42 +49,6 @@ export interface TeamCreateResponse {
   invite_tokens: InviteTokenRead[];
 }
 
-export interface TeamCreateFormData {
-  hackathon_id: number;
-  team_name: string;
-  description: string;
-}
-
-export interface TeamMember {
-  id: number;
-  user_id: number;
-  team_id: number;
-  email: string;
-  name: string;
-  skills: string[];
-  is_captain: boolean;
-  avatar_color?: string;
-}
-
-export interface Team {
-  id: number;
-  name: string;
-  description: string | null;
-  hackathon_id: number;
-  hackathon_title: string;
-  hackathon_dates: string;
-  hackathon_description: string;
-  hackathon_topics: string[];
-  hackathon_min_size: number;
-  hackathon_max_size: number;
-  members: TeamMember[];
-  pending_invites: string[];
-  created_at: string;
-}
-
-export interface TeamProfileRead {
-  id: number;
-  team_name: string;
-  members_count: number;
-  role_in_team: ParticipantRole;
+export interface TeamInviteRequest {
+  emails: string[];
 }

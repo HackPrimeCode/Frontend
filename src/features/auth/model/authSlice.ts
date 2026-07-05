@@ -46,12 +46,14 @@ const authSlice = createSlice({
 });
 
 export const selectCurrentContext = (state: RootState) => state.auth.context;
-
+export const selectIsAuthenticated = (state: RootState) =>
+  !!state.auth.accessToken;
+export const selectIsInitialized = (state: RootState) =>
+  state.auth.isInitialized;
 export const selectActiveHackathonId = (state: RootState) =>
   state.auth.context?.hackathonId;
 export const selectCurrentTeamId = (state: RootState) =>
   state.auth.context?.teamId;
-
 export const selectIsCaptain = (state: RootState) =>
   state.auth.context?.roleInTeam === "captain";
 export const selectGlobalRole = (state: RootState) =>

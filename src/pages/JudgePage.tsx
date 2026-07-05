@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FileCheck, FileText, Users, ChevronDown } from "lucide-react";
-import { mockHackathon } from "@/features/tasks/components/TaskTab/TaskTab";
 import TaskSpecTab from "@/features/tasks/components/TaskTab/tabs/TaskSpecTab";
 import EvaluationTab from "@/features/judge/components/EvaluationTab";
+import type { HackathonDetailsWithTask } from "@/features/hackathons/model/hackathonTypes";
 
 type MainTab = "spec" | "teams_review";
 
@@ -12,6 +12,61 @@ interface ParticipantTeam {
   status: "submitted" | "pending" | "checked";
   members_count: number;
 }
+
+export const mockHackathon: HackathonDetailsWithTask = {
+  id: 101010,
+  title: "HackPrimeCode Лето 2026",
+  description:
+    "Флагманский хакатон от платформы. 48 часов интенсивной командной работы над реальными задачами от наших партнёров. Создавайте инновационные решения, получайте ценный опыт и выигрывайте крупные денежные призы.",
+  status: "IN_PROGRESS",
+  event_location: "Moscow",
+  prizes: [
+    { id: 1, title: "1-е место", reward: "300000" },
+    { id: 2, title: "2-е место", reward: "150000" },
+    { id: 3, title: "3-е место", reward: "50000" },
+  ],
+  topics: ["ML", "Python", "React", "Go"],
+  min_team_size: 1,
+  max_team_size: 4,
+  max_participants: 1000,
+  current_participants: 676,
+  current_teams: 67,
+  start_date: "2026-07-01T18:00:00",
+  end_date: "2026-07-12T12:00:00",
+  task: "Умный AI-мерчандайзер и персональный шопер",
+  task_description:
+    "Участникам предстоит создать прототип интеллектуальной мультимодальной системы для физических магазинов, которая стирает границу между онлайн и офлайн-шопингом. Цель проекта — объединить зрение, язык и алгоритмы рекомендаций в единый контур, способный в режиме реального времени понимать контекст покупателя у полки и мгновенно предлагать ему лучший пользовательский опыт.",
+  functional_requirements: [
+    "Команда от 1 до 4 человек",
+    "Регистрация обязательна до начала хакатона",
+    "Наличие GitHub аккаунта",
+    "Готовность работать 48 часов",
+  ],
+  technical_limitations: [
+    "Команда от 1 до 4 человек",
+    "Регистрация обязательна до начала хакатона",
+    "Наличие GitHub аккаунта",
+    "Готовность работать 48 часов",
+  ],
+  evaluation_criteria: [
+    "Команда от 1 до 4 человек",
+    "Регистрация обязательна до начала хакатона",
+    "Наличие GitHub аккаунта",
+    "Готовность работать 48 часов",
+  ],
+  submission_requirements: [
+    "Команда от 1 до 4 человек",
+    "Регистрация обязательна до начала хакатона",
+    "Наличие GitHub аккаунта",
+    "Готовность работать 48 часов",
+  ],
+  files: [
+    { name: "task_specification.pdf", size: "1.2 MB" },
+    { name: "starter_template.zip", size: "4.7 MB" },
+    { name: "api_schema.json", size: "84 KB" },
+    { name: "dataset.csv", size: "230 KB" },
+  ],
+};
 
 const mockTeams: ParticipantTeam[] = [
   { id: 1, name: "ByteForce", status: "submitted", members_count: 4 },

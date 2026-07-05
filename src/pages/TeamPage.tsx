@@ -1,24 +1,53 @@
 import { useEffect, useState } from "react";
 import { Users, Calendar, UserPlus } from "lucide-react";
 import {
-  useGetMyTeamQuery,
+  useCancelInviteMutation,
   useCreateTeamMutation,
+  useGetTeamByIdQuery,
+  useRemoveMemberMutation,
 } from "@/features/team/api/teamApi";
 import { useInviteToTeamMutation } from "@/features/team/api/teamApi";
 import CreateTeamModal from "@/features/team/components/CreateTeamModal";
-import type { TeamCreateFormData } from "@/features/team/model/teamTypes";
 import { useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-// import HackathonDetailsModal from "@/features/hackathons/components/HackathonDetailsModal";
+import { useSelector } from "react-redux";
+import {
+  selectCurrentContext,
+  selectCurrentTeamId,
+} from "@/features/auth/model/authSlice";
+import type { TeamCreateFormData } from "@/features/team/model/teamTypes";
+import { formatDate } from "@/lib/utils";
+import { useGetHackathonDetailsWithTaskQuery } from "@/features/hackathons/api/hackathonApi";
+import HackathonDetailsModal from "@/features/hackathons/components/HackathonDetailsModal";
 
 export default function TeamPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: team, isLoading, refetch } = useGetMyTeamQuery();
+
+  const teamId = useSelector(selectCurrentTeamId);
+  const authContext = useSelector(selectCurrentContext);
+  const currentUserRole = authContext?.roleInTeam;
+
+  const { data: team, isLoading } = useGetTeamByIdQuery(teamId!, {
+    skip: !teamId,
+  });
+
+  const handleApply = () => {};
+
+  const hackathonId = team?.hackathon?.id;
+
+  const { data: hackathonDetails, isLoading: isHackathonLoading } =
+    useGetHackathonDetailsWithTaskQuery(hackathonId!, {
+      skip: !teamId || !hackathonId,
+    });
+
   const [createTeam] = useCreateTeamMutation();
   const [inviteToTeam] = useInviteToTeamMutation();
+  const [removeMember] = useRemoveMemberMutation();
+  const [cancelInvite] = useCancelInviteMutation();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [_isDetailsModalOpen, _setIsDetailsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [initialHackathonId, setInitialHackathonId] = useState<
     number | undefined
   >(undefined);
@@ -37,11 +66,12 @@ export default function TeamPage() {
     try {
       await createTeam({
         hackathon_id: data.hackathon_id,
-        data: {
-          team_name: data.team_name,
+        teamPayload: {
+          team_name: data.teamPayload.team_name,
+          description: data.teamPayload.description,
         },
       }).unwrap();
-      refetch();
+      setIsCreateModalOpen(false);
     } catch (error: any) {
       const detail = error?.data?.detail;
       if (detail === "Team creation is not allowed") {
@@ -56,15 +86,14 @@ export default function TeamPage() {
 
   const handleInvite = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    if (!inviteEmail.trim() || !team) return;
+    if (!inviteEmail.trim() || !teamId) return;
 
     try {
       await inviteToTeam({
-        teamId: team.id,
+        teamId: teamId,
         emails: [inviteEmail.trim()],
       }).unwrap();
       setInviteEmail("");
-      refetch();
     } catch (error: any) {
       const detail = error?.data?.detail;
       if (detail === "Team size limit exceeded") {
@@ -77,7 +106,7 @@ export default function TeamPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isHackathonLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-3.75rem)] w-full">
         <span className="animate-pulse text-sm text-white">Загрузка...</span>
@@ -85,7 +114,7 @@ export default function TeamPage() {
     );
   }
 
-  if (!team) {
+  if (!teamId || !team) {
     return (
       <div className="w-full max-w-232 mx-auto px-4 py-6 sm:py-8">
         <div className="mb-10 sm:mb-20">
@@ -125,8 +154,10 @@ export default function TeamPage() {
     );
   }
 
-  const currentMember = team.members.find((m) => m.is_captain);
-  const otherMembers = team.members.filter((m) => !m.is_captain);
+  const currentMember = team.members.find((m) => m.role === "captain");
+  const otherMembers = team.members.filter((m) => m.role !== "captain");
+
+  const isCaptain = currentUserRole === "captain";
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
@@ -142,19 +173,24 @@ export default function TeamPage() {
           <div className="bg-card-background border border-border rounded-lg p-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
               <h3 className="text-sm sm:text-base text-white">
-                {team.hackathon_title}
+                {team.hackathon.title}
               </h3>
               <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-accent shrink-0">
                 <Calendar className="w-3 h-3 text-red" />
-                <span>{team.hackathon_dates}</span>
+                <div>
+                  <p className="text-[10px] sm:text-[0.6875rem]">
+                    {formatDate(team.hackathon.start_date)} —{" "}
+                    {formatDate(team.hackathon.end_date)}
+                  </p>
+                </div>
               </div>
             </div>
             <p className="text-[11px] sm:text-xs text-text-accent mb-4 leading-relaxed">
-              {team.hackathon_description}
+              {hackathonDetails?.description}
             </p>
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div className="flex flex-wrap gap-1.5">
-                {team.hackathon_topics.map((topic, idx) => (
+                {hackathonDetails?.topics?.map((topic, idx) => (
                   <span
                     key={idx}
                     className="px-2 py-0.5 bg-input-background border border-border rounded-sm text-[10px] sm:text-[0.6875rem] text-text-accent"
@@ -165,10 +201,11 @@ export default function TeamPage() {
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-4 text-[10px] sm:text-xs">
                 <span className="text-text-accent uppercase whitespace-nowrap">
-                  От {team.hackathon_min_size} до {team.hackathon_max_size} чел.
+                  От {hackathonDetails?.min_team_size} до{" "}
+                  {hackathonDetails?.max_team_size} чел.
                 </span>
                 <Button
-                  onClick={() => alert("Пока не сделал!")}
+                  onClick={() => setIsDetailsModalOpen(true)}
                   className="h-5 px-1 text-red hover:text-red/85 text-[11px] sm:text-xs cursor-pointer flex items-center justify-center gap-1.5 hover:animate-pulse"
                 >
                   <span>Подробнее</span>
@@ -193,7 +230,7 @@ export default function TeamPage() {
                 </h3>
               </div>
               <p className="text-[11px] sm:text-xs text-text-accent shrink-0">
-                {team.members.length} / {team.hackathon_max_size} мест
+                {team.members.length} / {team.hackathon.max_team_size} мест
               </p>
             </div>
 
@@ -202,7 +239,7 @@ export default function TeamPage() {
                 <div className="px-4 py-3 sm:px-5 sm:py-4 flex flex-col gap-3">
                   <div className="flex gap-3 items-center">
                     <div
-                      className={`w-9 h-9 sm:w-10 sm:h-10 ${currentMember.avatar_color || "bg-red"} rounded-full flex items-center justify-center text-white text-xs sm:text-sm shrink-0`}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 bg-red rounded-full flex items-center justify-center text-white text-xs sm:text-sm shrink-0`}
                     >
                       {currentMember.name
                         .split(" ")
@@ -229,7 +266,7 @@ export default function TeamPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    {currentMember.skills.map((skill, idx) => (
+                    {currentMember.tech_stack.map((skill, idx) => (
                       <span
                         key={idx}
                         className="px-2 py-0.5 bg-input-background border border-border rounded text-[10px] sm:text-[0.6875rem] text-text-accent"
@@ -248,7 +285,7 @@ export default function TeamPage() {
                 >
                   <div className="flex gap-3 items-center">
                     <div
-                      className={`w-9 h-9 sm:w-10 sm:h-10 ${member.avatar_color || "bg-green-500"} rounded-full flex items-center justify-center text-white text-xs sm:text-sm shrink-0`}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-xs sm:text-sm shrink-0`}
                     >
                       {member.name
                         .split(" ")
@@ -271,7 +308,7 @@ export default function TeamPage() {
                   </div>
                   <div className="flex justify-between items-center gap-4">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      {member.skills.map((skill, idx) => (
+                      {member.tech_stack.map((skill, idx) => (
                         <span
                           key={idx}
                           className="px-2 py-0.5 bg-input-background border border-border rounded text-[10px] sm:text-[0.6875rem] text-text-accent"
@@ -280,16 +317,23 @@ export default function TeamPage() {
                         </span>
                       ))}
                     </div>
-                    <Button className="cursor-pointer p-0 h-auto bg-transparent hover:bg-transparent flex items-center gap-1 shrink-0">
-                      <img
-                        src="./delete-member-icon.svg"
-                        alt=""
-                        className="w-3.5 h-3.5"
-                      />
-                      <span className="text-[11px] sm:text-xs text-red">
-                        Исключить
-                      </span>
-                    </Button>
+                    {isCaptain && (
+                      <Button
+                        onClick={() =>
+                          removeMember({ teamId: team.id, userId: member.id })
+                        }
+                        className="cursor-pointer p-0 h-auto bg-transparent hover:bg-transparent flex items-center gap-1 shrink-0"
+                      >
+                        <img
+                          src="./delete-member-icon.svg"
+                          alt=""
+                          className="w-3.5 h-3.5"
+                        />
+                        <span className="text-[11px] sm:text-xs text-red">
+                          Исключить
+                        </span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -317,7 +361,7 @@ export default function TeamPage() {
                   Мероприятие
                 </label>
                 <p className="text-white truncate max-w-[60%]">
-                  {team.hackathon_title}
+                  {team.hackathon.title}
                 </p>
               </div>
 
@@ -333,14 +377,14 @@ export default function TeamPage() {
                   <label className="text-text-accent uppercase">
                     О команде
                   </label>
-                  {currentMember?.is_captain && (
+                  {/* {isCaptain && (
                     <button className="text-text-accent hover:text-white cursor-pointer">
                       <img
                         src="./edit-description-icon.svg"
                         className="w-3 h-3"
                       />
                     </button>
-                  )}
+                  )} */}
                 </div>
                 <p className="text-white leading-relaxed rounded-sm">
                   {team.description || "Описание не заполнено"}
@@ -349,7 +393,7 @@ export default function TeamPage() {
             </div>
           </div>
 
-          {currentMember?.is_captain && (
+          {isCaptain && (
             <div className="bg-card-background border border-border rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
                 <UserPlus className="w-3.5 h-3.5 text-red" />
@@ -386,7 +430,7 @@ export default function TeamPage() {
             </div>
           )}
 
-          {team.pending_invites.length > 0 && (
+          {isCaptain && team.pending_invites.length > 0 && (
             <div className="bg-card-background border border-border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -400,9 +444,9 @@ export default function TeamPage() {
                 </span>
               </div>
               <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-1">
-                {team.pending_invites.map((email, idx) => (
+                {team.pending_invites.map((invite) => (
                   <div
-                    key={idx}
+                    key={invite.token}
                     className="flex items-center gap-2 justify-between"
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -410,9 +454,19 @@ export default function TeamPage() {
                         <Users className="w-3 h-3 text-text-accent" />
                       </div>
                       <span className="text-[11px] sm:text-xs text-white truncate">
-                        {email}
+                        {invite.email}
                       </span>
                     </div>
+                    {isCaptain && (
+                      <button
+                        onClick={() =>
+                          cancelInvite({ teamId: team.id, token: invite.token })
+                        }
+                        className="text-[10px] text-red hover:underline cursor-pointer bg-transparent border-none"
+                      >
+                        Отмена
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -430,12 +484,12 @@ export default function TeamPage() {
         onSubmit={handleCreateTeam}
         initialHackathonId={initialHackathonId}
       />
-      {/* <HackathonDetailsModal
+      <HackathonDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setIsDetailsModalOpen(false)}
-        hackathon={team}
+        hackathon={hackathonDetails!}
         onApply={handleApply}
-      /> */}
+      />
     </div>
   );
 }

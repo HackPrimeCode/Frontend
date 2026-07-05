@@ -115,7 +115,7 @@ export default function HubPage() {
     if (hackathon.status === "IN_PROGRESS") activeCount++;
     else if (hackathon.status === "REGISTRATION") upcomingCount++;
 
-    totalParticipants += hackathon.total_participants || 0;
+    totalParticipants += hackathon.current_participants || 0;
 
     if (hackathon.prizes) {
       for (const prize of hackathon.prizes) {

@@ -6,7 +6,7 @@ import { Hash, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { useState } from "react";
 import { useRegisterUserMutation } from "../api/authApi";
 
@@ -28,6 +28,7 @@ export default function UserRegisterForm() {
   const navigate = useNavigate();
   const [register, { isLoading }] = useRegisterUserMutation();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<UserRegisterFormValues>({
@@ -40,7 +41,7 @@ export default function UserRegisterForm() {
     },
   });
 
-  const from = location.state?.from || "/hub";
+  const from = searchParams.get("redirect") || location.state?.from || "/hub";
   const applyHackathonId = location.state?.applyHackathonId;
 
   async function onSubmit(data: UserRegisterFormValues) {

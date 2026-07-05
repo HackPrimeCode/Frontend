@@ -33,7 +33,9 @@ export const axiosBaseQuery: BaseQueryFn<
         continue;
       }
 
-      if (err.response?.status !== 401) {
+      const isInviteUrl = url?.includes("/invite/");
+
+      if (err.response?.status !== 401 && !isInviteUrl) {
         console.error("API Error:", err.message);
       }
 

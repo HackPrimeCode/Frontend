@@ -33,10 +33,10 @@ export default function AuthLayout() {
 
   const stats = useMemo(() => {
     const totalParticipants = hackathons.reduce(
-      (acc, h) => acc + h.total_participants,
+      (acc, h) => acc + h.current_participants,
       0,
     );
-    const totalTeams = hackathons.reduce((acc, h) => acc + h.total_teams, 0);
+    const totalTeams = hackathons.reduce((acc, h) => acc + h.current_teams, 0);
     const finishedCount = hackathons.filter(
       (h) => h.status === "FINISHED",
     ).length;

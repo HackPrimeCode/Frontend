@@ -1,4 +1,4 @@
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { File } from "@/features/hackathons/model/hackathonTypes";
 
@@ -10,6 +10,21 @@ export default function TaskFilesTab({ files }: TaskFilesTabProps) {
   const handleDownload = (fileName: string) => {
     console.log(`Скачивание файла: ${fileName}`);
   };
+
+  if (!files || files.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-card-background border border-border rounded-lg border-dashed min-w-0 w-full animate-fadeIn">
+        <FolderOpen className="w-8 h-8 text-text-accent/40 mb-3 stroke-[1.5]" />
+        <h3 className="text-sm font-medium text-white mb-1">
+          Файлы задания отсутствуют
+        </h3>
+        <p className="text-xs text-text-accent/60 max-w-xs leading-relaxed">
+          Организаторы не прикрепили дополнительные материалы или архивы к этому
+          хакатону.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2.5 animate-fadeIn w-full">

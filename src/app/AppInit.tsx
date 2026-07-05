@@ -1,29 +1,31 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useRefreshSessionMutation } from "@/features/auth/api/authApi";
-import { setInitialized } from "@/features/auth/model/authSlice";
-import { useDispatch } from "react-redux";
+import {
+  selectIsAuthenticated,
+  setCredentials,
+  setInitialized,
+} from "@/features/auth/model/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetUserProfileLazyQuery } from "@/features/profile/api/profileApi";
 
 function AppInit({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
-  const [refresh, { isLoading: isRefreshLoading }] =
-    useRefreshSessionMutation();
-
-  const [triggerGetUserProfile] = useGetUserProfileLazyQuery();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const [isChainLoading, setIsChainLoading] = useState(true);
-  const isInitialized = useRef(false);
+
+  const [refresh] = useRefreshSessionMutation();
+  const [triggerGetUserProfile] = useGetUserProfileLazyQuery();
 
   useEffect(() => {
-    if (isInitialized.current) return;
-    isInitialized.current = true;
-
     const initAuthChain = async () => {
       try {
-        await refresh().unwrap();
-        await triggerGetUserProfile().unwrap();
+        const response = await refresh().unwrap();
+        dispatch(setCredentials(response));
+
+        console.log("Автоматический рефреш выполнен успешно.");
       } catch (error) {
-        console.error(error);
+        console.log("Старая сессия отсутствует или истекла.");
       } finally {
         setIsChainLoading(false);
         dispatch(setInitialized(true));
@@ -31,17 +33,28 @@ function AppInit({ children }: { children: ReactNode }) {
     };
 
     initAuthChain();
-  }, [refresh, triggerGetUserProfile, dispatch]);
+  }, [refresh, dispatch]);
 
-  if (isRefreshLoading || isChainLoading) {
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("Авторизация подтверждена. Загружаем профиль...");
+      triggerGetUserProfile()
+        .unwrap()
+        .catch((err) => console.error("Не удалось загрузить профиль:", err));
+    }
+  }, [isAuthenticated, triggerGetUserProfile]);
+
+  if (isChainLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <span className="animate-pulse text-sm text-white">
+          Инициализация приложения...
+        </span>
       </div>
     );
   }
 
-  return children;
+  return <>{children}</>;
 }
 
 export default AppInit;

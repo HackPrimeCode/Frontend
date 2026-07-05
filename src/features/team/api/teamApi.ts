@@ -1,78 +1,30 @@
 import { api } from "@/store/api";
 import type {
-  Team,
-  TeamCreateRequest,
+  TeamDetailRead,
   TeamCreateResponse,
   InviteTokenRead,
+  TeamCreateFormData,
 } from "../model/teamTypes";
-
-const mockTeam: Team = {
-  id: 1,
-  name: "ByteForce",
-  description:
-    "Мы — сыгранная команда инженеров, готовая к вызовам HackPrimeCode Лето 2026.",
-  hackathon_id: 1,
-  hackathon_title: "HackPrimeCode Лето 2026",
-  hackathon_dates: "18-20 июля 2026",
-  hackathon_description:
-    "HackPrimeCode Лето 2026 - специализированный хакатон для разработчиков в области ML и AI.",
-  hackathon_topics: ["ML", "Python", "React", "Go"],
-  hackathon_min_size: 1,
-  hackathon_max_size: 4,
-  members: [
-    {
-      id: 1,
-      user_id: 1,
-      team_id: 1,
-      email: "killoq7@gmail.com",
-      name: "Алексей Иванов",
-      skills: ["ML", "Python", "React", "Go"],
-      is_captain: true,
-      avatar_color: "bg-red",
-    },
-    {
-      id: 2,
-      user_id: 1111,
-      team_id: 1,
-      email: "m.volkova@gmail.com",
-      name: "Мария Волкова",
-      skills: ["ML", "Python", "React", "Go"],
-      is_captain: false,
-      avatar_color: "bg-green-500",
-    },
-  ],
-  pending_invites: ["o.sidorova@example.com"],
-  created_at: "2026-06-20T10:00:00",
-};
 
 export const teamsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    // Подключить реальный API, когда бэк будет готов
-    getMyTeam: builder.query<Team | null, void>({
-      queryFn: () => {
-        return { data: mockTeam };
-      },
-      // query: () => ({
-      //   url: "/teams/my",
-      //   method: "GET",
-      // }),
+    getTeamById: builder.query<TeamDetailRead, number>({
+      query: (teamId) => ({
+        url: `/teams/${teamId}`,
+        method: "GET",
+      }),
       providesTags: ["Team"],
     }),
 
-    // POST /hackathons/{hackathon_id}/teams
-    createTeam: builder.mutation<
-      TeamCreateResponse,
-      { hackathon_id: number; data: TeamCreateRequest }
-    >({
-      query: ({ hackathon_id, data }) => ({
+    createTeam: builder.mutation<TeamCreateResponse, TeamCreateFormData>({
+      query: ({ hackathon_id, teamPayload }) => ({
         url: `/hackathons/${hackathon_id}/teams`,
         method: "POST",
-        body: data,
+        data: teamPayload,
       }),
-      invalidatesTags: ["Team"],
+      invalidatesTags: ["Team", "User"],
     }),
 
-    // POST /teams/{team_id}/invite
     inviteToTeam: builder.mutation<
       InviteTokenRead[],
       { teamId: number; emails: string[] }
@@ -80,15 +32,22 @@ export const teamsApi = api.injectEndpoints({
       query: ({ teamId, emails }) => ({
         url: `/teams/${teamId}/invite`,
         method: "POST",
-        body: { emails },
+        data: { emails },
       }),
       invalidatesTags: ["Team"],
     }),
 
-    // DELETE /teams/members/{memberId}
-    removeMember: builder.mutation<void, { memberId: number }>({
-      query: ({ memberId }) => ({
-        url: `/teams/members/${memberId}`,
+    removeMember: builder.mutation<void, { teamId: number; userId: number }>({
+      query: ({ teamId, userId }) => ({
+        url: `/teams/${teamId}/members/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Team"],
+    }),
+
+    cancelInvite: builder.mutation<void, { teamId: number; token: string }>({
+      query: ({ teamId, token }) => ({
+        url: `/teams/${teamId}/invites/${token}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Team"],
@@ -97,8 +56,9 @@ export const teamsApi = api.injectEndpoints({
 });
 
 export const {
-  useGetMyTeamQuery,
+  useGetTeamByIdQuery,
   useCreateTeamMutation,
   useInviteToTeamMutation,
   useRemoveMemberMutation,
+  useCancelInviteMutation,
 } = teamsApi;

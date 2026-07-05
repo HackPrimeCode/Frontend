@@ -1,24 +1,60 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, X, FileText } from "lucide-react";
 import { useCountdown } from "@/lib/hooks/useCountdown";
-import { mockHackathon } from "../TaskTab/TaskTab";
-import { useGetMyTeamQuery } from "@/features/team/api/teamApi";
 import { Link } from "react-router";
+import { useGetTeamByIdQuery } from "@/features/team/api/teamApi";
+import { useSelector } from "react-redux";
+import { selectCurrentTeamId } from "@/features/auth/model/authSlice";
+import {
+  useGetSubmissionQuery,
+  useSubmitSolutionMutation,
+} from "./submissionApi";
 
 export default function SubmissionTab() {
   const [projectName, setProjectName] = useState("");
-  const [repositoryUrl, setRepositoryUrl] = useState("");
   const [demoUrl, setDemoUrl] = useState("");
-  const [presentationFile, setPresentationFile] = useState<File | null>(null);
+  const [repositoryUrl, setRepositoryUrl] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const [presentationFile, setPresentationFile] = useState<File | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedTime, setSubmittedTime] = useState<string | null>(null);
-  const { data: team, isLoading } = useGetMyTeamQuery();
+
+  const teamId = useSelector(selectCurrentTeamId);
+
+  const { data: team, isLoading: isTeamLoading } = useGetTeamByIdQuery(
+    teamId!,
+    {
+      skip: !teamId,
+    },
+  );
+
+  const { data: submission, isLoading: isSubmissionLoading } =
+    useGetSubmissionQuery(teamId!, {
+      skip: !teamId,
+    });
+
+  const [submitSolution, { isLoading: isSubmitting }] =
+    useSubmitSolutionMutation();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { days, hours, minutes, seconds, isExpired } = useCountdown(
-    mockHackathon.end_date,
+    team?.hackathon.end_date ?? "",
   );
+
+  useEffect(() => {
+    if (!submission) return;
+
+    setRepositoryUrl(submission.repository_url);
+    setProjectDescription(submission.description);
+
+    if (submission.submitted_at) {
+      setSubmittedTime(
+        new Date(submission.submitted_at).toLocaleTimeString("ru-RU"),
+      );
+
+      setIsSubmitted(true);
+    }
+  }, [submission]);
 
   const timeBlocks = [
     { value: days, label: "Дни" },
@@ -30,53 +66,68 @@ export default function SubmissionTab() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.type === "application/pdf") {
-        setPresentationFile(file);
-      }
+      if (file.type === "application/pdf") setPresentationFile(file);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      if (file.type === "application/pdf") {
-        setPresentationFile(file);
-      }
+      if (file.type === "application/pdf") setPresentationFile(file);
     }
   };
 
   const removeFile = () => {
     setPresentationFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+    if (!teamId) return;
+
+    const payload = {
+      description: projectDescription,
+      repository_url: repositoryUrl,
+      files: [],
+    };
+
+    try {
+      await submitSolution({ teamId, payload }).unwrap();
+      setSubmittedTime(new Date().toLocaleTimeString("ru-RU"));
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error("Не удалось отправить решение:", err);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    console.log("=== Отправка проекта ===");
-    console.log("Ссылка на репозиторий:", repositoryUrl);
-    console.log(
-      "Файл презентации:",
-      presentationFile
-        ? {
-            name: presentationFile.name,
-            size: `${(presentationFile.size / (1024 * 1024)).toFixed(2)} MB`,
-            type: presentationFile.type,
-          }
-        : "Не загружен",
+  if (isTeamLoading || isSubmissionLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-3.75rem)] w-full">
+        <span className="animate-pulse text-sm text-white">Загрузка...</span>
+      </div>
     );
-    console.log("Описание проекта:", projectDescription);
-    setSubmittedTime(new Date().toLocaleTimeString("ru-RU"));
+  }
 
-    setIsSubmitted(true);
-  };
+  if (!team) {
+    return (
+      <div className="text-text-accent text-sm p-6 text-center border border-dashed border-border rounded-xl bg-card-background/20 max-w-2xl mx-auto animate-fadeIn">
+        <p className="mb-4">
+          Вы не состоите в команде. Сдача проекта доступна только для
+          подтвержденных команд хакатона.
+        </p>
+        <Link
+          to="/team"
+          className="text-red hover:underline text-xs font-medium"
+        >
+          Перейти к созданию или выбору команды
+        </Link>
+      </div>
+    );
+  }
 
   if (isSubmitted) {
     return (
@@ -115,14 +166,6 @@ export default function SubmissionTab() {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-3.75rem)] w-full">
-        <span className="animate-pulse text-sm text-white">Загрузка...</span>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full max-w-2xl animate-fadeIn mx-auto grid grid-cols-[1fr_auto] items-start gap-10 pt-8 px-4 md:px-0">
       <div className="flex flex-col items-center gap-6">
@@ -136,7 +179,7 @@ export default function SubmissionTab() {
             Отправить проект
           </h2>
           <p className="text-xs text-text-accent">
-            // Команда {team?.name} • {team?.hackathon_title}
+            // Команда {team?.name} • {team?.hackathon.title}
           </p>
         </div>
 
@@ -278,10 +321,11 @@ export default function SubmissionTab() {
 
           <button
             type="submit"
+            disabled={isExpired || isSubmitting}
             className="w-full flex justify-center items-center gap-3 h-11 px-2 bg-red text-white text-sm rounded hover:bg-red/90 transition-colors cursor-pointer"
           >
             <img src="./send-invite-icon.svg" alt="" className="w-4 h-4" />
-            <span>Отправить решение</span>
+            <span>{isSubmitting ? "Отправка..." : "Отправить решение"}</span>
           </button>
         </form>
       </div>

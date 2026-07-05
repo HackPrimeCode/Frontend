@@ -32,8 +32,8 @@ export interface HackathonDetailRead {
   min_team_size: number;
   max_team_size: number;
   max_participants: number | null;
-  total_participants: number;
-  total_teams: number;
+  current_participants: number;
+  current_teams: number;
   start_date: string;
   end_date: string;
   submission_requirements: string[] | null;

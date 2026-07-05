@@ -6,8 +6,6 @@ import {
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
 } from "@/features/profile/api/profileApi";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "@/store";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -18,10 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { GlobalRole } from "@/features/auth/model/authTypes";
-import { updateUser } from "@/features/auth/model/authSlice";
-import type { HackathonParticipation } from "@/features/profile/model/profileTypes";
 import type { HackathonDetailRead } from "@/features/hackathons/model/hackathonTypes";
-import { calculateDurationHours, formatDate } from "@/lib/utils";
+import HackathonDetailsModal from "@/features/hackathons/components/HackathonDetailsModal";
 
 function getRoleLabel(role: GlobalRole | undefined) {
   if (role === "admin") return "Администратор";
@@ -37,106 +33,99 @@ function parseSkillsInput(value: string) {
 }
 
 export default function ProfilePage() {
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const {
-    data: profile,
-    isLoading: profileLoading,
-    isError: profileError,
-  } = useGetUserProfileQuery();
-  const [updateProfile, { isLoading: isSaving }] =
+  const { data: user, isLoading, isError } = useGetUserProfileQuery();
+  const [updateProfile, { isLoading: isUpdating }] =
     useUpdateUserProfileMutation();
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editName, setEditName] = useState("");
-  const [editSkills, setEditSkills] = useState("");
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [selectedHackathon, setSelectedHackathon] =
-    useState<HackathonDetailRead | null>(null);
-  const [selectedHistoryEvent, setSelectedHistoryEvent] =
-    useState<HackathonParticipation | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isHackathonModalOpen, setIsHackathonModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
+  const handleApply = () => {};
+
+  const [selectedHackathon, setSelectedHackathon] =
+    useState<HackathonDetailRead | null>(null);
+  // const [selectedHistoryEvent, setSelectedHistoryEvent] =
+  //   useState<HackathonDetailRead | null>(null);
+
+  const [name, setName] = useState("");
+  const [skillsString, setSkillsString] = useState("");
+
   useEffect(() => {
-    if (isEditDialogOpen && profile) {
-      setEditName(profile.name);
-      setEditSkills(profile.tech_stack.join(", "));
-      setSaveError(null);
+    if (user) {
+      setName(user.name || "");
+      setSkillsString(user.tech_stack ? user.tech_stack.join(", ") : "");
     }
-  }, [isEditDialogOpen, profile]);
+  }, [user, isEditModalOpen]);
 
   const isParticipant = user?.global_role === "user";
   const roleLabel = getRoleLabel(user?.global_role);
-  const durationHours = calculateDurationHours(
-    selectedHackathon?.start_date,
-    selectedHackathon?.end_date,
-  );
+
+  console.log(user);
 
   const handleSaveProfile = async () => {
-    const name = editName.trim();
-    if (!name) {
-      setSaveError("Имя не может быть пустым");
-      return;
-    }
-
     try {
-      const updatedProfile = await updateProfile({
+      await updateProfile({
         name,
-        tech_stack: parseSkillsInput(editSkills),
+        tech_stack: parseSkillsInput(skillsString),
       }).unwrap();
 
-      dispatch(updateUser({ name: updatedProfile.name }));
-      setIsEditDialogOpen(false);
-    } catch {
-      setSaveError("Не удалось сохранить профиль");
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error("Не удалось обновить профиль:", err);
     }
   };
 
-  const handleHackathonDetailsClick = (hackathon: HackathonDetailRead) => {
-    setSelectedHackathon(hackathon);
-    setIsHackathonModalOpen(true);
-  };
-
-  const handleHistoryDetailsClick = (event: HackathonParticipation) => {
-    setSelectedHistoryEvent(event);
+  const handleHistoryDetailsClick = (event: HackathonDetailRead) => {
+    setSelectedHackathon(event);
     setIsHistoryModalOpen(true);
   };
 
+  const handleHackathonDetailsClick = (event: HackathonDetailRead) => {
+    setSelectedHackathon(event);
+    setIsHackathonModalOpen(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="w-full p-6 text-center text-text-accent text-sm animate-pulse">
+        Загрузка личного кабинета...
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="w-full p-12 text-center text-text-accent text-sm border border-dashed border-border rounded-xl max-w-md mx-auto mt-10">
+        Не удалось загрузить профиль. Попробуйте перезайти в аккаунт или
+        обновить страницу.
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[calc(100vh-3.75rem)] w-full bg-background p-4 sm:p-6">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 sm:gap-6">
-        {profileError && (
-          <div className="rounded-lg border border-red bg-red/10 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-red">
-            Ошибка при загрузке профиля
-          </div>
-        )}
-
+      <div className="mx-auto flex w-full max-w-300 flex-col gap-4 sm:gap-6">
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
           <div className="space-y-3 sm:space-y-4">
             <ProfileHeader
-              profile={profile}
-              isLoading={profileLoading}
-              onEditClick={() => setIsEditDialogOpen(true)}
+              profile={user}
+              onEditClick={() => setIsEditModalOpen(true)}
               showSkills
               showStats={isParticipant}
               roleLabel={roleLabel}
             />
-            {isParticipant && (
-              <CurrentTeamSection team={null} isLoading={profileLoading} />
-            )}
+            {isParticipant && <CurrentTeamSection team={user.current_team} />}
           </div>
 
           <div className="space-y-6 sm:space-y-8">
             <CurrentHackathonSection
-              hackathon={null}
-              isLoading={profileLoading}
+              hackathon={user.active_hackathon}
               onDetailsClick={handleHackathonDetailsClick}
             />
             {isParticipant && (
               <HackathonHistorySection
-                history={profile?.hackathon_participations ?? []}
-                isLoading={profileLoading}
+                history={user?.past_hackathons ?? []}
                 onDetailsClick={handleHistoryDetailsClick}
               />
             )}
@@ -144,7 +133,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="border-border bg-card-background text-text">
           <DialogHeader>
             <DialogTitle className="text-text">
@@ -155,8 +144,8 @@ export default function ProfilePage() {
             <div>
               <label className="text-sm text-text-accent">Имя</label>
               <Input
-                value={editName}
-                onChange={(event) => setEditName(event.target.value)}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
                 placeholder="Ваше имя"
                 className="mt-2 border-border bg-input-background text-text"
               />
@@ -164,185 +153,38 @@ export default function ProfilePage() {
             <div>
               <label className="text-sm text-text-accent">Навыки</label>
               <Input
-                value={editSkills}
-                onChange={(event) => setEditSkills(event.target.value)}
+                value={skillsString}
+                onChange={(event) => setSkillsString(event.target.value)}
                 placeholder="Python, React, Go..."
                 className="mt-2 border-border bg-input-background text-text"
               />
             </div>
-            {saveError && <p className="text-sm text-red">{saveError}</p>}
             <div className="flex gap-2 pt-4">
               <Button
                 variant="outline"
-                onClick={() => setIsEditDialogOpen(false)}
-                disabled={isSaving}
+                onClick={() => setIsEditModalOpen(false)}
                 className="flex-1 border-border text-text hover:bg-text-accent/10"
               >
                 Отмена
               </Button>
               <Button
                 onClick={handleSaveProfile}
-                disabled={isSaving}
+                disabled={isUpdating}
                 className="flex-1 bg-red text-text hover:bg-red/90"
               >
-                {isSaving ? "Сохранение..." : "Сохранить"}
+                {isUpdating ? "Сохранение..." : "Сохранить"}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={isHackathonModalOpen}
-        onOpenChange={setIsHackathonModalOpen}
-      >
-        <DialogContent className="max-w-2xl border-border bg-card-background text-text">
-          <DialogHeader>
-            <DialogTitle className="text-text">
-              {selectedHackathon?.title}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <h3 className="mb-2 text-sm font-semibold text-text-accent">
-                Описание
-              </h3>
-              <p className="text-text">{selectedHackathon?.description}</p>
-            </div>
-
-            {selectedHackathon?.topics &&
-              selectedHackathon.topics.length > 0 && (
-                <div>
-                  <h3 className="mb-2 text-sm font-semibold text-text-accent">
-                    Требуемые навыки
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedHackathon.topics.map((skill) => (
-                      <span
-                        key={skill}
-                        className="rounded border border-border bg-transparent px-2.5 py-1 text-xs text-text-accent"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="mb-1 text-xs text-text-accent">Дата</p>
-                <p className="font-medium text-text">
-                  {formatDate(selectedHackathon?.start_date)} -{" "}
-                  {formatDate(selectedHackathon?.end_date)}
-                </p>
-              </div>
-              <div>
-                <p className="mb-1 text-xs text-text-accent">Место</p>
-                <p className="font-medium text-text">
-                  {selectedHackathon?.event_location}
-                </p>
-              </div>
-              <div>
-                <p className="mb-1 text-xs text-text-accent">
-                  Продолжительность
-                </p>
-                <p className="font-medium text-text">{durationHours} часов</p>
-              </div>
-              <div>
-                <p className="mb-1 text-xs text-text-accent">Участников</p>
-                <p className="font-medium text-text">
-                  {selectedHackathon?.total_participants}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsHackathonModalOpen(false)}
-                className="flex-1 border-border text-text hover:bg-text-accent/10"
-              >
-                Закрыть
-              </Button>
-              <Button className="flex-1 bg-red text-text hover:bg-red/90">
-                Перейти к мероприятию
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {isParticipant && (
-        <Dialog open={isHistoryModalOpen} onOpenChange={setIsHistoryModalOpen}>
-          <DialogContent className="max-w-2xl border-border bg-card-background text-text">
-            <DialogHeader>
-              <DialogTitle className="text-text">
-                {selectedHistoryEvent?.title}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <h3 className="mb-2 text-sm font-semibold text-text-accent">
-                  Информация о участии
-                </h3>
-                {selectedHistoryEvent?.team_name && (
-                  <p className="mb-2 text-text">
-                    <span className="text-text-accent">Команда:</span>{" "}
-                    {selectedHistoryEvent.team_name}
-                  </p>
-                )}
-                <p className="mb-2 text-text">
-                  <span className="text-text-accent">Дата:</span>{" "}
-                  {selectedHistoryEvent?.date &&
-                    new Date(selectedHistoryEvent.date).toLocaleDateString(
-                      "ru-RU",
-                    )}
-                </p>
-              </div>
-
-              {selectedHistoryEvent?.status === "FINISHED" && (
-                <div>
-                  <h3 className="mb-2 text-sm font-semibold text-text-accent">
-                    Результаты
-                  </h3>
-                  <div className="space-y-2">
-                    {selectedHistoryEvent.position && (
-                      <p className="text-text">
-                        <span className="text-text-accent">Место:</span>{" "}
-                        <span className="font-bold text-red">
-                          {selectedHistoryEvent.position}
-                        </span>
-                      </p>
-                    )}
-                    {selectedHistoryEvent.score !== undefined && (
-                      <p className="text-text">
-                        <span className="text-text-accent">Балл:</span>{" "}
-                        <span className="font-bold text-yellow">
-                          {selectedHistoryEvent.score.toFixed(1)}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsHistoryModalOpen(false)}
-                  className="flex-1 border-border text-text hover:bg-text-accent/10"
-                >
-                  Закрыть
-                </Button>
-                <Button className="flex-1 bg-red text-text hover:bg-red/90">
-                  Перейти к мероприятию
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      <HackathonDetailsModal
+        isOpen={isHackathonModalOpen || isHistoryModalOpen}
+        onClose={() => setIsHackathonModalOpen(true)}
+        hackathon={selectedHackathon}
+        onApply={handleApply}
+      />
     </div>
   );
 }

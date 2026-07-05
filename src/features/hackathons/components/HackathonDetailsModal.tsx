@@ -20,6 +20,8 @@ import {
   statusConfig,
 } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { selectCurrentContext } from "@/features/auth/model/authSlice";
+import { useSelector } from "react-redux";
 
 interface HackathonDetailsModalProps {
   isOpen: boolean;
@@ -68,6 +70,10 @@ export default function HackathonDetailsModal({
   hackathon,
   onApply,
 }: HackathonDetailsModalProps) {
+  const authContext = useSelector(selectCurrentContext);
+  const isParticipant = authContext?.teamId !== null;
+  console.log(authContext!);
+  console.count("HackathonDetailsModal render");
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -93,7 +99,13 @@ export default function HackathonDetailsModal({
   );
 
   const participantPercent =
-    (hackathon.total_participants / hackathon.max_participants) * 100;
+    (hackathon.current_participants / hackathon.max_participants) * 100;
+
+  const hasPrizes = hackathon?.prizes && hackathon.prizes.length > 0;
+  const hasTopics = hackathon?.topics && hackathon.topics.length > 0;
+  const hasRequirements =
+    hackathon?.submission_requirements &&
+    hackathon.submission_requirements.length > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
@@ -162,8 +174,8 @@ export default function HackathonDetailsModal({
               <div className="flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red" />
                 <span>
-                  {hackathon.total_participants} / {hackathon.max_participants}{" "}
-                  участников
+                  {hackathon.current_participants} /{" "}
+                  {hackathon.max_participants} участников
                 </span>
               </div>
             </div>
@@ -192,63 +204,73 @@ export default function HackathonDetailsModal({
               </p>
             </div>
 
-            <div className="flex flex-col gap-2.5">
-              <h4 className="text-[10px] sm:text-[0.6875rem] text-text-accent uppercase tracking-widest">
-                Призы
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {hackathon.prizes.map((prize) => (
-                  <div
-                    key={prize.id}
-                    className="flex items-center gap-3.5 px-3.5 py-2.5 sm:px-4 sm:py-3 bg-card-background border-2 border-border rounded-lg"
-                  >
-                    {getPrizeIcon(prize.title)}
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-xs sm:text-sm tracking-wide text-white truncate">
-                        {formatTotalRewards(+prize.reward)}
-                      </span>
-                      <span className="text-[10px] sm:text-[0.6875rem] text-text-accent leading-tight mt-0.5 line-clamp-2">
-                        {prize.title}
-                      </span>
+            {hasPrizes && (
+              <div className="flex flex-col gap-2.5">
+                <h4 className="text-[10px] sm:text-[0.6875rem] text-text-accent uppercase tracking-widest">
+                  Призы
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {hackathon.prizes.map((prize) => (
+                    <div
+                      key={prize.id}
+                      className="flex items-center gap-3.5 px-3.5 py-2.5 sm:px-4 sm:py-3 bg-card-background border-2 border-border rounded-lg"
+                    >
+                      {getPrizeIcon(prize.title)}
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-xs sm:text-sm tracking-wide text-white truncate">
+                          {formatTotalRewards(+prize.reward)}
+                        </span>
+                        <span className="text-[10px] sm:text-[0.6875rem] text-text-accent leading-tight mt-0.5 line-clamp-2">
+                          {prize.title}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {hasRequirements && (
+              <div className="flex flex-col gap-2.5">
+                <h4 className="text-[10px] sm:text-[0.6875rem] text-text-accent uppercase tracking-widest">
+                  требования
+                </h4>
+                <ul className="flex flex-col gap-1.5 text-xs sm:text-[0.8125rem] text-[#e5e5ea]">
+                  {hackathon.submission_requirements.map((req, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
+                      <span>{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {hasTopics && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {hackathon.topics.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="h-5.5 px-2.5 bg-input-background border border-border/70 rounded-sm text-[10px] sm:text-[0.6875rem] text-text-accent flex items-center tracking-wide"
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
-            </div>
-
-            <div className="flex flex-col gap-2.5">
-              <h4 className="text-[10px] sm:text-[0.6875rem] text-text-accent uppercase tracking-widest">
-                требования
-              </h4>
-              <ul className="flex flex-col gap-1.5 text-xs sm:text-[0.8125rem] text-[#e5e5ea]">
-                {hackathon.submission_requirements.map((req, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red mt-1.5 shrink-0" />
-                    <span>{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {hackathon.topics.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className="h-5.5 px-2.5 bg-input-background border border-border/70 rounded-sm text-[10px] sm:text-[0.6875rem] text-text-accent flex items-center tracking-wide"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            )}
           </div>
         </div>
 
         <div className="w-full min-h-16 sm:h-18 px-4 py-3 sm:py-0 sm:px-7 bg-background border-t-2 border-border flex flex-col sm:flex-row gap-3 sm:gap-0 items-center justify-between shrink-0">
           <div className="text-xs sm:text-sm text-[#e5e5ea] tracking-wide text-center sm:text-left">
-            <span className="text-white">{hackathon.total_teams}</span> команд
+            <span className="text-white">{hackathon.current_teams}</span> команд
             зарегистрировано
           </div>
-          {hackathon.status !== "FINISHED" && (
+          {hackathon.status === "FINISHED" ? (
+            <span>Хакатон завершен </span>
+          ) : isParticipant ? (
+            <span>Вы уже участвуете в хакатоне</span>
+          ) : (
             <Button
               onClick={() => {
                 if (hackathon && onApply) {
