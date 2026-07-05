@@ -210,7 +210,7 @@ export default function TaskTab({ hackathonId }: TaskTabProps) {
         </div>
 
         {activeContentTab === "spec" ? (
-          <OrganizerTaskSpecTab hackathonId={hackathonId} initialData={specification} />
+          <OrganizerTaskSpecTab hackathonId={hackathonId} initialData={specification} taskName={newTaskName} />
         ) : (
           <OrganizerTaskFilesTab hackathonId={hackathonId} />
         )}

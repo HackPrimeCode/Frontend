@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, Calendar, MapPin, Users, Plus, Award, ChevronDown } from "lucide-react";
+import { BookOpen, BarChart2, FileText, Settings, UserCheck, X, Tag, MapPin, Users, Plus, Award, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import OverviewTab from "@/features/organizer/components/OverviewTab";
 import TaskTab from "@/features/organizer/components/TaskTab";
 import SettingsTab from "@/features/organizer/components/SettingsTab";
 import JuryTab from "@/features/organizer/components/JuryTab";
-import { useCreateHackathonMutation, useGetAdminHackathonsListQuery, useGetOrganizerHackathonQuery } from "@/features/organizer/api";
+import { useCreateHackathonMutation, useGetAdminHackathonsListQuery } from "@/features/organizer/api";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import type { HackathonLocation } from "@/features/organizer/model/organizerTypes";
@@ -45,40 +45,64 @@ export default function OrganizerPage() {
     skip: !isAdmin,
   });
 
-  const { data: organizerHackathon } = useGetOrganizerHackathonQuery(undefined, {
-    skip: !isOrganizer,
-  });
-
   const [createHackathon] = useCreateHackathonMutation();
 
-  // Load saved hackathon selection from localStorage
+  // Restore saved selection only for the role that created it.
   useEffect(() => {
-    const savedHackathonId = localStorage.getItem('selectedHackathonId');
-    const savedHackathonTitle = localStorage.getItem('selectedHackathonTitle');
-    
-    if (savedHackathonId && savedHackathonTitle) {
-      setCurrentHackathonId(parseInt(savedHackathonId));
-      setCurrentHackathonTitle(savedHackathonTitle);
-      setHasEvent(true);
+    if (isAdmin) {
+      const savedHackathonId = localStorage.getItem("selectedHackathonId");
+      const savedHackathonTitle = localStorage.getItem("selectedHackathonTitle");
+
+      if (savedHackathonId && savedHackathonTitle) {
+        setCurrentHackathonId(parseInt(savedHackathonId));
+        setCurrentHackathonTitle(savedHackathonTitle);
+        setHasEvent(true);
+      } else {
+        setCurrentHackathonId(null);
+        setCurrentHackathonTitle("");
+        setHasEvent(false);
+      }
+      return;
     }
-  }, []);
+
+    if (isOrganizer) {
+      const savedOrganizerHackathonId = localStorage.getItem("selectedOrganizerHackathonId");
+      const savedOrganizerHackathonTitle = localStorage.getItem("selectedOrganizerHackathonTitle");
+
+      if (savedOrganizerHackathonId && savedOrganizerHackathonTitle) {
+        setCurrentHackathonId(parseInt(savedOrganizerHackathonId));
+        setCurrentHackathonTitle(savedOrganizerHackathonTitle);
+        setHasEvent(true);
+      } else {
+        setCurrentHackathonId(null);
+        setCurrentHackathonTitle("");
+        setHasEvent(false);
+      }
+      return;
+    }
+
+    setCurrentHackathonId(null);
+    setCurrentHackathonTitle("");
+    setHasEvent(false);
+  }, [isAdmin, isOrganizer]);
 
   // Save hackathon selection to localStorage when it changes
   useEffect(() => {
-    if (currentHackathonId && currentHackathonTitle) {
-      localStorage.setItem('selectedHackathonId', currentHackathonId.toString());
-      localStorage.setItem('selectedHackathonTitle', currentHackathonTitle);
+    if (!currentHackathonId || !currentHackathonTitle) {
+      return;
     }
-  }, [currentHackathonId, currentHackathonTitle]);
 
-  // Load organizer's hackathon automatically
-  useEffect(() => {
-    if (isOrganizer && organizerHackathon && !currentHackathonId) {
-      setCurrentHackathonId(organizerHackathon.id);
-      setCurrentHackathonTitle(organizerHackathon.title);
-      setHasEvent(true);
+    if (isAdmin) {
+      localStorage.setItem("selectedHackathonId", currentHackathonId.toString());
+      localStorage.setItem("selectedHackathonTitle", currentHackathonTitle);
+      return;
     }
-  }, [isOrganizer, organizerHackathon, currentHackathonId]);
+
+    if (isOrganizer) {
+      localStorage.setItem("selectedOrganizerHackathonId", currentHackathonId.toString());
+      localStorage.setItem("selectedOrganizerHackathonTitle", currentHackathonTitle);
+    }
+  }, [currentHackathonId, currentHackathonTitle, isAdmin, isOrganizer]);
 
   const handleCreateEvent = async () => {
     try {
@@ -111,9 +135,13 @@ export default function OrganizerPage() {
       setHasEvent(true);
       setIsCreateEventModalOpen(false);
       
-      // Save to localStorage
-      localStorage.setItem('selectedHackathonId', result.id.toString());
-      localStorage.setItem('selectedHackathonTitle', result.title);
+      if (isAdmin) {
+        localStorage.setItem("selectedHackathonId", result.id.toString());
+        localStorage.setItem("selectedHackathonTitle", result.title);
+      } else if (isOrganizer) {
+        localStorage.setItem("selectedOrganizerHackathonId", result.id.toString());
+        localStorage.setItem("selectedOrganizerHackathonTitle", result.title);
+      }
     } catch (error) {
       console.error("Failed to create hackathon:", error);
     }

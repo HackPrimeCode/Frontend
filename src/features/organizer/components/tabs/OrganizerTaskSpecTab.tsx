@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { useUpdateHackathonSpecificationMutation } from "@/features/organizer/api";
 
 interface ConditionItem {
@@ -22,9 +21,10 @@ interface OrganizerTaskSpecTabProps {
     technical_limitations: string[] | null;
     evaluation_criteria: string[] | null;
   } | null;
+  taskName: string;
 }
 
-export default function OrganizerTaskSpecTab({ hackathonId, initialData }: OrganizerTaskSpecTabProps) {
+export default function OrganizerTaskSpecTab({ hackathonId, initialData, taskName }: OrganizerTaskSpecTabProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     functional: false,
     technical: false,
@@ -57,6 +57,7 @@ export default function OrganizerTaskSpecTab({ hackathonId, initialData }: Organ
 
   const [tempConditions, setTempConditions] = useState<Record<string, string>>({});
   const [taskDescription, setTaskDescription] = useState("");
+  const textareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
 
   const [updateSpecification] = useUpdateHackathonSpecificationMutation();
 
@@ -101,6 +102,16 @@ export default function OrganizerTaskSpecTab({ hackathonId, initialData }: Organ
     }
   }, [initialData]);
 
+  const adjustTextareaHeight = (element: HTMLTextAreaElement | null) => {
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.max(40, element.scrollHeight)}px`;
+  };
+
+  useEffect(() => {
+    Object.values(textareaRefs.current).forEach(adjustTextareaHeight);
+  }, [tempConditions]);
+
   // Auto-save when data changes
   useEffect(() => {
     if (!hackathonId) return;
@@ -115,7 +126,7 @@ export default function OrganizerTaskSpecTab({ hackathonId, initialData }: Organ
       updateSpecification({
         hackathonId,
         data: {
-          task: "", // Task name is handled in parent component
+          task: taskName.trim(),
           task_description: taskDescription || null,
           functional_requirements: functional,
           technical_limitations: technical,
@@ -126,7 +137,7 @@ export default function OrganizerTaskSpecTab({ hackathonId, initialData }: Organ
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [accordionData, taskDescription, hackathonId, updateSpecification]);
+  }, [accordionData, taskDescription, hackathonId, taskName, updateSpecification]);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -215,16 +226,22 @@ export default function OrganizerTaskSpecTab({ hackathonId, initialData }: Organ
                   )}
 
                   <div className="flex flex-col gap-2">
-                    <Input
+                    <textarea
+                      ref={(element) => {
+                        textareaRefs.current[id] = element;
+                        adjustTextareaHeight(element);
+                      }}
                       value={tempValue}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setTempConditions((prev) => ({
                           ...prev,
                           [id]: e.target.value,
-                        }))
-                      }
+                        }));
+                      }}
+                      onInput={(e) => adjustTextareaHeight(e.currentTarget)}
                       placeholder="Введите условие..."
-                      className="h-10 bg-input-background border border-border rounded-sm px-3 md:px-4 text-white placeholder:text-text-accent text-xs"
+                      rows={1}
+                      className="min-h-10 max-h-40 w-full bg-input-background border border-border rounded-sm px-3 md:px-4 py-2 text-white placeholder:text-text-accent text-xs resize-none overflow-hidden"
                     />
 
                     <div className="flex flex-col sm:flex-row justify-end gap-2">
