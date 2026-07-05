@@ -1,4 +1,4 @@
-export type GlobalRole = "admin" | "user" | "organizator";
+export type GlobalRole = "admin" | "user" | "organizator" | "judge";
 
 export type LocalRole = "captain" | "participant" | "judge";
 
