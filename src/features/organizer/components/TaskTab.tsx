@@ -20,6 +20,7 @@ export default function TaskTab({ hackathonId }: TaskTabProps) {
   });
 
   const [createSpecification] = useCreateHackathonSpecificationMutation();
+  const specification = hackathonData?.specification ?? null;
 
   useEffect(() => {
     if (hackathonData?.specification) {
@@ -209,9 +210,9 @@ export default function TaskTab({ hackathonId }: TaskTabProps) {
         </div>
 
         {activeContentTab === "spec" ? (
-          <OrganizerTaskSpecTab />
+          <OrganizerTaskSpecTab hackathonId={hackathonId} initialData={specification} />
         ) : (
-          <OrganizerTaskFilesTab />
+          <OrganizerTaskFilesTab hackathonId={hackathonId} />
         )}
       </div>
     </div>

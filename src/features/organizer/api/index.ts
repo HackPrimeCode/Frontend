@@ -88,6 +88,20 @@ export const organizerApi = api.injectEndpoints({
       }),
       invalidatesTags: ["OrganizerHackathon"],
     }),
+    uploadHackathonSpecificationFiles: builder.mutation<
+      { success: boolean },
+      { hackathonId: number; formData: FormData }
+    >({
+      query: ({ hackathonId, formData }) => ({
+        url: `/admin/hackathons/${hackathonId}/specification/files`,
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+      invalidatesTags: ["OrganizerHackathon"],
+    }),
   }),
 });
 
@@ -99,4 +113,5 @@ export const {
   useUpdateHackathonMutation,
   useCreateHackathonSpecificationMutation,
   useUpdateHackathonSpecificationMutation,
+  useUploadHackathonSpecificationFilesMutation,
 } = organizerApi;

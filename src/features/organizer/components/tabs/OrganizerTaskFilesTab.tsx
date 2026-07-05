@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Plus, X, FileText } from "lucide-react";
+import { useUploadHackathonSpecificationFilesMutation } from "@/features/organizer/api";
 
 interface TaskFile {
   id: string;
@@ -8,15 +9,20 @@ interface TaskFile {
   file: File;
 }
 
-export default function OrganizerTaskFilesTab() {
+interface OrganizerTaskFilesTabProps {
+  hackathonId: number | null;
+}
+
+export default function OrganizerTaskFilesTab({ hackathonId }: OrganizerTaskFilesTabProps) {
   const [files, setFiles] = useState<TaskFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadHackathonSpecificationFiles] = useUploadHackathonSpecificationFilesMutation();
 
   const handleAddFile = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
@@ -30,17 +36,35 @@ export default function OrganizerTaskFilesTab() {
       return;
     }
 
-    const newFile: TaskFile = {
-      id: `${Date.now()}-${file.name}`,
-      name: file.name,
-      size: formatFileSize(file.size),
-      file,
-    };
+    if (!hackathonId) {
+      alert("Сначала выберите мероприятие");
+      return;
+    }
 
-    setFiles((prev) => [...prev, newFile]);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      await uploadHackathonSpecificationFiles({
+        hackathonId,
+        formData,
+      }).unwrap();
+
+      const newFile: TaskFile = {
+        id: `${Date.now()}-${file.name}`,
+        name: file.name,
+        size: formatFileSize(file.size),
+        file,
+      };
+
+      setFiles((prev) => [...prev, newFile]);
+    } catch (error) {
+      console.error("Failed to upload task file:", error);
+      alert("Не удалось прикрепить файл");
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
