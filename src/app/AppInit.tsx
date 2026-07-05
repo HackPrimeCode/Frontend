@@ -23,9 +23,9 @@ function AppInit({ children }: { children: ReactNode }) {
         const response = await refresh().unwrap();
         dispatch(setCredentials(response));
 
-        console.log("Автоматический рефреш выполнен успешно.");
+        console.log("Автоматический рефреш выполнен успешно");
       } catch (error) {
-        console.log("Старая сессия отсутствует или истекла.");
+        console.log("Старая сессия отсутствует или истекла");
       } finally {
         setIsChainLoading(false);
         dispatch(setInitialized(true));

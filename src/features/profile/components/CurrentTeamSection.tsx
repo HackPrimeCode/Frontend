@@ -17,7 +17,6 @@ function getMembersLabel(count: number) {
 }
 
 export default function CurrentTeamSection({ team }: CurrentTeamSectionProps) {
-  console.log(team);
   const roleLabel = team.role_in_team === "captain" ? "Капитан" : "Участник";
   const initials = team.team_name
     ?.split(" ")

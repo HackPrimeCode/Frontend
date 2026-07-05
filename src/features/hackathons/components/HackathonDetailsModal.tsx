@@ -72,7 +72,6 @@ export default function HackathonDetailsModal({
 }: HackathonDetailsModalProps) {
   const authContext = useSelector(selectCurrentContext);
   const isParticipant = authContext?.teamId !== null;
-  console.log(authContext!);
   console.count("HackathonDetailsModal render");
   useEffect(() => {
     if (isOpen) {

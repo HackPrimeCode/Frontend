@@ -388,7 +388,6 @@ export default function TrackerTab() {
                   type="button"
                   onClick={async () => {
                     try {
-                      console.log("TRY BETTER");
                       await deleteTeamTask({
                         teamId,
                         taskId: selectedTask.id,

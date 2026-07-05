@@ -61,8 +61,6 @@ export default function ProfilePage() {
   const isParticipant = user?.global_role === "user";
   const roleLabel = getRoleLabel(user?.global_role);
 
-  console.log(user);
-
   const handleSaveProfile = async () => {
     try {
       await updateProfile({
