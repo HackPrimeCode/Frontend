@@ -12,6 +12,8 @@ export const api = createApi({
     "Tasks",
     "Submission",
     "Judge",
+    ,
+    "AdminHackathons",
   ],
   endpoints: () => ({}),
 });

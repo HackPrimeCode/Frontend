@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useUpdateHackathonSpecificationMutation } from "@/features/organizer/api";
 
 interface ConditionItem {
   id: string;
@@ -13,9 +13,19 @@ interface AccordionItemConfig {
   conditions: ConditionItem[];
 }
 
-export default function OrganizerTaskSpecTab() {
+interface OrganizerTaskSpecTabProps {
+  hackathonId: number | null;
+  initialData: {
+    task_description: string | null;
+    functional_requirements: string[] | null;
+    technical_limitations: string[] | null;
+    evaluation_criteria: string[] | null;
+  } | null;
+  taskName: string;
+}
+
+export default function OrganizerTaskSpecTab({ hackathonId, initialData, taskName }: OrganizerTaskSpecTabProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    description: true,
     functional: false,
     technical: false,
     criteria: false,
@@ -23,11 +33,6 @@ export default function OrganizerTaskSpecTab() {
   });
 
   const [accordionData, setAccordionData] = useState<AccordionItemConfig[]>([
-    {
-      id: "description",
-      title: "Общее описание задачи",
-      conditions: [],
-    },
     {
       id: "functional",
       title: "Функциональные требования",
@@ -51,6 +56,88 @@ export default function OrganizerTaskSpecTab() {
   ]);
 
   const [tempConditions, setTempConditions] = useState<Record<string, string>>({});
+  const [taskDescription, setTaskDescription] = useState("");
+  const textareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
+
+  const [updateSpecification] = useUpdateHackathonSpecificationMutation();
+
+  // Load initial data
+  useEffect(() => {
+    if (initialData) {
+      setTaskDescription(initialData.task_description || "");
+      
+      const newData = [...accordionData];
+      
+      if (initialData.functional_requirements && initialData.functional_requirements.length > 0) {
+        const functionalIndex = newData.findIndex(item => item.id === "functional");
+        if (functionalIndex !== -1) {
+          newData[functionalIndex].conditions = initialData.functional_requirements.map((req, idx) => ({
+            id: `functional-${idx}`,
+            value: req
+          }));
+        }
+      }
+      
+      if (initialData.technical_limitations && initialData.technical_limitations.length > 0) {
+        const technicalIndex = newData.findIndex(item => item.id === "technical");
+        if (technicalIndex !== -1) {
+          newData[technicalIndex].conditions = initialData.technical_limitations.map((lim, idx) => ({
+            id: `technical-${idx}`,
+            value: lim
+          }));
+        }
+      }
+      
+      if (initialData.evaluation_criteria && initialData.evaluation_criteria.length > 0) {
+        const criteriaIndex = newData.findIndex(item => item.id === "criteria");
+        if (criteriaIndex !== -1) {
+          newData[criteriaIndex].conditions = initialData.evaluation_criteria.map((crit, idx) => ({
+            id: `criteria-${idx}`,
+            value: crit
+          }));
+        }
+      }
+      
+      setAccordionData(newData);
+    }
+  }, [initialData]);
+
+  const adjustTextareaHeight = (element: HTMLTextAreaElement | null) => {
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.max(40, element.scrollHeight)}px`;
+  };
+
+  useEffect(() => {
+    Object.values(textareaRefs.current).forEach(adjustTextareaHeight);
+  }, [tempConditions]);
+
+  // Auto-save when data changes
+  useEffect(() => {
+    if (!hackathonId) return;
+
+    const functional = accordionData.find(item => item.id === "functional")?.conditions.map(c => c.value) || [];
+    const technical = accordionData.find(item => item.id === "technical")?.conditions.map(c => c.value) || [];
+    const criteria = accordionData.find(item => item.id === "criteria")?.conditions.map(c => c.value) || [];
+    const requirements = accordionData.find(item => item.id === "requirements")?.conditions.map(c => c.value) || [];
+
+    // Debounce save
+    const timeoutId = setTimeout(() => {
+      updateSpecification({
+        hackathonId,
+        data: {
+          task: taskName.trim(),
+          task_description: taskDescription || null,
+          functional_requirements: functional,
+          technical_limitations: technical,
+          evaluation_criteria: criteria,
+          files: requirements,
+        },
+      });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [accordionData, taskDescription, hackathonId, taskName, updateSpecification]);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -139,16 +226,22 @@ export default function OrganizerTaskSpecTab() {
                   )}
 
                   <div className="flex flex-col gap-2">
-                    <Input
+                    <textarea
+                      ref={(element) => {
+                        textareaRefs.current[id] = element;
+                        adjustTextareaHeight(element);
+                      }}
                       value={tempValue}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setTempConditions((prev) => ({
                           ...prev,
                           [id]: e.target.value,
-                        }))
-                      }
+                        }));
+                      }}
+                      onInput={(e) => adjustTextareaHeight(e.currentTarget)}
                       placeholder="Введите условие..."
-                      className="h-10 bg-input-background border border-border rounded-sm px-3 md:px-4 text-white placeholder:text-text-accent text-xs"
+                      rows={1}
+                      className="min-h-10 max-h-40 w-full bg-input-background border border-border rounded-sm px-3 md:px-4 py-2 text-white placeholder:text-text-accent text-xs resize-none overflow-hidden"
                     />
 
                     <div className="flex flex-col sm:flex-row justify-end gap-2">

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tag, MapPin, Users, Plus, Award, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useGetOrganizerHackathonDetailsQuery, useUpdateHackathonMutation } from "@/features/organizer/api";
 import type { HackathonLocation } from "@/features/organizer/model/organizerTypes";
 
 interface Prize {
@@ -8,10 +9,14 @@ interface Prize {
   reward: string;
 }
 
-export default function SettingsTab() {
-  const [eventTitle, setEventTitle] = useState("HackPrimeCode Лето 2026");
+interface SettingsTabProps {
+  hackathonId: number | null;
+}
+
+export default function SettingsTab({ hackathonId }: SettingsTabProps) {
+  const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
-  const [eventLocation, setEventLocation] = useState<HackathonLocation>("Online");
+  const [eventLocation, setEventLocation] = useState<HackathonLocation>("Онлайн");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -21,6 +26,98 @@ export default function SettingsTab() {
   const [maxParticipants, setMaxParticipants] = useState("");
   const [topics, setTopics] = useState("");
   const [prizes, setPrizes] = useState<Prize[]>([{ title: "", reward: "" }]);
+
+  const { data: hackathonData, isLoading } = useGetOrganizerHackathonDetailsQuery(hackathonId ?? 0, {
+    skip: !hackathonId,
+  });
+
+  const [updateHackathon] = useUpdateHackathonMutation();
+
+  useEffect(() => {
+    if (hackathonData) {
+      setEventTitle(hackathonData.title || "");
+      setEventDescription(hackathonData.description || "");
+      setEventLocation(hackathonData.place || "Онлайн");
+      setMinTeamSize(hackathonData.min_team_size?.toString() || "1");
+      setMaxTeamSize(hackathonData.max_team_size?.toString() || "5");
+      setMaxParticipants(hackathonData.max_participants?.toString() || "");
+      setTopics(hackathonData.topics?.join(", ") || "");
+      
+      if (hackathonData.start_date) {
+        const startDateObj = new Date(hackathonData.start_date);
+        setStartDate(startDateObj.toISOString().split('T')[0]);
+        setStartTime(startDateObj.toTimeString().slice(0, 5));
+      }
+      
+      if (hackathonData.end_date) {
+        const endDateObj = new Date(hackathonData.end_date);
+        setEndDate(endDateObj.toISOString().split('T')[0]);
+        setEndTime(endDateObj.toTimeString().slice(0, 5));
+      }
+
+      if (hackathonData.prizes && hackathonData.prizes.length > 0) {
+        setPrizes(hackathonData.prizes.map(p => ({ title: p.title, reward: p.reward })));
+      }
+    }
+  }, [hackathonData]);
+
+  const handleSaveSettings = async () => {
+    if (!hackathonId) return;
+
+    try {
+      const updateData: any = {
+        title: eventTitle,
+        description: eventDescription,
+        place: eventLocation,
+        min_team_size: parseInt(minTeamSize),
+        max_team_size: parseInt(maxTeamSize),
+      };
+
+      if (maxParticipants) {
+        updateData.max_participants = parseInt(maxParticipants);
+      }
+
+      if (startDate && startTime) {
+        updateData.start_date = `${startDate}T${startTime}`;
+      }
+
+      if (endDate && endTime) {
+        updateData.end_date = `${endDate}T${endTime}`;
+      }
+
+      if (topics) {
+        updateData.topics = topics.split(",").map(t => t.trim());
+      }
+
+      const validPrizes = prizes.filter(p => p.title && p.reward);
+      if (validPrizes.length > 0) {
+        updateData.prizes = validPrizes;
+      }
+
+      await updateHackathon({
+        hackathonId,
+        data: updateData,
+      }).unwrap();
+    } catch (error) {
+      console.error("Failed to update hackathon:", error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Загрузка...</div>
+      </div>
+    );
+  }
+
+  if (!hackathonId) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Выберите хакатон</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 md:gap-6 ml-0 md:ml-10">
@@ -51,10 +148,11 @@ export default function SettingsTab() {
               onChange={(e) => setEventLocation(e.target.value as HackathonLocation)}
               className="h-12 w-full bg-input-background border border-border rounded-sm pl-10 pr-4 text-white appearance-none cursor-pointer"
             >
-              <option value="Online">Online</option>
-              <option value="Moscow">Moscow</option>
-              <option value="Saint Petersburg">Saint Petersburg</option>
-              <option value="Kazan">Kazan</option>
+              <option value="Онлайн">Онлайн</option>
+              <option value="Москва">Москва</option>
+              <option value="Санкт-Петербург">Санкт-Петербург</option>
+              <option value="Казань">Казань</option>
+              <option value="Нижний-Новгород">Нижний-Новгород</option>
             </select>
           </div>
         </div>
@@ -253,6 +351,7 @@ export default function SettingsTab() {
       <div className="flex flex-col sm:flex-row justify-start gap-2">
         <button
           type="button"
+          onClick={handleSaveSettings}
           className="flex h-10 w-full sm:w-fit items-center justify-center gap-2 px-6 rounded-sm bg-red text-white text-sm font-medium hover:bg-red/90 transition-colors cursor-pointer"
         >
           Сохранить изменения

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search, Users, Layers, UploadCloud, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useGetOrganizerHackathonDetailsQuery } from "@/features/organizer/api";
 
 const teamPalette = [
   "#C71C25",
@@ -38,33 +39,51 @@ function TeamAvatar({ name }: { name: string }) {
   );
 }
 
-export default function OverviewTab() {
+interface OverviewTabProps {
+  hackathonId: number | null;
+}
+
+export default function OverviewTab({ hackathonId }: OverviewTabProps) {
   const [searchValue, setSearchValue] = useState("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
+  const { data: hackathonData, isLoading } = useGetOrganizerHackathonDetailsQuery(hackathonId ?? 0, {
+    skip: !hackathonId,
+  });
+
   const stats = [
-    { title: "ЗАРЕГИСТРИРОВАНО", value: 847, icon: Users },
-    { title: "КОМАНД СОЗДАНО", value: 142, icon: Layers },
-    { title: "ПРОЕКТОВ СДАНО", value: 136, icon: UploadCloud },
-    { title: "СРЕДНИЙ БАЛЛ", value: "7.9", icon: Star },
+    { title: "ЗАРЕГИСТРИРОВАНО", value: hackathonData?.total_participants || 0, icon: Users },
+    { title: "КОМАНД СОЗДАНО", value: hackathonData?.total_teams || 0, icon: Layers },
+    { title: "ПРОЕКТОВ СДАНО", value: 0, icon: UploadCloud },
+    { title: "СРЕДНИЙ БАЛЛ", value: "0", icon: Star },
   ];
 
-  const teams = [
-    { name: "ByteForce", captain: "А.Иванов", members: 3, score: 8.9 },
-    { name: "Null Pointer", captain: "Д.Волков", members: 4, score: 8.5 },
-    { name: "Zero Day", captain: "М.Андреев", members: 3, score: 9.4 },
-    { name: "404 Team", captain: "В.Морозов", members: 2, score: 7.2 },
-  ];
+  const teams = hackathonData?.teams || [];
 
   const filteredTeams = useMemo(() => {
     const normalized = searchValue.trim().toLowerCase();
     return teams
       .filter((team) =>
-        team.name.toLowerCase().includes(normalized) ||
-        team.captain.toLowerCase().includes(normalized),
+        team.name.toLowerCase().includes(normalized),
       )
-      .sort((a, b) => (sortDirection === "asc" ? a.score - b.score : b.score - a.score));
-  }, [searchValue, sortDirection]);
+      .sort((a, b) => (sortDirection === "asc" ? a.members_count - b.members_count : b.members_count - a.members_count));
+  }, [searchValue, sortDirection, teams]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Загрузка...</div>
+      </div>
+    );
+  }
+
+  if (!hackathonId) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Выберите хакатон</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -103,15 +122,12 @@ export default function OverviewTab() {
             <thead>
               <tr className="text-white border-b border-border">
                 <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Команда</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Капитан</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Участников</th>
-                <th className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm">Сдача</th>
                 <th
                   className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm cursor-pointer select-none"
                   onClick={() => setSortDirection((current) => (current === "desc" ? "asc" : "desc"))}
                 >
                   <div className="flex items-center gap-2 text-white">
-                    <span>Оценка</span>
+                    <span>Участников</span>
                     <span className="text-text-accent text-xs">{sortDirection === "desc" ? "↓" : "↑"}</span>
                   </div>
                 </th>
@@ -120,19 +136,14 @@ export default function OverviewTab() {
             </thead>
             <tbody>
               {filteredTeams.map((t) => (
-                <tr key={t.name} className="border-b border-border last:border-0 hover:bg-input-background/30 transition-colors">
+                <tr key={t.id} className="border-b border-border last:border-0 hover:bg-input-background/30 transition-colors">
                   <td className="px-3 md:px-4 py-3 md:py-4 text-white">
                     <div className="flex items-center gap-2 md:gap-3">
                       <TeamAvatar name={t.name} />
                       <span className="text-xs md:text-sm">{t.name}</span>
                     </div>
                   </td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.captain}</td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.members}</td>
-                  <td className="px-3 md:px-4 py-3 md:py-4">
-                    <span className="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-2 py-1 rounded">Сдан</span>
-                  </td>
-                  <td className="px-3 md:px-4 py-3 md:py-4 text-red font-bold text-xs md:text-sm">{t.score}</td>
+                  <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent text-xs md:text-sm">{t.members_count}</td>
                   <td className="px-3 md:px-4 py-3 md:py-4 text-text-accent">
                     <button className="px-3 py-1 rounded bg-input-background text-xs hover:bg-input-background/80 transition-colors">Профиль</button>
                   </td>

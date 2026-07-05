@@ -9,6 +9,10 @@ interface JuryMember {
   color: string;
 }
 
+interface JuryTabProps {
+  hackathonId: number | null;
+}
+
 const avatarPalette = ["#C71C25", "#3D9A6A", "#FFCC00", "#7B5EA7", "#3B82F6"];
 
 const mockJury: JuryMember[] = [
@@ -52,12 +56,20 @@ function UserAvatar({ name, color }: { name: string; color: string }) {
   );
 }
 
-export default function JuryTab() {
+export default function JuryTab({ hackathonId }: JuryTabProps) {
   const [jury, setJury] = useState(mockJury);
   const [inviteEmail, setInviteEmail] = useState("");
   const [invitedEmails, setInvitedEmails] = useState<string[]>([
     "j.kim@example.com",
   ]);
+
+  if (!hackathonId) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-text-accent">Выберите хакатон</div>
+      </div>
+    );
+  }
 
   const handleInvite = (event: React.FormEvent) => {
     event.preventDefault();
